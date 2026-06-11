@@ -6,6 +6,10 @@ import { API_BASE, USE_MOCK } from '../config/api.config';
 
 const allOrders: PurchaseOrder[] = rawData as PurchaseOrder[];
 
+export function resetOrderCache(): void {
+  allOrders.splice(0, allOrders.length, ...(rawData as PurchaseOrder[]));
+}
+
 export interface POListResult {
   data: PurchaseOrder[];
   total: number;
@@ -134,4 +138,29 @@ export async function updatePO(
   if (index < 0) throw new PONotFoundError(id);
   allOrders[index] = { ...allOrders[index], ...payload, orderNo: id };
   return { ...allOrders[index] };
+}
+
+export async function createPO(
+  payload: Omit<PurchaseOrder, 'orderNo'>,
+  signal?: AbortSignal,
+): Promise<PurchaseOrder> {
+  if (!USE_MOCK) {
+    const res = await fetch(`${API_BASE}/api/purchase-orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal,
+    });
+    if (!res.ok) throw new Error(`Failed to create purchase order: ${res.status}`);
+    return res.json() as Promise<PurchaseOrder>;
+  }
+
+  await mockDelay(80, signal);
+  const now = new Date();
+  const prefix = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const sequence = String(allOrders.length + 1).padStart(4, '0');
+  const orderNo = `${prefix}${sequence}`;
+  const newOrder: PurchaseOrder = { ...payload, orderNo };
+  allOrders.unshift(newOrder);
+  return { ...newOrder };
 }

@@ -3,7 +3,7 @@ import type { FilterPeriod, FilterOption } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 import IconButton from './IconButton';
-import { AppIcon, Filter } from './icons';
+import { AppIcon, Filter, ICON_SIZE_HEADER } from './icons';
 
 interface FilterPopupProps {
   activeFilter: FilterPeriod;
@@ -119,7 +119,7 @@ function FilterPopup({
             setFocusedIndex(activeIdx >= 0 ? activeIdx : 0);
           }
         }}
-        icon={<AppIcon icon={Filter} />}
+        icon={<AppIcon icon={Filter} size={ICON_SIZE_HEADER} />}
       />
       {open && (
         <div className="filter-dropdown" role="listbox" aria-label={t.actions.filter}>

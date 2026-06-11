@@ -14,36 +14,25 @@ interface PurchaseOrderEditPageProps {
   setLang: (lang: 'en' | 'th') => void;
 }
 
-function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps) {
-  const { orderNo } = useParams<{ orderNo: string }>();
+interface EditOrderFormProps {
+  order: PurchaseOrder;
+  orderNo: string;
+  t: TranslationMap;
+  lang: 'en' | 'th';
+  setLang: (lang: 'en' | 'th') => void;
+  setError: (error: string | null) => void;
+}
+
+function EditOrderForm({ order, orderNo, t, lang, setLang, setError }: EditOrderFormProps) {
   const navigate = useNavigate();
-  const { order, setOrder, loading, error, setError } = usePODetail(orderNo, {
-    notFound: t.pages.notFound,
-    loadError: t.pages.loadError,
-  });
+  const [formOrder, setFormOrder] = useState(order);
+  const [baseline] = useState(() => JSON.stringify(order));
   const [saving, setSaving] = useState(false);
-  const [dirty, setDirty] = useState(false);
-  const [baseline, setBaseline] = useState('');
-  const [trackedOrderNo, setTrackedOrderNo] = useState(orderNo);
-
-  if (orderNo !== trackedOrderNo) {
-    setTrackedOrderNo(orderNo);
-    setBaseline('');
-    setDirty(false);
-  }
-
-  if (!loading && order && baseline === '' && order.orderNo === orderNo) {
-    setBaseline(JSON.stringify(order));
-  }
+  const dirty = JSON.stringify(formOrder) !== baseline;
 
   const handleChange = useCallback((field: keyof PurchaseOrder, val: string | number) => {
-    setOrder((prev) => {
-      if (!prev) return prev;
-      const next = { ...prev, [field]: val };
-      setDirty(JSON.stringify(next) !== baseline);
-      return next;
-    });
-  }, [baseline, setOrder]);
+    setFormOrder((prev) => ({ ...prev, [field]: val }));
+  }, []);
 
   const handleBack = () => {
     if (dirty && !window.confirm(t.pages.unsavedChanges)) return;
@@ -51,14 +40,10 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
   };
 
   const handleSave = async () => {
-    if (!order || !orderNo) return;
     setSaving(true);
     setError(null);
     try {
-      const updated = await updatePO(orderNo, order);
-      setOrder(updated);
-      setBaseline(JSON.stringify(updated));
-      setDirty(false);
+      await updatePO(orderNo, formOrder);
       navigate(`/purchase-orders/${orderNo}/view`);
     } catch {
       setError(t.pages.saveError);
@@ -67,33 +52,94 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
     }
   };
 
-  const showForm = !loading && order;
+  const toolbarTitle = dirty ? (
+    <>
+      {t.pages.editTitle}
+      <span className="dirty-indicator" aria-hidden="true"> •</span>
+    </>
+  ) : (
+    t.pages.editTitle
+  );
 
   return (
-    <div className="po-detail-page">
+    <>
       <PageToolbar
-        title={t.pages.editTitle}
+        title={toolbarTitle}
         onBack={handleBack}
         t={t}
         actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
       />
       <div className="po-detail-body">
-        {loading && <div className="po-detail-skeleton" />}
-        {error && <div className="po-detail-error">{error}</div>}
-        {showForm && (
-          <>
-            <PODetailForm value={order} onChange={handleChange} t={t} />
-            <div className="po-detail-actions">
-              <button type="button" className="btn btn-default" onClick={handleBack} disabled={saving}>
-                {t.form.cancel}
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => { void handleSave(); }} disabled={saving}>
-                {t.form.save}
-              </button>
-            </div>
-          </>
-        )}
+        <PODetailForm value={formOrder} onChange={handleChange} t={t} lang={lang} />
+        <div className="po-detail-actions">
+          <button type="button" className="btn btn-default" onClick={handleBack} disabled={saving}>
+            {t.form.cancel}
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => { void handleSave(); }}
+            disabled={saving || !dirty}
+          >
+            {saving ? t.form.saving : t.form.save}
+          </button>
+        </div>
       </div>
+    </>
+  );
+}
+
+function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps) {
+  const { orderNo } = useParams<{ orderNo: string }>();
+  const navigate = useNavigate();
+  const { order, loading, error, setError } = usePODetail(orderNo, {
+    notFound: t.pages.notFound,
+    loadError: t.pages.loadError,
+  });
+
+  const handleBack = () => {
+    navigate('/po/list');
+  };
+
+  return (
+    <div className="po-detail-page">
+      {loading && (
+        <>
+          <PageToolbar
+            title={t.pages.editTitle}
+            onBack={handleBack}
+            t={t}
+            actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
+          />
+          <div className="po-detail-body">
+            <div className="po-detail-skeleton" />
+          </div>
+        </>
+      )}
+      {error && (
+        <>
+          <PageToolbar
+            title={t.pages.editTitle}
+            onBack={handleBack}
+            t={t}
+            actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
+          />
+          <div className="po-detail-body">
+            <div className="po-detail-error">{error}</div>
+          </div>
+        </>
+      )}
+      {!loading && order && orderNo && (
+        <EditOrderForm
+          key={orderNo}
+          order={order}
+          orderNo={orderNo}
+          t={t}
+          lang={lang}
+          setLang={setLang}
+          setError={setError}
+        />
+      )}
     </div>
   );
 }

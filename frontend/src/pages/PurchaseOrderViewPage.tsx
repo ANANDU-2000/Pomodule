@@ -34,7 +34,7 @@ function PurchaseOrderViewPage({ t, lang, setLang }: PurchaseOrderViewPageProps)
         {error && <div className="po-detail-error">{error}</div>}
         {!loading && !error && order && (
           <>
-            <PODetailForm value={order} readOnly t={t} />
+            <PODetailForm value={order} readOnly t={t} lang={lang} />
             <div className="po-detail-actions">
               <button
                 type="button"

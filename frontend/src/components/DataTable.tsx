@@ -4,7 +4,15 @@ import type { TranslationMap } from '../types/i18n';
 import { formatDate, formatCurrency, getStatusLabel } from '../utils/formatters';
 import { TABLE_MIN_WIDTH } from '../data/poColumns';
 import IconButton from './IconButton';
-import { AppIcon, ArrowDown, ArrowUp, ArrowUpDown, Eye, Pencil } from './icons';
+import {
+  AppIcon,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ICON_SIZE_ACTION,
+  ICON_SIZE_SORT,
+  Pencil,
+} from './icons';
 
 interface DataTableProps {
   columns: ColumnConfig[];
@@ -38,13 +46,13 @@ function SortIndicator({ columnKey, sortBy, sortDirection }: {
   if (sortBy !== columnKey) {
     return (
       <span className="sort-icon sort-neutral">
-        <AppIcon icon={ArrowUpDown} size={14} />
+        <AppIcon icon={ArrowUpDown} size={ICON_SIZE_SORT} />
       </span>
     );
   }
   return (
     <span className="sort-icon">
-      <AppIcon icon={sortDirection === 'asc' ? ArrowUp : ArrowDown} size={14} />
+      <AppIcon icon={sortDirection === 'asc' ? ArrowUp : ArrowDown} size={ICON_SIZE_SORT} />
     </span>
   );
 }
@@ -70,30 +78,26 @@ function SkeletonRows({ colCount, rowCount }: { colCount: number; rowCount: numb
 
 function ActionCell({
   row,
-  onView,
   onEdit,
   t,
 }: {
   row: PurchaseOrder;
-  onView: (row: PurchaseOrder) => void;
   onEdit: (row: PurchaseOrder) => void;
   t: TranslationMap;
 }) {
+  if (row.status === 'Approved') return null;
+
   return (
-    <div className="action-buttons">
-      <IconButton
-        variant="ghost"
-        title={`${t.actions.view} ${row.orderNo}`}
-        aria-label={`${t.actions.view} ${row.orderNo}`}
-        onClick={() => onView(row)}
-        icon={<AppIcon icon={Eye} />}
-      />
+    <div className="action-buttons" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <IconButton
         variant="ghost"
         title={`${t.actions.edit} ${row.orderNo}`}
         aria-label={`${t.actions.edit} ${row.orderNo}`}
-        onClick={() => onEdit(row)}
-        icon={<AppIcon icon={Pencil} />}
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(row);
+        }}
+        icon={<AppIcon icon={Pencil} size={ICON_SIZE_ACTION} />}
       />
     </div>
   );
@@ -102,13 +106,12 @@ function ActionCell({
 function renderCell(
   col: ColumnConfig,
   row: PurchaseOrder,
-  onView: (row: PurchaseOrder) => void,
   onEdit: (row: PurchaseOrder) => void,
   t: TranslationMap,
   lang: 'en' | 'th',
 ) {
   if (col.key === 'actions') {
-    return <ActionCell row={row} onView={onView} onEdit={onEdit} t={t} />;
+    return <ActionCell row={row} onEdit={onEdit} t={t} />;
   }
   if (col.key === 'orderValue') return formatCurrency(row.orderValue, lang);
   if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key], lang);
@@ -153,6 +156,13 @@ function DataTableInner({
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onSort(key);
+    }
+  };
+
+  const handleRowKeyDown = (e: KeyboardEvent, row: PurchaseOrder) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onView(row);
     }
   };
 
@@ -205,14 +215,21 @@ function DataTableInner({
             </tr>
           ) : (
             data.map((row) => (
-              <tr key={row.orderNo}>
+              <tr
+                key={row.orderNo}
+                className="data-row"
+                onClick={() => onView(row)}
+                tabIndex={0}
+                onKeyDown={(e) => handleRowKeyDown(e, row)}
+                aria-label={`${t.actions.view} ${row.orderNo}`}
+              >
                 {columns.map((col) => (
                   <td
                     key={col.key}
                     className={getCellClassName(col)}
                     style={{ maxWidth: col.width }}
                   >
-                    {renderCell(col, row, onView, onEdit, t, lang)}
+                    {renderCell(col, row, onEdit, t, lang)}
                   </td>
                 ))}
               </tr>

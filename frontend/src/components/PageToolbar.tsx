@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import type { TranslationMap } from '../types/i18n';
-import { AppIcon, ChevronLeft } from './icons';
+import { AppIcon, ChevronLeft, ICON_SIZE_NAV_BACK } from './icons';
 
 interface PageToolbarProps {
-  title: string;
+  title: ReactNode;
   onBack?: () => void;
   backLabel?: string;
   actions?: ReactNode;
@@ -15,10 +15,13 @@ function PageToolbar({ title, onBack, backLabel, actions, t }: PageToolbarProps)
     <div className="page-toolbar">
       <div className="page-toolbar-left">
         {onBack && (
-          <button type="button" className="page-toolbar-back" onClick={onBack}>
-            <AppIcon icon={ChevronLeft} size={16} />
-            {backLabel ?? t.form.back}
-          </button>
+          <>
+            <button type="button" className="page-toolbar-back" onClick={onBack}>
+              <AppIcon icon={ChevronLeft} size={ICON_SIZE_NAV_BACK} />
+              {backLabel ?? t.form.back}
+            </button>
+            <div className="page-toolbar-divider" aria-hidden="true" />
+          </>
         )}
         <h1 className="page-toolbar-title">{title}</h1>
       </div>

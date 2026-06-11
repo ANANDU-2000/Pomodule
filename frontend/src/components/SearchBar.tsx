@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
-import { AppIcon, Search, X } from './icons';
+import { AppIcon, ICON_SIZE_FORM, Search, X } from './icons';
 
 export interface SearchBarHandle {
   focus: () => void;
@@ -48,7 +48,7 @@ const SearchBar = forwardRef<SearchBarHandle, SearchBarProps>(function SearchBar
   return (
     <div className="search-bar">
       <span className="search-bar-icon" aria-hidden="true">
-        <AppIcon icon={Search} />
+        <AppIcon icon={Search} size={ICON_SIZE_FORM} />
       </span>
       <input
         ref={inputRef}
@@ -67,7 +67,7 @@ const SearchBar = forwardRef<SearchBarHandle, SearchBarProps>(function SearchBar
           onClick={() => setLocalValue('')}
           aria-label={clearAriaLabel}
         >
-          <AppIcon icon={X} />
+          <AppIcon icon={X} size={ICON_SIZE_FORM} />
         </button>
       )}
     </div>

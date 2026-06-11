@@ -27,6 +27,7 @@ export interface TranslationMap {
 
   form: {
     save: string;
+    saving: string;
     cancel: string;
     back: string;
     edit: string;

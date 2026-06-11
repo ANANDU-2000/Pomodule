@@ -6,7 +6,7 @@ import type { SearchBarHandle } from './SearchBar';
 import SearchBar from './SearchBar';
 import FilterPopup from './FilterPopup';
 import LanguageSwitcher from './LanguageSwitcher';
-import { AppIcon, Plus } from './icons';
+import { AppIcon, ICON_SIZE_HEADER, Plus } from './icons';
 
 interface PageHeaderProps {
   title: string;
@@ -73,7 +73,7 @@ function PageHeader({
                 className={`btn${action.variant === 'primary' ? ' btn-primary' : ' btn-default'}`}
                 onClick={() => onPageAction?.(action.id)}
               >
-                {action.variant === 'primary' && <AppIcon icon={Plus} />}
+                {action.variant === 'primary' && <AppIcon icon={Plus} size={ICON_SIZE_HEADER} />}
                 {action.label}
               </button>
             ))}

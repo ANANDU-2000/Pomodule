@@ -24,6 +24,7 @@
   },
   "form": {
     "save": "Save",
+    "saving": "Saving…",
     "cancel": "Cancel",
     "back": "Back to list",
     "edit": "Edit"
@@ -77,7 +78,7 @@
     "of": "of",
     "records": "records",
     "rowsPerPage": "Rows per page",
-    "auto": "Auto",
+    "auto": "Auto-fit",
     "previousPage": "Previous page",
     "nextPage": "Next page"
   },

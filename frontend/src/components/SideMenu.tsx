@@ -3,8 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getNavigation, isNavNodeActive, type NavNode } from '../constants/navigation';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 import { useSidebarExpanded } from '../hooks/useSidebarExpanded';
+import { resetOrderCache } from '../services/purchaseOrderService';
 import type { TranslationMap } from '../types/i18n';
 import { AppIcon, ChevronLeft, ChevronRight, FileText, ICON_SIZE_NAV, LogOut } from './icons';
+
+const CACHE_KEYS = ['erp.sidebar.collapsed', 'erp.sidebar.expanded'];
 
 interface SideMenuProps {
   collapsed: boolean;
@@ -119,6 +122,18 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
     }
   };
 
+  const handleLogout = () => {
+    CACHE_KEYS.forEach((key) => {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // ignore
+      }
+    });
+    resetOrderCache();
+    navigate('/');
+  };
+
   return (
     <aside className={`side-menu${collapsed ? ' collapsed' : ''}`}>
       <nav className="side-menu-nav" role="navigation" aria-label={t.sidebar.mainNav}>
@@ -135,7 +150,7 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
       </nav>
 
       <div className="side-menu-footer">
-        <button type="button" className="nav-logout" title={t.nav.logout} disabled>
+        <button type="button" className="nav-logout" title={t.nav.logout} onClick={handleLogout}>
           <span className="nav-icon">
             <AppIcon icon={LogOut} size={ICON_SIZE_NAV} />
           </span>

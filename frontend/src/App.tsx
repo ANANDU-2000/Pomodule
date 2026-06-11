@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import SideMenu from './components/SideMenu';
 import PurchaseOrderListPage from './pages/PurchaseOrderListPage';
-import ModulePurchaseOrderListPage from './pages/ModulePurchaseOrderListPage';
 import PurchaseOrderViewPage from './pages/PurchaseOrderViewPage';
 import PurchaseOrderEditPage from './pages/PurchaseOrderEditPage';
 import PurchaseOrderNewPage from './pages/PurchaseOrderNewPage';
@@ -29,11 +28,11 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<Navigate to="/po/list" replace />} />
           <Route path="/po/list" element={<PurchaseOrderListPage {...listPageProps} />} />
-          <Route path="/po/gh-delivery" element={<ModulePurchaseOrderListPage {...listPageProps} moduleCode="po-gh" />} />
-          <Route path="/po/all" element={<ModulePurchaseOrderListPage {...listPageProps} moduleCode="po-all" />} />
-          <Route path="/po/exp" element={<ModulePurchaseOrderListPage {...listPageProps} moduleCode="po-exp" />} />
-          <Route path="/po/ast" element={<ModulePurchaseOrderListPage {...listPageProps} moduleCode="po-ast" />} />
-          <Route path="/po/gr" element={<ModulePurchaseOrderListPage {...listPageProps} moduleCode="po-gr" />} />
+          <Route path="/po/gh-delivery" element={<PurchaseOrderListPage {...listPageProps} pageTitle={t.moduleTitles.poGh} />} />
+          <Route path="/po/all" element={<PurchaseOrderListPage {...listPageProps} pageTitle={t.moduleTitles.poAll} />} />
+          <Route path="/po/exp" element={<PurchaseOrderListPage {...listPageProps} pageTitle={t.moduleTitles.poExp} />} />
+          <Route path="/po/ast" element={<PurchaseOrderListPage {...listPageProps} pageTitle={t.moduleTitles.poAst} />} />
+          <Route path="/po/gr" element={<PurchaseOrderListPage {...listPageProps} pageTitle={t.moduleTitles.poGr} />} />
           <Route path="/purchase-orders/:orderNo/view" element={<PurchaseOrderViewPage t={t} lang={lang} setLang={setLang} />} />
           <Route path="/purchase-orders/:orderNo/edit" element={<PurchaseOrderEditPage t={t} lang={lang} setLang={setLang} />} />
           <Route path="/purchase-orders/new" element={<PurchaseOrderNewPage t={t} lang={lang} setLang={setLang} />} />

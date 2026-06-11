@@ -2,17 +2,17 @@ import type { ColumnConfig } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
 
 const COLUMN_WIDTHS: Record<string, string> = {
-  orderNo: '120px',
-  documentDate: '110px',
-  supplierCode: '110px',
-  supplierName: '180px',
-  location: '120px',
-  orderValue: '110px',
-  status: '90px',
-  deliveryDate: '110px',
-  remarks: '150px',
-  userId: '90px',
-  actions: '100px',
+  orderNo: '116px',
+  documentDate: '108px',
+  supplierCode: '106px',
+  supplierName: '176px',
+  location: '118px',
+  orderValue: '108px',
+  status: '94px',
+  deliveryDate: '108px',
+  remarks: '180px',
+  userId: '86px',
+  actions: '60px',
 };
 
 export function getPoColumns(t: TranslationMap): ColumnConfig[] {
