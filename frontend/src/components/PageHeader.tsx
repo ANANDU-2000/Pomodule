@@ -70,7 +70,7 @@ function PageHeader({
               <button
                 key={action.id}
                 type="button"
-                className={`btn${action.variant === 'primary' ? ' btn-primary' : ' btn-default'}`}
+                className={`btn${action.variant === 'primary' ? ' btn-primary-compact' : ' btn-default'}`}
                 onClick={() => onPageAction?.(action.id)}
               >
                 {action.variant === 'primary' && <AppIcon icon={Plus} size={ICON_SIZE_HEADER} />}

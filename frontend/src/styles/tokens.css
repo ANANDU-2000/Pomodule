@@ -1,140 +1,147 @@
-:root {
-  /* ─── Backgrounds ─── */
-  --color-bg-app:           #F8FAFC;
-  --color-bg-surface:       #FFFFFF;
-  --color-bg-sidebar:       #1E293B;
-  --color-bg-sidebar-hover: #334155;
-  --color-bg-sidebar-active: rgba(37, 99, 235, 0.12);
-  --color-bg-header:        #FFFFFF;
-  --color-bg-table-header:  #F8FAFC;
-  --color-bg-row-hover:     #EEF2F7;
-  --color-bg-row-alt:       #F0F4F8;
-  --color-bg-input:         #FFFFFF;
-  --color-bg-input-disabled:#F8FAFC;
-  --color-bg-overlay:       rgba(15, 23, 42, 0.4);
-
-  /* ─── Text ─── */
-  --color-text-primary:     #0F172A;
-  --color-text-secondary:   #64748B;
-  --color-text-muted:       #94A3B8;
-  --color-text-sidebar:     #F8FAFC;
-  --color-text-sidebar-muted:#CBD5E1;
-  --color-text-sidebar-active:#F8FAFC;
-  --color-text-link:        #2563EB;
-  --color-text-table-link:  #0F172A;
-  --color-text-table-link-hover: #2563EB;
-  --color-text-inverse:     #FFFFFF;
-
-  /* ─── Borders ─── */
-  --color-border:           #CBD5E1;
-  --color-border-subtle:    #E2E8F0;
-  --color-border-focus:     #2563EB;
-  --color-border-sidebar:   #334155;
-  --color-border-input:     #CBD5E1;
-  --color-border-input-hover:#94A3B8;
-
-  /* ─── Accent / Brand ─── */
-  --color-accent:           #2563EB;
-  --color-accent-hover:     #1D4ED8;
-  --color-accent-active:    #1E40AF;
-  --color-accent-subtle:    #EFF6FF;
-
-  /* ─── Status (semantic — do not use for decoration) ─── */
-  --color-status-pending-text: #92400E;
-  --color-status-pending-bg:   #FEF3C7;
-  --color-status-pending-border:#FCD34D;
-
-  --color-status-approved-text:#065F46;
-  --color-status-approved-bg:  #D1FAE5;
-  --color-status-approved-border:#6EE7B7;
-
-  --color-status-rejected-text:#991B1B;
-  --color-status-rejected-bg:  #FEE2E2;
-  --color-status-rejected-border:#FCA5A5;
-
-  --color-status-draft-text:   #374151;
-  --color-status-draft-bg:     #F3F4F6;
-  --color-status-draft-border: #D1D5DB;
-
-  /* ─── Feedback ─── */
-  --color-error-text:       #B91C1C;
-  --color-error-bg:         #FEF2F2;
-  --color-error-border:     #FECACA;
-  --color-success-text:     #065F46;
-  --color-success-bg:       #ECFDF5;
-  --color-success-border:   #A7F3D0;
-
-  /* ─── Spacing (4px grid — only these 6 values) ─── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-
-  /* ─── Typography ─── */
-  --font-family:           'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-size-xs:          11px;
-  --font-size-sm:          12px;
-  --font-size-base:        13px;
-  --font-size-md:          14px;
-  --font-size-page-title:  28px;
-
-  --font-weight-normal:    400;
-  --font-weight-medium:    500;
-  --font-weight-semibold:  600;
-
-  --line-height-tight:     1.35;
-  --line-height-base:      1.5;
-
-  /* ─── Sidebar ─── */
-  --sidebar-width:         256px;
-  --sidebar-collapsed-width: 52px;
-  --sidebar-toggle-size:     40px;
-  --nav-item-height:       34px;
-  --nav-indent-l1:         16px;
-  --nav-indent-l2:         32px;
-  --nav-indent-l3:         44px;
-
-  /* ─── Table ─── */
-  --table-row-height:      36px;
-  --table-header-height:   32px;
-  --table-cell-padding-x:  12px;
-
-  /* ─── Components ─── */
-  --input-height:          36px;
-  --input-padding-x:       12px;
-  --btn-height:            36px;
-  --btn-padding-x:         14px;
-  --icon-btn-size:         36px;
-  --header-height:         48px;
-  --toolbar-height:        48px;
-  --pagination-height:     48px;
-  --search-width:          340px;
-
-  /* ─── Status badge ─── */
-  --badge-height:          22px;
-  --badge-padding-x:       8px;
-  --badge-width:           80px;
-
-  /* ─── Icons (see icons.tsx for constant names) ─── */
-  --icon-size-nav:         16px;
-  --icon-size-header:      15px;
-  --icon-size-action:      14px;
-  --icon-size-sort:        12px;
-  --icon-size-form:        14px;
-
-  /* ─── Shape ─── */
-  --radius-sm:             4px;
-  --radius-md:             6px;
-  --radius-lg:             6px;
-
-  /* ─── Elevation (flat by default) ─── */
-  --shadow-none:           none;
-  --shadow-popup:          0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-  --shadow-modal:          0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-
-  /* ─── Motion ─── */
-  --transition-fast:       120ms ease;
-  --transition-base:       180ms ease;
-}
+:root {
+  /* ─── Backgrounds ─── */
+  --color-bg-app:           #F9FAFB;
+  --color-bg-surface:       #FFFFFF;
+  --color-bg-sidebar:       #1F2937;
+  --color-bg-sidebar-hover: #374151;
+  --color-bg-sidebar-active:#1E40AF;
+  --color-bg-header:        #FFFFFF;
+  --color-bg-table-header:  #F9FAFB;
+  --color-bg-row-hover:     #F3F4F6;
+  --color-bg-row-alt:       #F9FAFB;
+  --color-bg-input:         #FFFFFF;
+  --color-bg-input-disabled:#F9FAFB;
+  --color-bg-overlay:       rgba(17, 24, 39, 0.4);
+
+  /* ─── Text ─── */
+  --color-text-primary:     #111827;
+  --color-text-secondary:   #6B7280;
+  --color-text-muted:       #9CA3AF;
+  --color-text-sidebar:     #F9FAFB;
+  --color-text-sidebar-muted:#9CA3AF;
+  --color-text-sidebar-active:#F9FAFB;
+  --color-text-link:        #2563EB;
+  --color-text-table-link:  #111827;
+  --color-text-table-link-hover: #2563EB;
+  --color-text-inverse:     #FFFFFF;
+
+  /* ─── Borders ─── */
+  --color-border:           #E5E7EB;
+  --color-border-subtle:    #E5E7EB;
+  --color-border-focus:     #2563EB;
+  --color-border-sidebar:   #374151;
+  --color-border-input:     #E5E7EB;
+  --color-border-input-hover:#9CA3AF;
+
+  /* ─── Accent / Brand ─── */
+  --color-accent:           #2563EB;
+  --color-accent-hover:     #1D4ED8;
+  --color-accent-active:    #1E40AF;
+  --color-accent-subtle:    #EFF6FF;
+  --color-success:          #16A34A;
+  --color-warning:          #D97706;
+  --color-danger:           #DC2626;
+
+  /* ─── Status (muted enterprise) ─── */
+  --color-status-pending-text: #92400E;
+  --color-status-pending-bg:   #FFFBEB;
+  --color-status-pending-border:#FDE68A;
+
+  --color-status-approved-text:#166534;
+  --color-status-approved-bg:  #F0FDF4;
+  --color-status-approved-border:#BBF7D0;
+
+  --color-status-rejected-text:#991B1B;
+  --color-status-rejected-bg:  #FEF2F2;
+  --color-status-rejected-border:#FECACA;
+
+  --color-status-draft-text:   #4B5563;
+  --color-status-draft-bg:     #F9FAFB;
+  --color-status-draft-border: #E5E7EB;
+
+  /* ─── Feedback ─── */
+  --color-error-text:       #DC2626;
+  --color-error-bg:         #FEF2F2;
+  --color-error-border:     #FECACA;
+  --color-success-text:     #166534;
+  --color-success-bg:       #F0FDF4;
+  --color-success-border:   #BBF7D0;
+
+  /* ─── Spacing (4px grid — only these 6 values) ─── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ─── Typography ─── */
+  --font-family:           'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs:          11px;
+  --font-size-sm:          12px;
+  --font-size-base:        13px;
+  --font-size-md:          14px;
+  --font-size-page-title:  24px;
+
+  --font-weight-normal:    400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+
+  --line-height-tight:     1.35;
+  --line-height-base:      1.5;
+
+  /* ─── Sidebar ─── */
+  --sidebar-width:           220px;
+  --sidebar-collapsed-width: 64px;
+  --sidebar-header-height:   40px;
+  --sidebar-toggle-size:     32px;
+  --nav-item-height:         32px;
+  --nav-active-bar-width:    4px;
+  --nav-indent-l1:           12px;
+  --nav-indent-l2:           24px;
+  --nav-indent-l3:           36px;
+
+  /* ─── Table ─── */
+  --table-row-height:      32px;
+  --table-header-height:   28px;
+  --table-cell-padding-x:  8px;
+
+  /* ─── Components ─── */
+  --input-height:          32px;
+  --input-padding-x:       10px;
+  --btn-height:            32px;
+  --btn-height-primary:    32px;
+  --btn-padding-x:         12px;
+  --icon-btn-size:         32px;
+  --header-height:         40px;
+  --toolbar-height:        40px;
+  --pagination-height:     40px;
+  --search-width:          320px;
+
+  /* ─── Status badge ─── */
+  --badge-height:          20px;
+  --badge-padding-x:       8px;
+  --badge-width:           76px;
+
+  /* ─── Icons (see icons.tsx for constant names) ─── */
+  --icon-size-nav:         16px;
+  --icon-size-header:      14px;
+  --icon-size-action:      14px;
+  --icon-size-sort:        12px;
+  --icon-size-form:        14px;
+
+  /* ─── Shape ─── */
+  --radius-sm:             4px;
+  --radius-md:             6px;
+  --radius-lg:             6px;
+
+  /* ─── Elevation (flat by default) ─── */
+  --shadow-none:           none;
+  --shadow-popup:          0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-modal:          0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* ─── Motion ─── */
+  --transition-fast:       120ms ease;
+  --transition-base:       180ms ease;
+}
+

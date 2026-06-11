@@ -12,8 +12,8 @@ export function useViewportPageSize(
   containerRef: RefObject<HTMLElement | null>,
   options: UseViewportPageSizeOptions = {},
 ) {
-  const rowHeight = options.rowHeight ?? 36;
-  const headerHeight = options.headerHeight ?? 32;
+  const rowHeight = options.rowHeight ?? 32;
+  const headerHeight = options.headerHeight ?? 28;
   const [pageSize, setPageSize] = useState(PAGE_SIZE_MIN);
 
   useEffect(() => {

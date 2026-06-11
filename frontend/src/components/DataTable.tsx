@@ -89,7 +89,7 @@ function ActionCell({
   t: TranslationMap;
 }) {
   return (
-    <div className="action-buttons" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+    <div className="action-buttons actions-cell" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <IconButton
         variant="ghost"
         title={`${t.actions.view} ${row.orderNo}`}
