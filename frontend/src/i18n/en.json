@@ -20,6 +20,7 @@
     "loadError": "Failed to load purchase order",
     "listLoadError": "Failed to load purchase orders",
     "saveError": "Failed to save purchase order",
+    "approveError": "Failed to approve purchase order",
     "unsavedChanges": "You have unsaved changes. Leave anyway?"
   },
   "form": {
@@ -71,6 +72,8 @@
     "search": "Search orders...",
     "filter": "Filter",
     "addPurchaseOrder": "Add Purchase Order",
+    "approve": "Approve",
+    "approving": "Approving…",
     "retry": "Retry"
   },
   "pagination": {

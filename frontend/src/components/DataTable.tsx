@@ -89,29 +89,41 @@ function ActionCell({
   t: TranslationMap;
 }) {
   return (
-    <div className="action-buttons actions-cell" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-      <IconButton
-        variant="ghost"
-        title={`${t.actions.view} ${row.orderNo}`}
-        aria-label={`${t.actions.view} ${row.orderNo}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onView(row);
-        }}
-        icon={<AppIcon icon={Eye} size={ICON_SIZE_ACTION} />}
-      />
-      {row.status !== 'Approved' && (
+    <div
+      className="action-buttons actions-cell"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+    >
+      <span className="action-slot">
         <IconButton
           variant="ghost"
-          title={`${t.actions.edit} ${row.orderNo}`}
-          aria-label={`${t.actions.edit} ${row.orderNo}`}
+          className="action-btn"
+          title={`${t.actions.view} ${row.orderNo}`}
+          aria-label={`${t.actions.view} ${row.orderNo}`}
           onClick={(e) => {
             e.stopPropagation();
-            onEdit(row);
+            onView(row);
           }}
-          icon={<AppIcon icon={Pencil} size={ICON_SIZE_ACTION} />}
+          icon={<AppIcon icon={Eye} size={ICON_SIZE_ACTION} />}
         />
-      )}
+      </span>
+      <span className="action-slot">
+        {row.status !== 'Approved' ? (
+          <IconButton
+            variant="ghost"
+            className="action-btn"
+            title={`${t.actions.edit} ${row.orderNo}`}
+            aria-label={`${t.actions.edit} ${row.orderNo}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(row);
+            }}
+            icon={<AppIcon icon={Pencil} size={ICON_SIZE_ACTION} />}
+          />
+        ) : (
+          <span className="action-slot-placeholder" aria-hidden="true" />
+        )}
+      </span>
     </div>
   );
 }

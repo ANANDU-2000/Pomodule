@@ -46,3 +46,20 @@ export function updatePO(id: string, payload: Partial<POListItem>): POListItem |
   orders[index] = { ...orders[index], ...payload, orderNo: id };
   return orders[index];
 }
+
+const APPROVABLE_STATUSES = new Set(['Pending', 'Draft']);
+
+export function approvePO(id: string): POListItem | null {
+  const index = orders.findIndex((o) => o.orderNo === id);
+  if (index < 0) return null;
+  const current = orders[index];
+  if (!APPROVABLE_STATUSES.has(current.status)) {
+    return null;
+  }
+  orders[index] = { ...current, status: 'Approved' };
+  return orders[index];
+}
+
+export function isApprovableStatus(status: string): boolean {
+  return APPROVABLE_STATUSES.has(status);
+}

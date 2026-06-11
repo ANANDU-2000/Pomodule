@@ -8,6 +8,12 @@ import FilterPopup from './FilterPopup';
 import LanguageSwitcher from './LanguageSwitcher';
 import { AppIcon, ICON_SIZE_HEADER, Plus } from './icons';
 
+function parsePageTitle(title: string): { code: string | null; label: string } {
+  const sep = title.indexOf(' - ');
+  if (sep === -1) return { code: null, label: title };
+  return { code: title.slice(0, sep), label: title.slice(sep + 3) };
+}
+
 interface PageHeaderProps {
   title: string;
   searchValue: string;
@@ -41,10 +47,14 @@ function PageHeader({
   onLangSwitch,
   filterOptions,
 }: PageHeaderProps) {
+  const { code, label } = parsePageTitle(title);
+
   return (
     <header className="page-header">
-      <h1 className="page-header-title">{title}</h1>
-      <div className="page-header-spacer" aria-hidden="true" />
+      <div className="page-header-title-block">
+        {code && <span className="page-header-code">{code}</span>}
+        <h1 className="page-header-title">{label}</h1>
+      </div>
       <div className="page-header-toolbar" role="toolbar" aria-label={t.accessibility.pageActions}>
         <FilterPopup
           activeFilter={activeFilter}

@@ -27,6 +27,13 @@ export class PONotFoundError extends Error {
   }
 }
 
+export class POActionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'POActionError';
+  }
+}
+
 export function toApiParams(params: POListParams): Record<string, string> {
   return {
     page: String(params.page),
@@ -137,6 +144,37 @@ export async function updatePO(
   const index = allOrders.findIndex((o) => o.orderNo === id);
   if (index < 0) throw new PONotFoundError(id);
   allOrders[index] = { ...allOrders[index], ...payload, orderNo: id };
+  return { ...allOrders[index] };
+}
+
+const APPROVABLE_STATUSES: PurchaseOrder['status'][] = ['Pending', 'Draft'];
+
+export async function approvePO(
+  id: string,
+  signal?: AbortSignal,
+): Promise<PurchaseOrder> {
+  if (!USE_MOCK) {
+    const res = await fetch(`${API_BASE}/api/purchase-orders/${encodeURIComponent(id)}/approve`, {
+      method: 'POST',
+      signal,
+    });
+    if (res.status === 404) throw new PONotFoundError(id);
+    if (res.status === 409) {
+      const body = await res.json().catch(() => ({})) as { error?: string };
+      throw new POActionError(body.error ?? 'Purchase order cannot be approved');
+    }
+    if (!res.ok) throw new Error(`Failed to approve purchase order: ${res.status}`);
+    return res.json() as Promise<PurchaseOrder>;
+  }
+
+  await mockDelay(80, signal);
+  const index = allOrders.findIndex((o) => o.orderNo === id);
+  if (index < 0) throw new PONotFoundError(id);
+  const current = allOrders[index];
+  if (!APPROVABLE_STATUSES.includes(current.status)) {
+    throw new POActionError('Purchase order is not in an approvable status');
+  }
+  allOrders[index] = { ...current, status: 'Approved' };
   return { ...allOrders[index] };
 }
 

@@ -6,6 +6,7 @@ import * as purchaseOrderController from '../controllers/purchaseOrder.controlle
 const router = Router();
 
 router.get('/', validateQuery, purchaseOrderController.getList);
+router.post('/:id/approve', purchaseOrderController.approveDetail);
 router.get('/:id', purchaseOrderController.getDetail);
 router.put('/:id', validateUpdateBody, purchaseOrderController.updateDetail);
 

@@ -22,6 +22,7 @@ export interface TranslationMap {
     loadError: string;
     listLoadError: string;
     saveError: string;
+    approveError: string;
     unsavedChanges: string;
   };
 
@@ -79,6 +80,8 @@ export interface TranslationMap {
     search: string;
     filter: string;
     addPurchaseOrder: string;
+    approve: string;
+    approving: string;
     retry: string;
   };
 

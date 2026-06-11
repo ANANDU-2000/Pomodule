@@ -92,3 +92,20 @@ export async function updatePO(
   void id;
   return null;
 }
+
+export async function approvePO(
+  id: string,
+  conn?: Connection,
+): Promise<POListItem | null> {
+  if (env.DATA_SOURCE === 'mock') {
+    return mockService.approvePO(id);
+  }
+
+  void conn;
+
+  // PLACEHOLDER procedure call — replace when DB team shares APPROVE proc:
+  // await conn!.execute(`BEGIN PKG_PO.APPROVE_PO(:P_ORDER_NO); END;`, { P_ORDER_NO: id });
+
+  void id;
+  return null;
+}

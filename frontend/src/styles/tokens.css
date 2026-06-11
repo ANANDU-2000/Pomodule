@@ -1,147 +1,147 @@
-:root {
-  /* ─── Backgrounds ─── */
-  --color-bg-app:           #F9FAFB;
-  --color-bg-surface:       #FFFFFF;
-  --color-bg-sidebar:       #1F2937;
-  --color-bg-sidebar-hover: #374151;
-  --color-bg-sidebar-active:#1E40AF;
-  --color-bg-header:        #FFFFFF;
-  --color-bg-table-header:  #F9FAFB;
-  --color-bg-row-hover:     #F3F4F6;
-  --color-bg-row-alt:       #F9FAFB;
-  --color-bg-input:         #FFFFFF;
-  --color-bg-input-disabled:#F9FAFB;
-  --color-bg-overlay:       rgba(17, 24, 39, 0.4);
-
-  /* ─── Text ─── */
-  --color-text-primary:     #111827;
-  --color-text-secondary:   #6B7280;
-  --color-text-muted:       #9CA3AF;
-  --color-text-sidebar:     #F9FAFB;
-  --color-text-sidebar-muted:#9CA3AF;
-  --color-text-sidebar-active:#F9FAFB;
-  --color-text-link:        #2563EB;
-  --color-text-table-link:  #111827;
-  --color-text-table-link-hover: #2563EB;
-  --color-text-inverse:     #FFFFFF;
-
-  /* ─── Borders ─── */
-  --color-border:           #E5E7EB;
-  --color-border-subtle:    #E5E7EB;
-  --color-border-focus:     #2563EB;
-  --color-border-sidebar:   #374151;
-  --color-border-input:     #E5E7EB;
-  --color-border-input-hover:#9CA3AF;
-
-  /* ─── Accent / Brand ─── */
-  --color-accent:           #2563EB;
-  --color-accent-hover:     #1D4ED8;
-  --color-accent-active:    #1E40AF;
-  --color-accent-subtle:    #EFF6FF;
-  --color-success:          #16A34A;
-  --color-warning:          #D97706;
-  --color-danger:           #DC2626;
-
-  /* ─── Status (muted enterprise) ─── */
-  --color-status-pending-text: #92400E;
-  --color-status-pending-bg:   #FFFBEB;
-  --color-status-pending-border:#FDE68A;
-
-  --color-status-approved-text:#166534;
-  --color-status-approved-bg:  #F0FDF4;
-  --color-status-approved-border:#BBF7D0;
-
-  --color-status-rejected-text:#991B1B;
-  --color-status-rejected-bg:  #FEF2F2;
-  --color-status-rejected-border:#FECACA;
-
-  --color-status-draft-text:   #4B5563;
-  --color-status-draft-bg:     #F9FAFB;
-  --color-status-draft-border: #E5E7EB;
-
-  /* ─── Feedback ─── */
-  --color-error-text:       #DC2626;
-  --color-error-bg:         #FEF2F2;
-  --color-error-border:     #FECACA;
-  --color-success-text:     #166534;
-  --color-success-bg:       #F0FDF4;
-  --color-success-border:   #BBF7D0;
-
-  /* ─── Spacing (4px grid — only these 6 values) ─── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-
-  /* ─── Typography ─── */
-  --font-family:           'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-size-xs:          11px;
-  --font-size-sm:          12px;
-  --font-size-base:        13px;
-  --font-size-md:          14px;
-  --font-size-page-title:  24px;
-
-  --font-weight-normal:    400;
-  --font-weight-medium:    500;
-  --font-weight-semibold:  600;
-
-  --line-height-tight:     1.35;
-  --line-height-base:      1.5;
-
-  /* ─── Sidebar ─── */
-  --sidebar-width:           220px;
-  --sidebar-collapsed-width: 64px;
-  --sidebar-header-height:   40px;
-  --sidebar-toggle-size:     32px;
-  --nav-item-height:         32px;
-  --nav-active-bar-width:    4px;
-  --nav-indent-l1:           12px;
-  --nav-indent-l2:           24px;
-  --nav-indent-l3:           36px;
-
-  /* ─── Table ─── */
-  --table-row-height:      32px;
-  --table-header-height:   28px;
-  --table-cell-padding-x:  8px;
-
-  /* ─── Components ─── */
-  --input-height:          32px;
-  --input-padding-x:       10px;
-  --btn-height:            32px;
-  --btn-height-primary:    32px;
-  --btn-padding-x:         12px;
-  --icon-btn-size:         32px;
-  --header-height:         40px;
-  --toolbar-height:        40px;
-  --pagination-height:     40px;
-  --search-width:          320px;
-
-  /* ─── Status badge ─── */
-  --badge-height:          20px;
-  --badge-padding-x:       8px;
-  --badge-width:           76px;
-
-  /* ─── Icons (see icons.tsx for constant names) ─── */
-  --icon-size-nav:         16px;
-  --icon-size-header:      14px;
-  --icon-size-action:      14px;
-  --icon-size-sort:        12px;
-  --icon-size-form:        14px;
-
-  /* ─── Shape ─── */
-  --radius-sm:             4px;
-  --radius-md:             6px;
-  --radius-lg:             6px;
-
-  /* ─── Elevation (flat by default) ─── */
-  --shadow-none:           none;
-  --shadow-popup:          0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-  --shadow-modal:          0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-
-  /* ─── Motion ─── */
-  --transition-fast:       120ms ease;
-  --transition-base:       180ms ease;
-}
-
+:root {
+  /* ─── Backgrounds ─── */
+  --color-bg-app:           #F9FAFB;
+  --color-bg-surface:       #FFFFFF;
+  --color-bg-sidebar:       #1F2937;
+  --color-bg-sidebar-hover: #374151;
+  --color-bg-sidebar-active:rgba(59, 130, 246, 0.18);
+  --color-bg-header:        #FFFFFF;
+  --color-bg-table-header:  #F9FAFB;
+  --color-bg-row-hover:     #F3F4F6;
+  --color-bg-row-alt:       #F9FAFB;
+  --color-bg-input:         #FFFFFF;
+  --color-bg-input-disabled:#F9FAFB;
+  --color-bg-overlay:       rgba(17, 24, 39, 0.4);
+
+  /* ─── Text ─── */
+  --color-text-primary:     #111827;
+  --color-text-secondary:   #6B7280;
+  --color-text-muted:       #9CA3AF;
+  --color-text-sidebar:     #F9FAFB;
+  --color-text-sidebar-muted:#9CA3AF;
+  --color-text-sidebar-active:#F9FAFB;
+  --color-text-link:        #2563EB;
+  --color-text-table-link:  #111827;
+  --color-text-table-link-hover: #2563EB;
+  --color-text-inverse:     #FFFFFF;
+
+  /* ─── Borders ─── */
+  --color-border:           #E5E7EB;
+  --color-border-subtle:    #E5E7EB;
+  --color-border-focus:     #2563EB;
+  --color-border-sidebar:   #374151;
+  --color-border-input:     #E5E7EB;
+  --color-border-input-hover:#9CA3AF;
+
+  /* ─── Accent / Brand ─── */
+  --color-accent:           #2563EB;
+  --color-accent-hover:     #1D4ED8;
+  --color-accent-active:    #1E40AF;
+  --color-accent-subtle:    #EFF6FF;
+  --color-success:          #16A34A;
+  --color-warning:          #D97706;
+  --color-danger:           #DC2626;
+
+  /* ─── Status (muted enterprise) ─── */
+  --color-status-pending-text: #92400E;
+  --color-status-pending-bg:   #FFFBEB;
+  --color-status-pending-border:#FDE68A;
+
+  --color-status-approved-text:#166534;
+  --color-status-approved-bg:  #F0FDF4;
+  --color-status-approved-border:#BBF7D0;
+
+  --color-status-rejected-text:#991B1B;
+  --color-status-rejected-bg:  #FEF2F2;
+  --color-status-rejected-border:#FECACA;
+
+  --color-status-draft-text:   #4B5563;
+  --color-status-draft-bg:     #F9FAFB;
+  --color-status-draft-border: #E5E7EB;
+
+  /* ─── Feedback ─── */
+  --color-error-text:       #DC2626;
+  --color-error-bg:         #FEF2F2;
+  --color-error-border:     #FECACA;
+  --color-success-text:     #166534;
+  --color-success-bg:       #F0FDF4;
+  --color-success-border:   #BBF7D0;
+
+  /* ─── Spacing (4px grid — only these 6 values) ─── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ─── Typography ─── */
+  --font-family:           'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs:          11px;
+  --font-size-sm:          12px;
+  --font-size-base:        13px;
+  --font-size-md:          14px;
+  --font-size-page-title:  18px;
+
+  --font-weight-normal:    400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+
+  --line-height-tight:     1.35;
+  --line-height-base:      1.5;
+
+  /* ─── Sidebar ─── */
+  --sidebar-width:           220px;
+  --sidebar-collapsed-width: 64px;
+  --sidebar-header-height:   40px;
+  --sidebar-toggle-size:     32px;
+  --nav-item-height:         32px;
+  --nav-active-bar-width:    4px;
+  --nav-indent-l1:           12px;
+  --nav-indent-l2:           24px;
+  --nav-indent-l3:           36px;
+
+  /* ─── Table ─── */
+  --table-row-height:      32px;
+  --table-header-height:   28px;
+  --table-cell-padding-x:  8px;
+
+  /* ─── Components ─── */
+  --input-height:          32px;
+  --input-padding-x:       10px;
+  --btn-height:            32px;
+  --btn-height-primary:    32px;
+  --btn-padding-x:         12px;
+  --icon-btn-size:         32px;
+  --header-height:         40px;
+  --toolbar-height:        40px;
+  --pagination-height:     40px;
+  --search-width:          320px;
+
+  /* ─── Status badge ─── */
+  --badge-height:          20px;
+  --badge-padding-x:       8px;
+  --badge-width:           76px;
+
+  /* ─── Icons (see icons.tsx for constant names) ─── */
+  --icon-size-nav:         16px;
+  --icon-size-header:      14px;
+  --icon-size-action:      14px;
+  --icon-size-sort:        12px;
+  --icon-size-form:        14px;
+
+  /* ─── Shape ─── */
+  --radius-sm:             4px;
+  --radius-md:             6px;
+  --radius-lg:             6px;
+
+  /* ─── Elevation (flat by default) ─── */
+  --shadow-none:           none;
+  --shadow-popup:          0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-modal:          0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* ─── Motion ─── */
+  --transition-fast:       120ms ease;
+  --transition-base:       180ms ease;
+}
+

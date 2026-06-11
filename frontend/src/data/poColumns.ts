@@ -12,7 +12,7 @@ const COLUMN_WIDTHS: Record<string, string> = {
   deliveryDate: '108px',
   remarks: '180px',
   userId: '86px',
-  actions: '68px',
+  actions: '72px',
 };
 
 export function getPoColumns(t: TranslationMap): ColumnConfig[] {
