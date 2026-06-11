@@ -5,7 +5,7 @@ import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 import { useSidebarExpanded } from '../hooks/useSidebarExpanded';
 import { resetOrderCache } from '../services/purchaseOrderService';
 import type { TranslationMap } from '../types/i18n';
-import { AppIcon, ChevronLeft, ChevronRight, FileText, ICON_SIZE_NAV, LogOut } from './icons';
+import { AppIcon, ChevronRight, FileText, ICON_SIZE_NAV, LogOut, PanelLeft, PanelRight } from './icons';
 
 const CACHE_KEYS = ['erp.sidebar.collapsed', 'erp.sidebar.expanded'];
 
@@ -78,7 +78,7 @@ function NavTree({
             >
               {depth === 0 && (
                 <span className="nav-icon">
-                  <AppIcon icon={FileText} size={ICON_SIZE_NAV} />
+                  <AppIcon icon={FileText} size={collapsed ? 18 : ICON_SIZE_NAV} />
                 </span>
               )}
               <span className="nav-parent-label">{node.label}</span>
@@ -137,16 +137,18 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
   return (
     <aside className={`side-menu${collapsed ? ' collapsed' : ''}`}>
       <nav className="side-menu-nav" role="navigation" aria-label={t.sidebar.mainNav}>
-        <NavTree
-          nodes={navigation}
-          depth={0}
-          collapsed={collapsed}
-          pathname={pathname}
-          expandedIds={expandedIds}
-          onToggleExpand={toggleExpand}
-          onNavigate={navigate}
-          onKeyDown={handleKeyDown}
-        />
+        <div className="side-menu-nav-inner">
+          <NavTree
+            nodes={navigation}
+            depth={0}
+            collapsed={collapsed}
+            pathname={pathname}
+            expandedIds={expandedIds}
+            onToggleExpand={toggleExpand}
+            onNavigate={navigate}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
       </nav>
 
       <div className="side-menu-footer">
@@ -166,7 +168,7 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
           aria-label={collapsed ? t.sidebar.expand : t.sidebar.collapse}
           aria-keyshortcuts={KEYBOARD_SHORTCUTS.toggleSidebar.label}
         >
-          <AppIcon icon={collapsed ? ChevronRight : ChevronLeft} size={ICON_SIZE_NAV} />
+          <AppIcon icon={collapsed ? PanelRight : PanelLeft} size={ICON_SIZE_NAV} />
         </button>
       </div>
     </aside>

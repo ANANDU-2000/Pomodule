@@ -3,12 +3,12 @@
   "purchaseOrders": "รายการใบสั่งซื้อ",
   "nav": {
     "purchaseOrder": "ใบสั่งซื้อ",
-    "purchaseOrderList": "ใบสั่งซื้อ",
+    "purchaseOrderList": "ใบสั่งซื้อทั้งหมด",
     "poTransaction": "PO - ธุรกรรม",
-    "poGh": "PO_GH - ใบส่งมอบ/เงินสด",
-    "poAll": "PO - ใบสั่งซื้อ - ทั้งหมด",
-    "poExp": "PO_EXP - ใบสั่งซื้อ",
-    "poAst": "PO_AST - ใบสั่งซื้อ",
+    "poGh": "ใบส่งมอบ/เงินสด",
+    "poAll": "ใบสั่งซื้อ - ทั้งหมด",
+    "poExp": "ใบสั่งซื้อ",
+    "poAst": "ใบสั่งซื้อ",
     "poGr": "PO_GR",
     "logout": "ออกจากระบบ"
   },

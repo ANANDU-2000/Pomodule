@@ -1,33 +1,35 @@
 :root {
   /* ─── Backgrounds ─── */
-  --color-bg-app:           #F1F5F9;
+  --color-bg-app:           #F8FAFC;
   --color-bg-surface:       #FFFFFF;
   --color-bg-sidebar:       #1E293B;
-  --color-bg-sidebar-hover: #2D3E50;
-  --color-bg-sidebar-active: rgba(37, 99, 235, 0.18);
+  --color-bg-sidebar-hover: #334155;
+  --color-bg-sidebar-active: rgba(37, 99, 235, 0.12);
   --color-bg-header:        #FFFFFF;
   --color-bg-table-header:  #F8FAFC;
   --color-bg-row-hover:     #EEF2F7;
-  --color-bg-row-alt:       #F5F7FA;
+  --color-bg-row-alt:       #F0F4F8;
   --color-bg-input:         #FFFFFF;
   --color-bg-input-disabled:#F8FAFC;
   --color-bg-overlay:       rgba(15, 23, 42, 0.4);
 
   /* ─── Text ─── */
   --color-text-primary:     #0F172A;
-  --color-text-secondary:   #475569;
+  --color-text-secondary:   #64748B;
   --color-text-muted:       #94A3B8;
-  --color-text-sidebar:     #F1F5F9;
-  --color-text-sidebar-muted:#94A3B8;
-  --color-text-sidebar-active:#FFFFFF;
+  --color-text-sidebar:     #F8FAFC;
+  --color-text-sidebar-muted:#CBD5E1;
+  --color-text-sidebar-active:#F8FAFC;
   --color-text-link:        #2563EB;
+  --color-text-table-link:  #0F172A;
+  --color-text-table-link-hover: #2563EB;
   --color-text-inverse:     #FFFFFF;
 
   /* ─── Borders ─── */
   --color-border:           #CBD5E1;
   --color-border-subtle:    #E2E8F0;
   --color-border-focus:     #2563EB;
-  --color-border-sidebar:   #2D3E50;
+  --color-border-sidebar:   #334155;
   --color-border-input:     #CBD5E1;
   --color-border-input-hover:#94A3B8;
 
@@ -76,7 +78,7 @@
   --font-size-sm:          12px;
   --font-size-base:        13px;
   --font-size-md:          14px;
-  --font-size-page-title:  20px;
+  --font-size-page-title:  28px;
 
   --font-weight-normal:    400;
   --font-weight-medium:    500;
@@ -87,27 +89,28 @@
 
   /* ─── Sidebar ─── */
   --sidebar-width:         256px;
-  --sidebar-collapsed-width:56px;
-  --nav-item-height:       36px;
+  --sidebar-collapsed-width: 52px;
+  --sidebar-toggle-size:     40px;
+  --nav-item-height:       34px;
   --nav-indent-l1:         16px;
   --nav-indent-l2:         32px;
   --nav-indent-l3:         44px;
 
   /* ─── Table ─── */
-  --table-row-height:      40px;
-  --table-header-height:   34px;
-  --table-cell-padding-x:  14px;
+  --table-row-height:      36px;
+  --table-header-height:   32px;
+  --table-cell-padding-x:  12px;
 
   /* ─── Components ─── */
   --input-height:          36px;
   --input-padding-x:       12px;
   --btn-height:            36px;
   --btn-padding-x:         14px;
-  --icon-btn-size:         32px;
-  --header-height:         52px;
-  --toolbar-height:        52px;
-  --pagination-height:     44px;
-  --search-width:          300px;
+  --icon-btn-size:         36px;
+  --header-height:         48px;
+  --toolbar-height:        48px;
+  --pagination-height:     48px;
+  --search-width:          340px;
 
   /* ─── Status badge ─── */
   --badge-height:          22px;
@@ -122,8 +125,8 @@
   --icon-size-form:        14px;
 
   /* ─── Shape ─── */
-  --radius-sm:             3px;
-  --radius-md:             4px;
+  --radius-sm:             4px;
+  --radius-md:             6px;
   --radius-lg:             6px;
 
   /* ─── Elevation (flat by default) ─── */

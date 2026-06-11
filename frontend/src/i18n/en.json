@@ -3,12 +3,12 @@
   "purchaseOrders": "Purchase Orders",
   "nav": {
     "purchaseOrder": "Purchase Order",
-    "purchaseOrderList": "Purchase Order",
+    "purchaseOrderList": "All Purchase Orders",
     "poTransaction": "PO - Transaction",
-    "poGh": "PO_GH - Cash/Delivery Note",
-    "poAll": "PO - Purchase Order - ALL",
-    "poExp": "PO_EXP - Purchase Order",
-    "poAst": "PO_AST - Purchase Order",
+    "poGh": "Cash/Delivery Note",
+    "poAll": "Purchase Order - ALL",
+    "poExp": "Purchase Order",
+    "poAst": "Purchase Order",
     "poGr": "PO_GR",
     "logout": "Logout"
   },

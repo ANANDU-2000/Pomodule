@@ -9,6 +9,7 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
+  Eye,
   ICON_SIZE_ACTION,
   ICON_SIZE_SORT,
   Pencil,
@@ -78,27 +79,39 @@ function SkeletonRows({ colCount, rowCount }: { colCount: number; rowCount: numb
 
 function ActionCell({
   row,
+  onView,
   onEdit,
   t,
 }: {
   row: PurchaseOrder;
+  onView: (row: PurchaseOrder) => void;
   onEdit: (row: PurchaseOrder) => void;
   t: TranslationMap;
 }) {
-  if (row.status === 'Approved') return null;
-
   return (
     <div className="action-buttons" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <IconButton
         variant="ghost"
-        title={`${t.actions.edit} ${row.orderNo}`}
-        aria-label={`${t.actions.edit} ${row.orderNo}`}
+        title={`${t.actions.view} ${row.orderNo}`}
+        aria-label={`${t.actions.view} ${row.orderNo}`}
         onClick={(e) => {
           e.stopPropagation();
-          onEdit(row);
+          onView(row);
         }}
-        icon={<AppIcon icon={Pencil} size={ICON_SIZE_ACTION} />}
+        icon={<AppIcon icon={Eye} size={ICON_SIZE_ACTION} />}
       />
+      {row.status !== 'Approved' && (
+        <IconButton
+          variant="ghost"
+          title={`${t.actions.edit} ${row.orderNo}`}
+          aria-label={`${t.actions.edit} ${row.orderNo}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(row);
+          }}
+          icon={<AppIcon icon={Pencil} size={ICON_SIZE_ACTION} />}
+        />
+      )}
     </div>
   );
 }
@@ -106,12 +119,13 @@ function ActionCell({
 function renderCell(
   col: ColumnConfig,
   row: PurchaseOrder,
+  onView: (row: PurchaseOrder) => void,
   onEdit: (row: PurchaseOrder) => void,
   t: TranslationMap,
   lang: 'en' | 'th',
 ) {
   if (col.key === 'actions') {
-    return <ActionCell row={row} onEdit={onEdit} t={t} />;
+    return <ActionCell row={row} onView={onView} onEdit={onEdit} t={t} />;
   }
   if (col.key === 'orderValue') return formatCurrency(row.orderValue, lang);
   if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key], lang);
@@ -132,6 +146,7 @@ function getCellClassName(col: ColumnConfig): string {
     col.align ? `align-${col.align}` : '',
     col.key === 'orderValue' ? 'col-numeric' : '',
     col.key === 'orderNo' ? 'col-order-no' : '',
+    col.key === 'actions' ? 'col-sticky-end' : '',
   ].filter(Boolean).join(' ');
 }
 
@@ -174,7 +189,7 @@ function DataTableInner({
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`${col.sortable ? 'sortable' : ''}${col.align ? ` align-${col.align}` : ''}`}
+                className={`${col.sortable ? 'sortable' : ''}${col.align ? ` align-${col.align}` : ''}${col.key === 'actions' ? ' col-sticky-end' : ''}`}
                 style={{ width: col.width }}
                 scope="col"
                 aria-sort={
@@ -229,7 +244,7 @@ function DataTableInner({
                     className={getCellClassName(col)}
                     style={{ maxWidth: col.width }}
                   >
-                    {renderCell(col, row, onEdit, t, lang)}
+                    {renderCell(col, row, onView, onEdit, t, lang)}
                   </td>
                 ))}
               </tr>

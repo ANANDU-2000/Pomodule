@@ -53,7 +53,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
   const [filterOpen, setFilterOpen] = useState(false);
   const [isAutoPageSize, setIsAutoPageSize] = useState(true);
 
-  const viewportPageSize = useViewportPageSize(tableBodyRef);
+  const viewportPageSize = useViewportPageSize(tableBodyRef, { rowHeight: 36, headerHeight: 32 });
 
   useEffect(() => {
     if (isAutoPageSize && viewportPageSize > 0 && params.pageSize !== viewportPageSize) {

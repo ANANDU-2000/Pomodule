@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'erp.sidebar.expanded';
-const DEFAULT_EXPANDED = ['purchase-order', 'po-transaction'];
+const DEFAULT_EXPANDED = ['purchase-order'];
 
 function readExpanded(): Set<string> {
   try {
