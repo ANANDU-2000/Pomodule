@@ -6,6 +6,7 @@ import type { SearchBarHandle } from './SearchBar';
 import SearchBar from './SearchBar';
 import FilterPopup from './FilterPopup';
 import LanguageSwitcher from './LanguageSwitcher';
+import { AppIcon, Plus } from './icons';
 
 interface PageHeaderProps {
   title: string;
@@ -43,7 +44,8 @@ function PageHeader({
   return (
     <header className="page-header">
       <h1 className="page-header-title">{title}</h1>
-      <div className="page-header-toolbar">
+      <div className="page-header-spacer" aria-hidden="true" />
+      <div className="page-header-toolbar" role="toolbar" aria-label={t.accessibility.pageActions}>
         <FilterPopup
           activeFilter={activeFilter}
           onSelect={onFilter}
@@ -63,7 +65,7 @@ function PageHeader({
           />
         </div>
         {pageActions.length > 0 && (
-          <div className="page-header-actions" role="toolbar" aria-label="Page actions">
+          <div className="page-header-actions">
             {pageActions.map((action) => (
               <button
                 key={action.id}
@@ -71,18 +73,13 @@ function PageHeader({
                 className={`btn${action.variant === 'primary' ? ' btn-primary' : ' btn-default'}`}
                 onClick={() => onPageAction?.(action.id)}
               >
-                {action.variant === 'primary' && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                )}
+                {action.variant === 'primary' && <AppIcon icon={Plus} />}
                 {action.label}
               </button>
             ))}
           </div>
         )}
-        <LanguageSwitcher lang={lang} onSwitch={onLangSwitch} />
+        <LanguageSwitcher lang={lang} onSwitch={onLangSwitch} ariaLabel={t.accessibility.language} />
       </div>
     </header>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
+import { AppIcon, Search, X } from './icons';
 
 export interface SearchBarHandle {
   focus: () => void;
@@ -47,10 +48,7 @@ const SearchBar = forwardRef<SearchBarHandle, SearchBarProps>(function SearchBar
   return (
     <div className="search-bar">
       <span className="search-bar-icon" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
-        </svg>
+        <AppIcon icon={Search} />
       </span>
       <input
         ref={inputRef}
@@ -69,7 +67,7 @@ const SearchBar = forwardRef<SearchBarHandle, SearchBarProps>(function SearchBar
           onClick={() => setLocalValue('')}
           aria-label={clearAriaLabel}
         >
-          ×
+          <AppIcon icon={X} />
         </button>
       )}
     </div>

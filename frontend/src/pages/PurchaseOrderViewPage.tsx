@@ -27,7 +27,7 @@ function PurchaseOrderViewPage({ t, lang, setLang }: PurchaseOrderViewPageProps)
         title={t.pages.viewTitle}
         onBack={handleBack}
         t={t}
-        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} />}
+        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
       />
       <div className="po-detail-body">
         {loading && <div className="po-detail-skeleton" />}

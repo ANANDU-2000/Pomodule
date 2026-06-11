@@ -92,5 +92,10 @@
   },
   "empty": {
     "noResults": "No purchase orders found"
+  },
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "pageActions": "Page actions",
+    "language": "Language"
   }
 }

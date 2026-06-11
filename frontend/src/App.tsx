@@ -21,8 +21,11 @@ function AppLayout() {
 
   return (
     <div className="app-layout">
+      <a href="#main-content" className="skip-link">
+        {t.accessibility.skipToContent}
+      </a>
       <SideMenu collapsed={collapsed} onToggle={toggle} t={t} />
-      <main className="app-main">
+      <main id="main-content" className="app-main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Navigate to="/po/list" replace />} />
           <Route path="/po/list" element={<PurchaseOrderListPage {...listPageProps} />} />

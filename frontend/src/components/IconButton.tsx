@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;
@@ -7,14 +7,17 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;
 }
 
-function IconButton({
-  icon,
-  variant = 'ghost',
-  active = false,
-  iconOnly = false,
-  className = '',
-  ...props
-}: IconButtonProps) {
+const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+  {
+    icon,
+    variant = 'ghost',
+    active = false,
+    iconOnly = false,
+    className = '',
+    ...props
+  },
+  ref,
+) {
   const classes = [
     'icon-btn',
     variant === 'ghost' ? 'ghost' : '',
@@ -26,10 +29,10 @@ function IconButton({
     .join(' ');
 
   return (
-    <button type="button" className={classes} {...props}>
+    <button type="button" ref={ref} className={classes} {...props}>
       <span className="icon-btn-icon">{icon}</span>
     </button>
   );
-}
+});
 
 export default IconButton;

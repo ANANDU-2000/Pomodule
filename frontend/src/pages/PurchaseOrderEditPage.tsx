@@ -75,7 +75,7 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
         title={t.pages.editTitle}
         onBack={handleBack}
         t={t}
-        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} />}
+        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
       />
       <div className="po-detail-body">
         {loading && <div className="po-detail-skeleton" />}

@@ -1,9 +1,10 @@
-import { memo, type CSSProperties } from 'react';
+import { memo, type CSSProperties, type KeyboardEvent } from 'react';
 import type { ColumnConfig, PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
 import { formatDate, formatCurrency, getStatusLabel } from '../utils/formatters';
 import { TABLE_MIN_WIDTH } from '../data/poColumns';
 import IconButton from './IconButton';
+import { AppIcon, ArrowDown, ArrowUp, ArrowUpDown, Eye, Pencil } from './icons';
 
 interface DataTableProps {
   columns: ColumnConfig[];
@@ -34,8 +35,18 @@ function SortIndicator({ columnKey, sortBy, sortDirection }: {
   sortBy: string;
   sortDirection: 'asc' | 'desc';
 }) {
-  if (sortBy !== columnKey) return <span className="sort-icon sort-neutral">↕</span>;
-  return <span className="sort-icon">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
+  if (sortBy !== columnKey) {
+    return (
+      <span className="sort-icon sort-neutral">
+        <AppIcon icon={ArrowUpDown} size={14} />
+      </span>
+    );
+  }
+  return (
+    <span className="sort-icon">
+      <AppIcon icon={sortDirection === 'asc' ? ArrowUp : ArrowDown} size={14} />
+    </span>
+  );
 }
 
 function TruncatedCell({ text, showTooltip }: { text: string; showTooltip: boolean }) {
@@ -75,24 +86,14 @@ function ActionCell({
         title={`${t.actions.view} ${row.orderNo}`}
         aria-label={`${t.actions.view} ${row.orderNo}`}
         onClick={() => onView(row)}
-        icon={
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        }
+        icon={<AppIcon icon={Eye} />}
       />
       <IconButton
         variant="ghost"
         title={`${t.actions.edit} ${row.orderNo}`}
         aria-label={`${t.actions.edit} ${row.orderNo}`}
         onClick={() => onEdit(row)}
-        icon={
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-          </svg>
-        }
+        icon={<AppIcon icon={Pencil} />}
       />
     </div>
   );
@@ -113,7 +114,7 @@ function renderCell(
   if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key], lang);
   if (col.key === 'status') {
     return (
-      <span className={`status-badge ${STATUS_CLASS[row.status]}`}>
+      <span className={`status-badge ${STATUS_CLASS[row.status]}`} role="status">
         {getStatusLabel(row.status, t)}
       </span>
     );
@@ -121,6 +122,14 @@ function renderCell(
   const text = row[col.key as keyof PurchaseOrder] as string;
   const showTooltip = TOOLTIP_COLUMNS.has(col.key) || text.length > 24;
   return <TruncatedCell text={text} showTooltip={showTooltip} />;
+}
+
+function getCellClassName(col: ColumnConfig): string {
+  return [
+    col.align ? `align-${col.align}` : '',
+    col.key === 'orderValue' ? 'col-numeric' : '',
+    col.key === 'orderNo' ? 'col-order-no' : '',
+  ].filter(Boolean).join(' ');
 }
 
 function DataTableInner({
@@ -140,6 +149,13 @@ function DataTableInner({
   const wrapperClass = `data-table-wrapper${fillHeight ? ' po-table-fill' : ''}`;
   const tableStyle = { '--table-min-width': `${TABLE_MIN_WIDTH}px` } as CSSProperties;
 
+  const handleSortKeyDown = (e: KeyboardEvent, key: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSort(key);
+    }
+  };
+
   return (
     <div className={wrapperClass} style={tableStyle}>
       <table className="data-table">
@@ -150,15 +166,30 @@ function DataTableInner({
                 key={col.key}
                 className={`${col.sortable ? 'sortable' : ''}${col.align ? ` align-${col.align}` : ''}`}
                 style={{ width: col.width }}
-                onClick={col.sortable ? () => onSort(col.key) : undefined}
-                aria-sort={sortBy === col.key ? (sortDirection === 'asc' ? 'ascending' : 'descending') : undefined}
+                scope="col"
+                aria-sort={
+                  col.sortable && sortBy === col.key
+                    ? (sortDirection === 'asc' ? 'ascending' : 'descending')
+                    : col.sortable
+                      ? 'none'
+                      : undefined
+                }
               >
-                <span className="th-content">
-                  {col.label}
-                  {col.sortable && (
-                    <SortIndicator columnKey={col.key} sortBy={sortBy} sortDirection={sortDirection} />
-                  )}
-                </span>
+                {col.sortable ? (
+                  <button
+                    type="button"
+                    className="th-sort-btn"
+                    onClick={() => onSort(col.key)}
+                    onKeyDown={(e) => handleSortKeyDown(e, col.key)}
+                  >
+                    <span className="th-content">
+                      {col.label}
+                      <SortIndicator columnKey={col.key} sortBy={sortBy} sortDirection={sortDirection} />
+                    </span>
+                  </button>
+                ) : (
+                  <span className="th-content">{col.label}</span>
+                )}
               </th>
             ))}
           </tr>
@@ -178,10 +209,7 @@ function DataTableInner({
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={[
-                      col.align ? `align-${col.align}` : '',
-                      col.key === 'orderValue' ? 'col-numeric' : '',
-                    ].filter(Boolean).join(' ')}
+                    className={getCellClassName(col)}
                     style={{ maxWidth: col.width }}
                   >
                     {renderCell(col, row, onView, onEdit, t, lang)}

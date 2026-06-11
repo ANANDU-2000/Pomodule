@@ -3,6 +3,7 @@ import {
   PAGE_SIZE_OPTIONS,
 } from '../constants/pageSizeOptions';
 import type { TranslationMap } from '../types/i18n';
+import { AppIcon, ChevronLeft, ChevronRight } from './icons';
 
 interface PaginationProps {
   page: number;
@@ -45,7 +46,7 @@ function Pagination({
             onClick={() => onPageChange(page - 1)}
             aria-label={t.pagination.previousPage}
           >
-            ‹
+            <AppIcon icon={ChevronLeft} />
           </button>
           <span className="pagination-page-indicator" aria-live="polite">
             {totalPages === 0 ? '0/0' : `${page}/${totalPages}`}
@@ -57,7 +58,7 @@ function Pagination({
             onClick={() => onPageChange(page + 1)}
             aria-label={t.pagination.nextPage}
           >
-            ›
+            <AppIcon icon={ChevronRight} />
           </button>
         </div>
         <label className="pagination-size">

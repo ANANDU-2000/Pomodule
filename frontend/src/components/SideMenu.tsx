@@ -4,22 +4,12 @@ import { getNavigation, isNavNodeActive, type NavNode } from '../constants/navig
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 import { useSidebarExpanded } from '../hooks/useSidebarExpanded';
 import type { TranslationMap } from '../types/i18n';
+import { AppIcon, ChevronLeft, ChevronRight, FileText, ICON_SIZE_NAV, LogOut } from './icons';
 
 interface SideMenuProps {
   collapsed: boolean;
   onToggle: () => void;
   t: TranslationMap;
-}
-
-function NavIcon() {
-  return (
-    <span className="nav-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-      </svg>
-    </span>
-  );
 }
 
 interface NavTreeProps {
@@ -83,13 +73,15 @@ function NavTree({
               onClick={() => hasChildren && onToggleExpand(node.id)}
               onKeyDown={(e) => onKeyDown(e, () => hasChildren && onToggleExpand(node.id))}
             >
-              {depth === 0 && <NavIcon />}
+              {depth === 0 && (
+                <span className="nav-icon">
+                  <AppIcon icon={FileText} size={ICON_SIZE_NAV} />
+                </span>
+              )}
               <span className="nav-parent-label">{node.label}</span>
               {hasChildren && (
                 <span className={`nav-chevron${isExpanded ? ' expanded' : ''}`}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <AppIcon icon={ChevronRight} size={12} />
                 </span>
               )}
             </button>
@@ -145,11 +137,7 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
       <div className="side-menu-footer">
         <button type="button" className="nav-logout" title={t.nav.logout} disabled>
           <span className="nav-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            <AppIcon icon={LogOut} size={ICON_SIZE_NAV} />
           </span>
           <span className="nav-logout-label">{t.nav.logout}</span>
         </button>
@@ -163,13 +151,7 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
           aria-label={collapsed ? t.sidebar.expand : t.sidebar.collapse}
           aria-keyshortcuts={KEYBOARD_SHORTCUTS.toggleSidebar.label}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            {collapsed ? (
-              <path d="M9 18l6-6-6-6" />
-            ) : (
-              <path d="M15 18l-6-6 6-6" />
-            )}
-          </svg>
+          <AppIcon icon={collapsed ? ChevronRight : ChevronLeft} size={ICON_SIZE_NAV} />
         </button>
       </div>
     </aside>

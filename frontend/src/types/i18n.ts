@@ -105,4 +105,10 @@ export interface TranslationMap {
   empty: {
     noResults: string;
   };
+
+  accessibility: {
+    skipToContent: string;
+    pageActions: string;
+    language: string;
+  };
 }

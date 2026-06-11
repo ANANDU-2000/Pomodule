@@ -1,11 +1,12 @@
 interface LanguageSwitcherProps {
   lang: 'en' | 'th';
   onSwitch: (lang: 'en' | 'th') => void;
+  ariaLabel: string;
 }
 
-function LanguageSwitcher({ lang, onSwitch }: LanguageSwitcherProps) {
+function LanguageSwitcher({ lang, onSwitch, ariaLabel }: LanguageSwitcherProps) {
   return (
-    <div className="language-switcher">
+    <div className="language-switcher" role="group" aria-label={ariaLabel}>
       <button
         type="button"
         className={`language-switcher-btn${lang === 'en' ? ' active' : ''}`}

@@ -39,7 +39,7 @@ function PurchaseOrderNewPage({ t, lang, setLang }: PurchaseOrderNewPageProps) {
         title={t.pages.newTitle}
         onBack={() => navigate('/po/list')}
         t={t}
-        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} />}
+        actions={<LanguageSwitcher lang={lang} onSwitch={setLang} ariaLabel={t.accessibility.language} />}
       />
       <div className="po-detail-body">
         <PODetailForm value={order} onChange={handleChange} t={t} />

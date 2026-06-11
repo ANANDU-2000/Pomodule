@@ -92,5 +92,10 @@
   },
   "empty": {
     "noResults": "ไม่พบใบสั่งซื้อ"
+  },
+  "accessibility": {
+    "skipToContent": "ข้ามไปเนื้อหาหลัก",
+    "pageActions": "การดำเนินการของหน้า",
+    "language": "ภาษา"
   }
 }
