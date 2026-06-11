@@ -10,6 +10,22 @@ import { toOracleListParams } from '../utils/oracleParams';
 import { calcTotalPages } from '../utils/pagination';
 import * as mockService from './purchaseOrder.mock.service';
 
+export function mapOracleRow(row: Record<string, unknown>): POListItem {
+  // PLACEHOLDER — map Oracle column names to POListItem when DB team shares schema
+  return {
+    orderNo: String(row.ORDER_NO ?? ''),
+    documentDate: String(row.DOCUMENT_DATE ?? ''),
+    supplierCode: String(row.SUPPLIER_CODE ?? ''),
+    supplierName: String(row.SUPPLIER_NAME ?? ''),
+    location: String(row.LOCATION ?? ''),
+    orderValue: Number(row.ORDER_VALUE ?? 0),
+    status: String(row.STATUS ?? ''),
+    deliveryDate: String(row.DELIVERY_DATE ?? ''),
+    remarks: String(row.REMARKS ?? ''),
+    userId: String(row.USER_ID ?? ''),
+  };
+}
+
 export async function getPOList(
   params: POListQueryParams,
   conn?: Connection,

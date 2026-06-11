@@ -2,16 +2,14 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;
-  label?: string;
-  variant?: 'toolbar' | 'ghost';
+  variant?: 'ghost';
   active?: boolean;
   iconOnly?: boolean;
 }
 
 function IconButton({
   icon,
-  label,
-  variant = 'toolbar',
+  variant = 'ghost',
   active = false,
   iconOnly = false,
   className = '',
@@ -30,7 +28,6 @@ function IconButton({
   return (
     <button type="button" className={classes} {...props}>
       <span className="icon-btn-icon">{icon}</span>
-      {label && !iconOnly && <span>{label}</span>}
     </button>
   );
 }

@@ -1,11 +1,6 @@
 import type { POListQueryParams } from '../types/purchaseOrder.types';
 import { resolveFilterDates } from './dateFilter';
 
-/**
- * Maps validated query params to Oracle stored procedure IN parameters.
- * Date range is resolved on the Node layer from filter enum — not sent by frontend.
- * PLACEHOLDER: replace param names when DB team shares the procedure signature.
- */
 export function toOracleListParams(q: POListQueryParams): Record<string, unknown> {
   const { fromDate, toDate } = resolveFilterDates(q.filter);
 

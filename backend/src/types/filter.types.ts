@@ -1,13 +1,15 @@
-/** Date filter periods — must match frontend FilterPeriod and validateQuery enum. */
-export type FilterPeriod =
-  | 'today'
-  | 'yesterday'
-  | 'last_week'
-  | 'this_week'
-  | 'this_month'
-  | 'last_month'
-  | 'all'
-  | 'none';
+export const FILTER_PERIODS = [
+  'today',
+  'yesterday',
+  'last_week',
+  'this_week',
+  'this_month',
+  'last_month',
+  'all',
+  'none',
+] as const;
+
+export type FilterPeriod = (typeof FILTER_PERIODS)[number];
 
 export interface ResolvedFilterDates {
   fromDate: string;

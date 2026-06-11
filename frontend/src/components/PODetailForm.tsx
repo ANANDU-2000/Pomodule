@@ -1,5 +1,6 @@
 import type { PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
+import { getStatusLabel } from '../utils/formatters';
 
 interface PODetailFormProps {
   value: PurchaseOrder;
@@ -9,16 +10,6 @@ interface PODetailFormProps {
 }
 
 const STATUS_OPTIONS: PurchaseOrder['status'][] = ['Pending', 'Approved', 'Rejected', 'Draft'];
-
-function getStatusLabel(status: PurchaseOrder['status'], t: TranslationMap): string {
-  const map: Record<PurchaseOrder['status'], string> = {
-    Pending: t.status.pending,
-    Approved: t.status.approved,
-    Rejected: t.status.rejected,
-    Draft: t.status.draft,
-  };
-  return map[status];
-}
 
 function PODetailForm({ value, onChange, readOnly = false, t }: PODetailFormProps) {
   const fields: { key: keyof PurchaseOrder; label: string; type?: string }[] = [

@@ -161,7 +161,12 @@
   cursor: pointer;
 }
 
-.nav-logout:hover {
+.nav-logout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-logout:hover:not(:disabled) {
   background: var(--color-bg-sidebar-hover);
 }
 
@@ -398,8 +403,7 @@
   flex-shrink: 0;
 }
 
-/* Future action area */
-.future-action-area {
+.page-header-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -408,39 +412,12 @@
   margin-left: auto;
 }
 
-.future-action-area:empty,
-.future-action-area.is-empty {
-  display: none;
-}
-
-.future-action-btn {
+.page-header-actions .btn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: var(--toolbar-btn-height);
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
   white-space: nowrap;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-}
-
-.future-action-btn:hover {
-  background: var(--color-bg-row-hover);
-}
-
-.future-action-btn.primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-text-sidebar-active);
-}
-
-.future-action-btn.primary:hover {
-  background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
+  border-radius: var(--radius-md);
 }
 
 /* PO page layout */
@@ -841,7 +818,20 @@
   border-radius: var(--radius-md);
   background: linear-gradient(90deg, var(--color-bg-row-alt) 25%, var(--color-bg-row-hover) 50%, var(--color-bg-row-alt) 75%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.po-list-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-status-rejected);
+  background: color-mix(in srgb, var(--color-status-rejected) 8%, var(--color-bg-surface));
+  border: 1px solid color-mix(in srgb, var(--color-status-rejected) 25%, transparent);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
 }
 
 .po-detail-error {

@@ -18,7 +18,7 @@
     "newTitle": "New Purchase Order",
     "notFound": "Purchase order not found",
     "loadError": "Failed to load purchase order",
-    "saveSuccess": "Purchase order saved",
+    "listLoadError": "Failed to load purchase orders",
     "saveError": "Failed to save purchase order",
     "unsavedChanges": "You have unsaved changes. Leave anyway?"
   },
@@ -69,7 +69,8 @@
     "edit": "Edit",
     "search": "Search orders...",
     "filter": "Filter",
-    "addPurchaseOrder": "Add Purchase Order"
+    "addPurchaseOrder": "Add Purchase Order",
+    "retry": "Retry"
   },
   "pagination": {
     "showing": "Showing",
@@ -77,13 +78,8 @@
     "records": "records",
     "rowsPerPage": "Rows per page",
     "auto": "Auto",
-    "page": "Page",
     "previousPage": "Previous page",
     "nextPage": "Next page"
-  },
-  "language": {
-    "english": "EN",
-    "thai": "TH"
   },
   "sidebar": {
     "expand": "Expand sidebar",

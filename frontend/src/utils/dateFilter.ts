@@ -1,9 +1,5 @@
 import type { FilterPeriod } from '../types/PurchaseOrder';
 
-/**
- * Dev-only mock filter — mirrors backend filterByDatePeriod using filter enum.
- * Production: backend resolves dates; frontend sends filter key only.
- */
 function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | null } {
   const today = new Date();
   today.setHours(0, 0, 0, 0);

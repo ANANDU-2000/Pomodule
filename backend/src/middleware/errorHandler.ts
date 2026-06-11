@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from 'express';
-import { ZodError } from 'zod';
 import { env } from '../config/env';
 
 interface OracleError extends Error {
@@ -13,14 +12,6 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   console.error(err);
-
-  if (err instanceof ZodError) {
-    res.status(400).json({
-      error: 'Validation error',
-      details: err.flatten().fieldErrors,
-    });
-    return;
-  }
 
   const oracleErr = err as OracleError;
   if (oracleErr.errorNum === 1403) {

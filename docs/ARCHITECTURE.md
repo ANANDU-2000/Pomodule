@@ -143,4 +143,4 @@ See also [API_PERFORMANCE_AND_INTEGRATION.md](./API_PERFORMANCE_AND_INTEGRATION.
 
 - **React Router** can wire View/Edit to `GET/PUT` APIs (currently `window.open` stubs)
 - **Virtual scrolling** can be added to DataTable if needed
-- **Role permissions** gate action buttons via `getPoListPageActions(t)` + `usePageActions`
+- **Role permissions** gate action buttons via `getPoListPageActions(t)` filtered against `MOCK_USER_PERMISSIONS`

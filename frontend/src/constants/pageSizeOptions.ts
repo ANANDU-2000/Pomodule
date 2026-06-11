@@ -8,7 +8,3 @@ export type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];
 export const AUTO_PAGE_SIZE = 0;
 
 export const DEFAULT_PAGE_SIZE: PageSize = 10;
-
-export function clampPageSize(size: number): number {
-  return Math.max(PAGE_SIZE_MIN, Math.min(PAGE_SIZE_MAX, size));
-}

@@ -21,7 +21,15 @@ async function main(): Promise<void> {
   app.use(express.json());
   app.use(requestLogger);
 
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', dataSource: env.DATA_SOURCE });
+  });
+
   app.use('/api/purchase-orders', purchaseOrderRouter);
+
+  app.use((_req, res) => {
+    res.status(404).json({ error: 'Not found' });
+  });
 
   app.use(errorHandler);
 

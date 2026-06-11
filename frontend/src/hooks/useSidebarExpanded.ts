@@ -41,7 +41,5 @@ export function useSidebarExpanded() {
     });
   }, []);
 
-  const isExpanded = useCallback((id: string) => expandedIds.has(id), [expandedIds]);
-
-  return { expandedIds, toggleExpand, isExpanded };
+  return { expandedIds, toggleExpand };
 }

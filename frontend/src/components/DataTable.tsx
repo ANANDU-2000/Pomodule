@@ -1,7 +1,7 @@
 import { memo, type CSSProperties } from 'react';
 import type { ColumnConfig, PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
-import { formatDate, formatCurrency } from '../utils/formatters';
+import { formatDate, formatCurrency, getStatusLabel } from '../utils/formatters';
 import { TABLE_MIN_WIDTH } from '../data/poColumns';
 import IconButton from './IconButton';
 
@@ -15,6 +15,7 @@ interface DataTableProps {
   onView: (row: PurchaseOrder) => void;
   onEdit: (row: PurchaseOrder) => void;
   t: TranslationMap;
+  lang?: 'en' | 'th';
   fillHeight?: boolean;
   skeletonRowCount?: number;
 }
@@ -27,16 +28,6 @@ const STATUS_CLASS: Record<PurchaseOrder['status'], string> = {
 };
 
 const TOOLTIP_COLUMNS = new Set(['supplierName', 'remarks']);
-
-function getStatusLabel(status: PurchaseOrder['status'], t: TranslationMap): string {
-  const map: Record<PurchaseOrder['status'], string> = {
-    Pending: t.status.pending,
-    Approved: t.status.approved,
-    Rejected: t.status.rejected,
-    Draft: t.status.draft,
-  };
-  return map[status];
-}
 
 function SortIndicator({ columnKey, sortBy, sortDirection }: {
   columnKey: string;
@@ -113,12 +104,13 @@ function renderCell(
   onView: (row: PurchaseOrder) => void,
   onEdit: (row: PurchaseOrder) => void,
   t: TranslationMap,
+  lang: 'en' | 'th',
 ) {
   if (col.key === 'actions') {
     return <ActionCell row={row} onView={onView} onEdit={onEdit} t={t} />;
   }
-  if (col.key === 'orderValue') return formatCurrency(row.orderValue);
-  if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key]);
+  if (col.key === 'orderValue') return formatCurrency(row.orderValue, lang);
+  if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key], lang);
   if (col.key === 'status') {
     return (
       <span className={`status-badge ${STATUS_CLASS[row.status]}`}>
@@ -141,6 +133,7 @@ function DataTableInner({
   onView,
   onEdit,
   t,
+  lang = 'en',
   fillHeight = false,
   skeletonRowCount = 10,
 }: DataTableProps) {
@@ -191,7 +184,7 @@ function DataTableInner({
                     ].filter(Boolean).join(' ')}
                     style={{ maxWidth: col.width }}
                   >
-                    {renderCell(col, row, onView, onEdit, t)}
+                    {renderCell(col, row, onView, onEdit, t, lang)}
                   </td>
                 ))}
               </tr>

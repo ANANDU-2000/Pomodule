@@ -1,18 +1,18 @@
 import PurchaseOrderListPage from './PurchaseOrderListPage';
 import type { TranslationMap } from '../types/i18n';
 
-export type POModuleCode = 'po-gh' | 'po-all' | 'po-exp' | 'po-ast' | 'po-gr';
+export type PurchaseOrderModule = 'po-gh' | 'po-all' | 'po-exp' | 'po-ast' | 'po-gr';
 
-interface POTransactionListPageProps {
-  moduleCode: POModuleCode;
+interface ModulePurchaseOrderListPageProps {
+  moduleCode: PurchaseOrderModule;
   onToggleSidebar: () => void;
   t: TranslationMap;
   lang: 'en' | 'th';
   setLang: (lang: 'en' | 'th') => void;
 }
 
-function getModuleTitle(moduleCode: POModuleCode, t: TranslationMap): string {
-  const titles: Record<POModuleCode, string> = {
+function getModuleTitle(moduleCode: PurchaseOrderModule, t: TranslationMap): string {
+  const titles: Record<PurchaseOrderModule, string> = {
     'po-gh': t.moduleTitles.poGh,
     'po-all': t.moduleTitles.poAll,
     'po-exp': t.moduleTitles.poExp,
@@ -22,7 +22,8 @@ function getModuleTitle(moduleCode: POModuleCode, t: TranslationMap): string {
   return titles[moduleCode];
 }
 
-function POTransactionListPage(props: POTransactionListPageProps) {
+// moduleCode filters list data when Oracle module procs are available; title-only for now.
+function ModulePurchaseOrderListPage(props: ModulePurchaseOrderListPageProps) {
   const { moduleCode, ...rest } = props;
   return (
     <PurchaseOrderListPage
@@ -32,4 +33,4 @@ function POTransactionListPage(props: POTransactionListPageProps) {
   );
 }
 
-export default POTransactionListPage;
+export default ModulePurchaseOrderListPage;

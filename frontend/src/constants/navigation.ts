@@ -31,19 +31,6 @@ export function getNavigation(t: TranslationMap): NavNode[] {
   ];
 }
 
-export function findNavIdByPath(nodes: NavNode[], pathname: string): string | null {
-  for (const node of nodes) {
-    if (node.route && pathname.startsWith(node.route)) {
-      return node.id;
-    }
-    if (node.children) {
-      const childId = findNavIdByPath(node.children, pathname);
-      if (childId) return childId;
-    }
-  }
-  return null;
-}
-
 export function isNavNodeActive(node: NavNode, pathname: string): boolean {
   if (node.route && pathname.startsWith(node.route)) return true;
   if (node.children) {

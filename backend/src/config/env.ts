@@ -22,7 +22,7 @@ const envSchema = z.object({
   }
 });
 
-export type Env = z.infer<typeof envSchema>;
+type Env = z.infer<typeof envSchema>;
 
 function parseEnv(): Env {
   const result = envSchema.safeParse(process.env);

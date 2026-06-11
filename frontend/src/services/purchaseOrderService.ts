@@ -23,10 +23,6 @@ export class PONotFoundError extends Error {
   }
 }
 
-/**
- * Maps list params to API query string.
- * Date range is NOT computed here — backend resolves filter → dates.
- */
 export function toApiParams(params: POListParams): Record<string, string> {
   return {
     page: String(params.page),
@@ -38,7 +34,7 @@ export function toApiParams(params: POListParams): Record<string, string> {
   };
 }
 
-function delay(ms: number, signal?: AbortSignal): Promise<void> {
+function mockDelay(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(resolve, ms);
     if (signal) {
@@ -55,12 +51,11 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-/** Dev-only offline mock — uses filter enum; date math mirrors backend filterByDatePeriod. */
 async function fetchMockPurchaseOrders(
   params: POListParams,
   signal?: AbortSignal,
 ): Promise<POListResult> {
-  await delay(100, signal);
+  await mockDelay(100, signal);
 
   let result = [...allOrders];
 
@@ -97,7 +92,6 @@ export async function fetchPurchaseOrders(
     return res.json() as Promise<POListResult>;
   }
 
-  // MOCK FALLBACK — used when VITE_USE_MOCK=true (offline dev only)
   return fetchMockPurchaseOrders(params, signal);
 }
 
@@ -112,8 +106,7 @@ export async function fetchPODetail(
     return res.json() as Promise<PODetailResponse>;
   }
 
-  // MOCK FALLBACK
-  await delay(50, signal);
+  await mockDelay(50, signal);
   const item = allOrders.find((o) => o.orderNo === id);
   if (!item) throw new PONotFoundError(id);
   return { ...item };
@@ -136,8 +129,7 @@ export async function updatePO(
     return res.json() as Promise<PurchaseOrder>;
   }
 
-  // MOCK FALLBACK
-  await delay(50, signal);
+  await mockDelay(50, signal);
   const index = allOrders.findIndex((o) => o.orderNo === id);
   if (index < 0) throw new PONotFoundError(id);
   allOrders[index] = { ...allOrders[index], ...payload, orderNo: id };

@@ -4,9 +4,9 @@ import type { PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
 import { usePurchaseOrders } from '../hooks/usePurchaseOrders';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
-import { usePageActions } from '../hooks/usePageActions';
 import { useViewportPageSize } from '../hooks/useViewportPageSize';
 import { getPoListPageActions } from '../constants/pageActions';
+import { MOCK_USER_PERMISSIONS } from '../constants/permissions';
 import { getFilterOptions } from '../constants/filterOptions';
 import { getPoColumns } from '../data/poColumns';
 import { AUTO_PAGE_SIZE } from '../constants/pageSizeOptions';
@@ -28,6 +28,8 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
   const {
     result,
     loading,
+    error,
+    retry,
     params,
     setSearch,
     setFilter,
@@ -39,7 +41,12 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
   const columns = useMemo(() => getPoColumns(t), [t]);
   const filterOptions = useMemo(() => getFilterOptions(t), [t]);
   const pageActions = useMemo(() => getPoListPageActions(t), [t]);
-  const visiblePageActions = usePageActions(pageActions);
+  const visiblePageActions = useMemo(
+    () => pageActions.filter(
+      (action) => !action.permission || MOCK_USER_PERMISSIONS.includes(action.permission),
+    ),
+    [pageActions],
+  );
 
   const searchRef = useRef<SearchBarHandle>(null);
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -114,6 +121,14 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
         onLangSwitch={setLang}
         filterOptions={filterOptions}
       />
+      {error && (
+        <div className="po-list-error" role="alert">
+          <span>{t.pages.listLoadError}</span>
+          <button type="button" className="btn btn-default" onClick={retry}>
+            {t.actions.retry}
+          </button>
+        </div>
+      )}
       <div className="po-page-body" ref={tableBodyRef}>
         <DataTable
           columns={columns}
@@ -125,6 +140,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
           onView={handleView}
           onEdit={handleEdit}
           t={t}
+          lang={lang}
           fillHeight
           skeletonRowCount={effectivePageSize}
         />

@@ -25,5 +25,5 @@ export function useSidebarState() {
     setCollapsed((c) => !c);
   }, []);
 
-  return { collapsed, toggle, setCollapsed };
+  return { collapsed, toggle };
 }

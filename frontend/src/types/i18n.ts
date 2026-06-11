@@ -20,7 +20,7 @@ export interface TranslationMap {
     newTitle: string;
     notFound: string;
     loadError: string;
-    saveSuccess: string;
+    listLoadError: string;
     saveError: string;
     unsavedChanges: string;
   };
@@ -78,6 +78,7 @@ export interface TranslationMap {
     search: string;
     filter: string;
     addPurchaseOrder: string;
+    retry: string;
   };
 
   pagination: {
@@ -86,14 +87,8 @@ export interface TranslationMap {
     records: string;
     rowsPerPage: string;
     auto: string;
-    page: string;
     previousPage: string;
     nextPage: string;
-  };
-
-  language: {
-    english: string;
-    thai: string;
   };
 
   sidebar: {

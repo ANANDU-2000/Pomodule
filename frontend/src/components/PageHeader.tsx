@@ -5,7 +5,6 @@ import type { TranslationMap } from '../types/i18n';
 import type { SearchBarHandle } from './SearchBar';
 import SearchBar from './SearchBar';
 import FilterPopup from './FilterPopup';
-import FutureActionArea from './FutureActionArea';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface PageHeaderProps {
@@ -64,7 +63,24 @@ function PageHeader({
           />
         </div>
         {pageActions.length > 0 && (
-          <FutureActionArea actions={pageActions} onAction={onPageAction} />
+          <div className="page-header-actions" role="toolbar" aria-label="Page actions">
+            {pageActions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                className={`btn${action.variant === 'primary' ? ' btn-primary' : ' btn-default'}`}
+                onClick={() => onPageAction?.(action.id)}
+              >
+                {action.variant === 'primary' && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                )}
+                {action.label}
+              </button>
+            ))}
+          </div>
         )}
         <LanguageSwitcher lang={lang} onSwitch={onLangSwitch} />
       </div>

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
-import { fetchPODetail, updatePO, PONotFoundError } from '../services/purchaseOrderService';
+import { updatePO } from '../services/purchaseOrderService';
+import { usePODetail } from '../hooks/usePODetail';
 import PageToolbar from '../components/PageToolbar';
 import PODetailForm from '../components/PODetailForm';
 import LanguageSwitcher from '../components/LanguageSwitcher';
@@ -16,45 +17,33 @@ interface PurchaseOrderEditPageProps {
 function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps) {
   const { orderNo } = useParams<{ orderNo: string }>();
   const navigate = useNavigate();
-  const [order, setOrder] = useState<PurchaseOrder | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { order, setOrder, loading, error, setError } = usePODetail(orderNo, {
+    notFound: t.pages.notFound,
+    loadError: t.pages.loadError,
+  });
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
-  const initialRef = useRef<string>('');
+  const [baseline, setBaseline] = useState('');
+  const [trackedOrderNo, setTrackedOrderNo] = useState(orderNo);
 
-  useEffect(() => {
-    if (!orderNo) return;
-    const controller = new AbortController();
-    setLoading(true);
-    setError(null);
+  if (orderNo !== trackedOrderNo) {
+    setTrackedOrderNo(orderNo);
+    setBaseline('');
+    setDirty(false);
+  }
 
-    fetchPODetail(orderNo, controller.signal)
-      .then((data) => {
-        setOrder(data);
-        initialRef.current = JSON.stringify(data);
-        setDirty(false);
-      })
-      .catch((err: unknown) => {
-        if (err instanceof PONotFoundError) {
-          setError(t.pages.notFound);
-        } else if (err instanceof Error && err.name !== 'AbortError') {
-          setError(t.pages.loadError);
-        }
-      })
-      .finally(() => setLoading(false));
-
-    return () => controller.abort();
-  }, [orderNo, t.pages.notFound, t.pages.loadError]);
+  if (!loading && order && baseline === '' && order.orderNo === orderNo) {
+    setBaseline(JSON.stringify(order));
+  }
 
   const handleChange = useCallback((field: keyof PurchaseOrder, val: string | number) => {
     setOrder((prev) => {
       if (!prev) return prev;
       const next = { ...prev, [field]: val };
-      setDirty(JSON.stringify(next) !== initialRef.current);
+      setDirty(JSON.stringify(next) !== baseline);
       return next;
     });
-  }, []);
+  }, [baseline, setOrder]);
 
   const handleBack = () => {
     if (dirty && !window.confirm(t.pages.unsavedChanges)) return;
@@ -68,7 +57,7 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
     try {
       const updated = await updatePO(orderNo, order);
       setOrder(updated);
-      initialRef.current = JSON.stringify(updated);
+      setBaseline(JSON.stringify(updated));
       setDirty(false);
       navigate(`/purchase-orders/${orderNo}/view`);
     } catch {
@@ -77,6 +66,8 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
       setSaving(false);
     }
   };
+
+  const showForm = !loading && order;
 
   return (
     <div className="po-detail-page">
@@ -89,7 +80,7 @@ function PurchaseOrderEditPage({ t, lang, setLang }: PurchaseOrderEditPageProps)
       <div className="po-detail-body">
         {loading && <div className="po-detail-skeleton" />}
         {error && <div className="po-detail-error">{error}</div>}
-        {!loading && order && (
+        {showForm && (
           <>
             <PODetailForm value={order} onChange={handleChange} t={t} />
             <div className="po-detail-actions">

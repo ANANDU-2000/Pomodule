@@ -12,20 +12,19 @@ const DEFAULT_PARAMS: POListParams = {
   sortDirection: 'asc',
 };
 
-function paramsEqual(a: POListParams, b: Partial<POListParams>): boolean {
-  return (Object.keys(b) as (keyof POListParams)[]).every((key) => a[key] === b[key]);
-}
-
 export function usePurchaseOrders() {
   const [params, setParams] = useState<POListParams>(DEFAULT_PARAMS);
   const [result, setResult] = useState<POListResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fetchKey, setFetchKey] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function load() {
       setLoading(true);
+      setError(null);
       try {
         const data = await fetchPurchaseOrders(params, controller.signal);
         if (!controller.signal.aborted) {
@@ -33,7 +32,9 @@ export function usePurchaseOrders() {
         }
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
-        throw err;
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load');
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -43,7 +44,7 @@ export function usePurchaseOrders() {
 
     void load();
     return () => controller.abort();
-  }, [params]);
+  }, [params, fetchKey]);
 
   const setSearch = useCallback((search: string) => {
     setParams((p) => {
@@ -77,19 +78,20 @@ export function usePurchaseOrders() {
     });
   }, []);
 
-  const updateParams = useCallback((partial: Partial<POListParams>) => {
-    setParams((p) => (paramsEqual(p, partial) ? p : { ...p, ...partial }));
+  const retry = useCallback(() => {
+    setFetchKey((k) => k + 1);
   }, []);
 
   return {
     result,
     loading,
+    error,
+    retry,
     params,
     setSearch,
     setFilter,
     setSort,
     setPage,
     setPageSize,
-    updateParams,
   };
 }

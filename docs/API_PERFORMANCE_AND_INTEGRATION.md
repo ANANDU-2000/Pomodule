@@ -17,9 +17,9 @@ For component layout and keyboard shortcuts, see [ARCHITECTURE.md](./ARCHITECTUR
                                 │  HTTP (JSON)
                                 ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  BACKEND API (Node / Java / .NET — not in this repo yet)               │
+│  BACKEND API (Express — backend/src)                                    │
 │  GET /api/purchase-orders?page=1&pageSize=10&search=...                │
-│  Validates request, calls Oracle, returns one page + total count       │
+│  Validates request, calls Oracle (or mock), returns one page + total   │
 └───────────────────────────────┬──────────────────────────────────────────┘
                                 │  JDBC / ODP.NET / oracledb
                                 ▼

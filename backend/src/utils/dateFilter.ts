@@ -55,10 +55,6 @@ function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | nul
   }
 }
 
-/**
- * Converts filter enum → ISO date strings for Oracle P_FROM_DATE / P_TO_DATE.
- * Single source of truth — frontend sends filter key only.
- */
 export function resolveFilterDates(filter: string): ResolvedFilterDates {
   const period = filter as FilterPeriod;
   if (period === 'all' || period === 'none') {

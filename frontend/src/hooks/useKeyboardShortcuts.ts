@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -16,20 +17,21 @@ export function useKeyboardShortcuts(handlers: KeyboardShortcutHandlers) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const inEditable = isEditableTarget(e.target);
+      const key = e.key.toLowerCase();
 
-      if (e.ctrlKey && e.key.toLowerCase() === 'k') {
+      if (e.ctrlKey && key === KEYBOARD_SHORTCUTS.focusSearch.key) {
         e.preventDefault();
         handlers.onFocusSearch?.();
         return;
       }
 
-      if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+      if (e.ctrlKey && key === KEYBOARD_SHORTCUTS.toggleSidebar.key) {
         e.preventDefault();
         handlers.onToggleSidebar?.();
         return;
       }
 
-      if (e.altKey && e.key.toLowerCase() === 'f' && !inEditable) {
+      if (e.altKey && key === KEYBOARD_SHORTCUTS.openFilter.key && !inEditable) {
         e.preventDefault();
         handlers.onOpenFilter?.();
       }

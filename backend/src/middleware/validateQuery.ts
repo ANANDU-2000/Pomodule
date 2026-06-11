@@ -1,24 +1,30 @@
 import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import type { POListQueryParams } from '../types/purchaseOrder.types';
+import { FILTER_PERIODS } from '../types/filter.types';
 
-const filterEnum = z.enum([
-  'today',
-  'yesterday',
-  'last_week',
-  'this_week',
-  'this_month',
-  'last_month',
-  'all',
-  'none',
-]);
+const SORTABLE_FIELDS = [
+  'orderNo',
+  'documentDate',
+  'supplierCode',
+  'supplierName',
+  'location',
+  'orderValue',
+  'status',
+  'deliveryDate',
+  'remarks',
+  'userId',
+] as const;
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(200).default(25),
   search: z.string().max(200).default(''),
-  filter: filterEnum.default('all'),
-  sortBy: z.string().max(50).default(''),
+  filter: z.enum(FILTER_PERIODS).default('all'),
+  sortBy: z.string().max(50).default('').refine(
+    (val) => val === '' || SORTABLE_FIELDS.includes(val as typeof SORTABLE_FIELDS[number]),
+    { message: 'Invalid sort field' },
+  ),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 

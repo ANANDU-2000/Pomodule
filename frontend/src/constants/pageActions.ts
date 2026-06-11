@@ -3,7 +3,6 @@ import type { TranslationMap } from '../types/i18n';
 export interface PageActionConfig {
   id: string;
   label: string;
-  /** Permission code checked against user roles — omit to always show. */
   permission?: string;
   variant?: 'primary' | 'default';
 }
