@@ -1,0 +1,100 @@
+{
+  "pageTitle": "Purchase Order",
+  "purchaseOrders": "Purchase Orders",
+  "nav": {
+    "purchaseOrder": "Purchase Order",
+    "purchaseOrderList": "Purchase Order",
+    "poTransaction": "PO - Transaction",
+    "poGh": "PO_GH - Cash/Delivery Note",
+    "poAll": "PO - Purchase Order - ALL",
+    "poExp": "PO_EXP - Purchase Order",
+    "poAst": "PO_AST - Purchase Order",
+    "poGr": "PO_GR",
+    "logout": "Logout"
+  },
+  "pages": {
+    "viewTitle": "View Purchase Order",
+    "editTitle": "Edit Purchase Order",
+    "newTitle": "New Purchase Order",
+    "notFound": "Purchase order not found",
+    "loadError": "Failed to load purchase order",
+    "saveSuccess": "Purchase order saved",
+    "saveError": "Failed to save purchase order",
+    "unsavedChanges": "You have unsaved changes. Leave anyway?"
+  },
+  "form": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back to list",
+    "edit": "Edit"
+  },
+  "moduleTitles": {
+    "poGh": "PO_GH - Cash/Delivery Note",
+    "poAll": "PO - Purchase Order - ALL",
+    "poExp": "PO_EXP - Purchase Order",
+    "poAst": "PO_AST - Purchase Order",
+    "poGr": "PO_GR"
+  },
+  "columns": {
+    "orderNo": "Order No",
+    "documentDate": "Document Date",
+    "supplierCode": "Supplier Code",
+    "supplierName": "Supplier Name",
+    "location": "Location",
+    "orderValue": "Order Value",
+    "status": "Status",
+    "deliveryDate": "Deliver Date",
+    "remarks": "Remarks / Annotation",
+    "userId": "User Id",
+    "actions": "Actions"
+  },
+  "filters": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "lastWeek": "Last Week",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "all": "All",
+    "none": "None"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "draft": "Draft"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "search": "Search orders...",
+    "filter": "Filter",
+    "addPurchaseOrder": "Add Purchase Order"
+  },
+  "pagination": {
+    "showing": "Showing",
+    "of": "of",
+    "records": "records",
+    "rowsPerPage": "Rows per page",
+    "auto": "Auto",
+    "page": "Page",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "language": {
+    "english": "EN",
+    "thai": "TH"
+  },
+  "sidebar": {
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
+    "mainNav": "Main navigation"
+  },
+  "search": {
+    "ariaLabel": "Search purchase orders",
+    "clear": "Clear search"
+  },
+  "empty": {
+    "noResults": "No purchase orders found"
+  }
+}

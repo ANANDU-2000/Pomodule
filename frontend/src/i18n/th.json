@@ -1,0 +1,100 @@
+{
+  "pageTitle": "ใบสั่งซื้อ",
+  "purchaseOrders": "รายการใบสั่งซื้อ",
+  "nav": {
+    "purchaseOrder": "ใบสั่งซื้อ",
+    "purchaseOrderList": "ใบสั่งซื้อ",
+    "poTransaction": "PO - ธุรกรรม",
+    "poGh": "PO_GH - ใบส่งมอบ/เงินสด",
+    "poAll": "PO - ใบสั่งซื้อ - ทั้งหมด",
+    "poExp": "PO_EXP - ใบสั่งซื้อ",
+    "poAst": "PO_AST - ใบสั่งซื้อ",
+    "poGr": "PO_GR",
+    "logout": "ออกจากระบบ"
+  },
+  "pages": {
+    "viewTitle": "ดูใบสั่งซื้อ",
+    "editTitle": "แก้ไขใบสั่งซื้อ",
+    "newTitle": "สร้างใบสั่งซื้อใหม่",
+    "notFound": "ไม่พบใบสั่งซื้อ",
+    "loadError": "โหลดใบสั่งซื้อไม่สำเร็จ",
+    "saveSuccess": "บันทึกใบสั่งซื้อแล้ว",
+    "saveError": "บันทึกใบสั่งซื้อไม่สำเร็จ",
+    "unsavedChanges": "มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก ต้องการออกหรือไม่?"
+  },
+  "form": {
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "back": "กลับไปรายการ",
+    "edit": "แก้ไข"
+  },
+  "moduleTitles": {
+    "poGh": "PO_GH - ใบส่งมอบ/เงินสด",
+    "poAll": "PO - ใบสั่งซื้อ - ทั้งหมด",
+    "poExp": "PO_EXP - ใบสั่งซื้อ",
+    "poAst": "PO_AST - ใบสั่งซื้อ",
+    "poGr": "PO_GR"
+  },
+  "columns": {
+    "orderNo": "เลขที่ใบสั่งซื้อ",
+    "documentDate": "วันที่เอกสาร",
+    "supplierCode": "รหัสผู้จำหน่าย",
+    "supplierName": "ชื่อผู้จำหน่าย",
+    "location": "สถานที่",
+    "orderValue": "มูลค่าคำสั่งซื้อ",
+    "status": "สถานะ",
+    "deliveryDate": "วันที่ส่งมอบ",
+    "remarks": "หมายเหตุ",
+    "userId": "รหัสผู้ใช้",
+    "actions": "การดำเนินการ"
+  },
+  "filters": {
+    "today": "วันนี้",
+    "yesterday": "เมื่อวาน",
+    "lastWeek": "สัปดาห์ที่แล้ว",
+    "thisWeek": "สัปดาห์นี้",
+    "thisMonth": "เดือนนี้",
+    "lastMonth": "เดือนที่แล้ว",
+    "all": "ทั้งหมด",
+    "none": "ไม่มี"
+  },
+  "status": {
+    "pending": "รอดำเนินการ",
+    "approved": "อนุมัติแล้ว",
+    "rejected": "ปฏิเสธ",
+    "draft": "ร่าง"
+  },
+  "actions": {
+    "view": "ดู",
+    "edit": "แก้ไข",
+    "search": "ค้นหาใบสั่งซื้อ...",
+    "filter": "กรอง",
+    "addPurchaseOrder": "เพิ่มใบสั่งซื้อ"
+  },
+  "pagination": {
+    "showing": "แสดง",
+    "of": "จาก",
+    "records": "รายการ",
+    "rowsPerPage": "แถวต่อหน้า",
+    "auto": "อัตโนมัติ",
+    "page": "หน้า",
+    "previousPage": "หน้าก่อนหน้า",
+    "nextPage": "หน้าถัดไป"
+  },
+  "language": {
+    "english": "EN",
+    "thai": "TH"
+  },
+  "sidebar": {
+    "expand": "ขยายแถบด้านข้าง",
+    "collapse": "ยุบแถบด้านข้าง",
+    "mainNav": "เมนูหลัก"
+  },
+  "search": {
+    "ariaLabel": "ค้นหาใบสั่งซื้อ",
+    "clear": "ล้างการค้นหา"
+  },
+  "empty": {
+    "noResults": "ไม่พบใบสั่งซื้อ"
+  }
+}
