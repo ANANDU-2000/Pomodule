@@ -77,11 +77,11 @@ Defined in `frontend/src/constants/keyboardShortcuts.ts`, wired via `useKeyboard
 GET /api/purchase-orders
   ?page=1&pageSize=10&search=abc&filter=this_month
   &sortBy=documentDate&sortOrder=desc
-  &fromDate=2026-06-01&toDate=2026-06-10
 ```
 
+- Frontend sends `filter` enum only — no `fromDate` / `toDate` in the request.
+- Backend `resolveFilterDates(filter)` in `backend/src/utils/dateFilter.ts` computes dates for mock filtering and Oracle `P_FROM_DATE` / `P_TO_DATE`.
 - Frontend uses `sortDirection` internally; `toApiParams()` maps to `sortOrder` for the API.
-- `fromDate` / `toDate` derived from `filter` via `resolveFilterDates()`.
 
 Response shape (`POListResult`):
 
@@ -109,8 +109,8 @@ See [ORACLE_INTEGRATION_GUIDE.md](./ORACLE_INTEGRATION_GUIDE.md) for procedure a
 When Oracle stored procedures are ready:
 
 1. Fill in PLACEHOLDER comments in `backend/src/utils/oracleParams.ts` and `backend/src/services/purchaseOrder.service.ts`
-2. Uncomment real `fetch()` in `frontend/src/services/purchaseOrderService.ts`
-3. Comment out mock fallback logic (keep as reference)
+2. Set `DATA_SOURCE=oracle` in `backend/.env`
+3. Frontend keeps calling `/api` — no service-layer changes needed for listing
 
 No changes required to hooks, pages, or components for listing.
 

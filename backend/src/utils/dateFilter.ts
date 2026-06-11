@@ -1,15 +1,14 @@
-type FilterPeriod =
-  | 'today'
-  | 'yesterday'
-  | 'last_week'
-  | 'this_week'
-  | 'this_month'
-  | 'last_month'
-  | 'all'
-  | 'none';
+import type { FilterPeriod, ResolvedFilterDates } from '../types/filter.types';
 
 interface DatedRow {
   documentDate: string;
+}
+
+function formatIsoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | null } {
@@ -56,10 +55,23 @@ function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | nul
   }
 }
 
-export function filterByDatePeriod<T extends DatedRow>(
-  data: T[],
-  filter: string,
-): T[] {
+/**
+ * Converts filter enum → ISO date strings for Oracle P_FROM_DATE / P_TO_DATE.
+ * Single source of truth — frontend sends filter key only.
+ */
+export function resolveFilterDates(filter: string): ResolvedFilterDates {
+  const period = filter as FilterPeriod;
+  if (period === 'all' || period === 'none') {
+    return { fromDate: '', toDate: '' };
+  }
+  const { from, to } = getDateRange(period);
+  if (!from || !to) {
+    return { fromDate: '', toDate: '' };
+  }
+  return { fromDate: formatIsoDate(from), toDate: formatIsoDate(to) };
+}
+
+export function filterByDatePeriod<T extends DatedRow>(data: T[], filter: string): T[] {
   const period = filter as FilterPeriod;
   if (period === 'all') return data;
   if (period === 'none') return [];

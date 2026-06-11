@@ -15,7 +15,8 @@ For each Oracle stored procedure the team shares, we need:
 ## Section 2: How to adopt a new procedure (step-by-step)
 
 **Step 1:** Open `backend/src/utils/oracleParams.ts`  
-Replace PLACEHOLDER param names with actual IN param names
+`P_FROM_DATE` / `P_TO_DATE` are already resolved from `filter` enum in `backend/src/utils/dateFilter.ts` — frontend never sends dates.  
+Replace PLACEHOLDER param names with actual IN param names from the DB team.
 
 **Step 2:** Open `backend/src/services/purchaseOrder.service.ts`  
 Replace PLACEHOLDER procedure call:
@@ -33,8 +34,8 @@ WHY explicit mapping: Oracle returns UPPERCASE column names by default; frontend
 **Step 4:** Run backend dev server: `cd backend && npm run dev`  
 Test with curl: `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
 
-**Step 5:** Update frontend `VITE_API_BASE_URL` in `.env` to point to backend  
-In `purchaseOrderService.ts`: uncomment real fetch, comment mock delay
+**Step 5:** Set `DATA_SOURCE=oracle` in `backend/.env` and Oracle credentials  
+Frontend already calls `/api/purchase-orders` by default (`VITE_USE_MOCK=false`). Set `VITE_API_BASE_URL` only if backend is on a different host.
 
 **Step 6:** Test with 1000 rows: add `P_PAGE_SIZE=1000` and verify response time < 2s
 

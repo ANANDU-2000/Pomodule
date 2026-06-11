@@ -1,6 +1,6 @@
 import type { PurchaseOrder, POListParams } from '../types/PurchaseOrder';
 import rawData from '../data/purchaseOrders.mock.json';
-import { filterByDatePeriod, resolveFilterDates } from '../utils/dateFilter';
+import { filterByDatePeriod } from '../utils/dateFilter';
 import { searchPurchaseOrders } from '../utils/search';
 import { API_BASE, USE_MOCK } from '../config/api.config';
 
@@ -23,17 +23,11 @@ export class PONotFoundError extends Error {
   }
 }
 
-export class NotImplementedError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'NotImplementedError';
-  }
-}
-
-/** Maps frontend params to Oracle API query string keys. */
+/**
+ * Maps list params to API query string.
+ * Date range is NOT computed here — backend resolves filter → dates.
+ */
 export function toApiParams(params: POListParams): Record<string, string> {
-  const { fromDate, toDate } = resolveFilterDates(params.filter);
-
   return {
     page: String(params.page),
     pageSize: String(params.pageSize),
@@ -41,8 +35,6 @@ export function toApiParams(params: POListParams): Record<string, string> {
     filter: params.filter,
     sortBy: params.sortBy,
     sortOrder: params.sortDirection,
-    fromDate,
-    toDate,
   };
 }
 
@@ -63,6 +55,7 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
+/** Dev-only offline mock — uses filter enum; date math mirrors backend filterByDatePeriod. */
 async function fetchMockPurchaseOrders(
   params: POListParams,
   signal?: AbortSignal,
@@ -104,7 +97,7 @@ export async function fetchPurchaseOrders(
     return res.json() as Promise<POListResult>;
   }
 
-  // MOCK FALLBACK — used when VITE_USE_MOCK=true
+  // MOCK FALLBACK — used when VITE_USE_MOCK=true (offline dev only)
   return fetchMockPurchaseOrders(params, signal);
 }
 

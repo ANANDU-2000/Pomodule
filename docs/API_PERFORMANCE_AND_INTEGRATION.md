@@ -32,16 +32,16 @@ For component layout and keyboard shortcuts, see [ARCHITECTURE.md](./ARCHITECTUR
 
 | Layer | Location in project | Responsibility |
 |-------|---------------------|----------------|
-| **Frontend** | `src/pages`, `src/components`, `src/hooks` | UI, user input, loading state, display **one page** of rows |
-| **Service (API client)** | `src/services/purchaseOrderService.ts` | Build query params (`toApiParams`), call API, return `POListResult` |
-| **Backend API** | *Future server* | Auth, validation, Oracle calls, JSON response |
+| **Frontend** | `frontend/src/pages`, `components`, `hooks` | UI, user input, loading state, display **one page** of rows |
+| **Service (API client)** | `frontend/src/services/purchaseOrderService.ts` | Build query params (`toApiParams`), call API, return `POListResult` |
+| **Backend API** | `backend/src` | Auth, validation, date filter resolution, Oracle calls, JSON response |
 | **Oracle DB** | *ERP database* | Source of truth, indexed queries, stored procedures |
 
 ### Current state (development)
 
-Today the app is **frontend-only**. `purchaseOrderService.ts` reads mock JSON (`src/data/purchaseOrders.json`, **20 records**) and runs filter, search, sort, and slice **in the browser**. That is acceptable only for demos.
+Default: frontend calls `GET /api/purchase-orders` via Vite proxy → Express backend (`DATA_SOURCE=mock`). Backend mock service filters/sorts/paginates **20 records** in RAM.
 
-When Oracle is ready, **only** `purchaseOrderService.ts` switches from mock logic to `fetch('/api/purchase-orders?...')`. Hooks and components stay unchanged.
+`VITE_USE_MOCK=true` enables offline frontend-only fallback (same mock JSON in browser). Oracle integration: set `DATA_SOURCE=oracle` and fill PLACEHOLDER procedures in `backend/src/services/purchaseOrder.service.ts`. Hooks and components stay unchanged.
 
 ---
 
@@ -57,11 +57,9 @@ GET /api/purchase-orders
   &filter=this_month
   &sortBy=documentDate
   &sortOrder=desc
-  &fromDate=2026-06-01
-  &toDate=2026-06-10
 ```
 
-Built by `toApiParams()` in `purchaseOrderService.ts`:
+Built by `toApiParams()` in `purchaseOrderService.ts` — **no date params from frontend**:
 
 | Frontend (`POListParams`) | API query key | Notes |
 |---------------------------|---------------|-------|
@@ -71,7 +69,8 @@ Built by `toApiParams()` in `purchaseOrderService.ts`:
 | `filter` | `filter` | Period: `today`, `this_month`, `all`, `none`, etc. |
 | `sortBy` | `sortBy` | Column key, e.g. `documentDate` |
 | `sortDirection` | `sortOrder` | Mapped from internal `sortDirection` |
-| *(derived)* | `fromDate`, `toDate` | From `resolveFilterDates()` in `dateFilter.ts` |
+
+Backend resolves `filter` → `P_FROM_DATE` / `P_TO_DATE` in `backend/src/utils/dateFilter.ts` before mock filter or Oracle proc call.
 
 ### Response (`POListResult`)
 
@@ -257,7 +256,7 @@ Frontend validation is **UX only** — never trust it for security.
 | `sortBy` in allowed column list | Ignore or `400` |
 | `sortOrder` `asc` \| `desc` | Default `asc` |
 | `filter` in allowed enum | `400` |
-| `fromDate` / `toDate` ISO dates | `400` |
+| Date range | Resolved server-side from `filter` — not accepted from client |
 | Oracle timeout / error | `502` or `503` with safe message (no stack trace to client) |
 
 **Response shape validation** (API should always return):
@@ -340,15 +339,15 @@ User types in search (debounced):
 
 | Question | Answer |
 |----------|--------|
-| Where is business logic today? | Browser mock in `purchaseOrderService.ts` |
-| Where should it live with Oracle? | Oracle procedures + backend API |
+| Where is business logic today? | Backend mock service (`purchaseOrder.mock.service.ts`); optional browser fallback when `VITE_USE_MOCK=true` |
+| Where should it live with Oracle? | Oracle procedures + backend API (`DATA_SOURCE=oracle`) |
 | How many orders does one API call return? | **10–100** (page size), never 1,000,000 |
 | Response size per call? | **~3–35 KB** typical |
 | Target API latency? | **&lt; 200–500 ms** p95 for list |
 | What shows while waiting? | `SkeletonRows` in `DataTable` (`loading` from `usePurchaseOrders`) |
 | Can UI handle 1M total orders? | **Yes**, if every fetch is paginated server-side |
 | Can UI fetch all 1M at once? | **No** — memory, network, and render will fail |
-| What file to change for Oracle? | **`src/services/purchaseOrderService.ts`** only |
+| What file to change for Oracle? | **`backend/src/services/purchaseOrder.service.ts`** + **`backend/src/utils/oracleParams.ts`** |
 | How to validate integration? | Request/response contract + API auth + Oracle plans + latency tests (Section 5) |
 
 ---
@@ -357,14 +356,13 @@ User types in search (debounced):
 
 | File | Role |
 |------|------|
-| `src/services/purchaseOrderService.ts` | API client, `toApiParams`, `POListResult` |
-| `src/hooks/usePurchaseOrders.ts` | Loading state, param orchestration |
-| `src/components/DataTable.tsx` | Skeleton loader, renders one page |
-| `src/components/SearchBar.tsx` | 300 ms debounce |
-| `src/constants/pageSizeOptions.ts` | Max 100 rows per request |
-| `src/types/PurchaseOrder.ts` | Row and param types |
+| `frontend/src/services/purchaseOrderService.ts` | API client, `toApiParams`, `POListResult` |
+| `frontend/src/hooks/usePurchaseOrders.ts` | Loading state, param orchestration |
+| `backend/src/utils/dateFilter.ts` | `resolveFilterDates` — filter enum → Oracle date params |
+| `backend/src/services/purchaseOrder.mock.service.ts` | Dev mock list/detail/update |
+| `backend/src/services/purchaseOrder.service.ts` | Oracle procedure stubs |
 | `docs/ARCHITECTURE.md` | UI architecture and component matrix |
 
 ---
 
-*Last updated for PO module listing scope — production Oracle backend assumed but not yet implemented in this repository.*
+*Last updated for PO module listing scope — backend API live with mock data; Oracle procedures pending DB team.*

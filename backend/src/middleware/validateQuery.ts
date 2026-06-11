@@ -20,8 +20,6 @@ const querySchema = z.object({
   filter: filterEnum.default('all'),
   sortBy: z.string().max(50).default(''),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  fromDate: z.string().default(''),
-  toDate: z.string().default(''),
 });
 
 declare global {

@@ -1,12 +1,9 @@
 import type { FilterPeriod } from '../types/PurchaseOrder';
 
-function formatIsoDate(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
+/**
+ * Dev-only mock filter — mirrors backend filterByDatePeriod using filter enum.
+ * Production: backend resolves dates; frontend sends filter key only.
+ */
 function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | null } {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -16,7 +13,6 @@ function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | nul
   switch (filter) {
     case 'today':
       return { from: today, to: todayEnd };
-
     case 'yesterday': {
       const from = new Date(today);
       from.setDate(from.getDate() - 1);
@@ -24,13 +20,11 @@ function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | nul
       to.setHours(23, 59, 59, 999);
       return { from, to };
     }
-
     case 'this_week': {
       const from = new Date(today);
       from.setDate(from.getDate() - from.getDay());
       return { from, to: todayEnd };
     }
-
     case 'last_week': {
       const from = new Date(today);
       from.setDate(from.getDate() - from.getDay() - 7);
@@ -39,36 +33,19 @@ function getDateRange(filter: FilterPeriod): { from: Date | null; to: Date | nul
       to.setHours(23, 59, 59, 999);
       return { from, to };
     }
-
     case 'this_month': {
       const from = new Date(today.getFullYear(), today.getMonth(), 1);
       return { from, to: todayEnd };
     }
-
     case 'last_month': {
       const from = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       const to = new Date(today.getFullYear(), today.getMonth(), 0);
       to.setHours(23, 59, 59, 999);
       return { from, to };
     }
-
-    case 'all':
-    case 'none':
     default:
       return { from: null, to: null };
   }
-}
-
-/** Resolves filter period to ISO date strings for API query params. */
-export function resolveFilterDates(filter: FilterPeriod): { fromDate: string; toDate: string } {
-  if (filter === 'all' || filter === 'none') {
-    return { fromDate: '', toDate: '' };
-  }
-  const { from, to } = getDateRange(filter);
-  if (!from || !to) {
-    return { fromDate: '', toDate: '' };
-  }
-  return { fromDate: formatIsoDate(from), toDate: formatIsoDate(to) };
 }
 
 export function filterByDatePeriod<T extends { documentDate: string }>(

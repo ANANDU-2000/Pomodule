@@ -5,8 +5,6 @@ export interface POListQueryParams {
   filter: string;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-  fromDate: string;
-  toDate: string;
 }
 
 export interface POListItem {
