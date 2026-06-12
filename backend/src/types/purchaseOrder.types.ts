@@ -8,7 +8,7 @@ export interface POListQueryParams {
   txnCode?: string;
 }
 
-export interface POListItem {
+export interface PurchaseOrderListItem {
   orderNo: string;
   documentDate: string;
   supplierCode: string;
@@ -21,12 +21,25 @@ export interface POListItem {
   userId: string;
 }
 
+/** @deprecated Use PurchaseOrderListItem */
+export type POListItem = PurchaseOrderListItem;
+
 export interface POListResponse {
-  data: POListItem[];
+  data: PurchaseOrderListItem[];
   total: number;
   page: number;
   pageSize: number;
   totalPages: number;
 }
 
-export type PODetailResponse = POListItem;
+export type PODetailResponse = PurchaseOrderListItem;
+
+export interface PurchaseOrderListItemExtended extends PurchaseOrderListItem {
+  locationCode?: string;
+  totalQty?: number;
+  currency?: string;
+  itemCount?: number;
+  termName?: string;
+  userName?: string;
+  rowId?: string;
+}

@@ -1,10 +1,10 @@
-import type { POListQueryParams, POListItem, POListResponse } from '../types/purchaseOrder.types';
+import type { POListQueryParams, PurchaseOrderListItem, POListResponse } from '../types/purchaseOrder.types';
 import { filterByDatePeriod } from './dateFilter';
 import { searchPurchaseOrders } from './search';
 import { calcTotalPages } from './pagination';
 
 export function applyListParams(
-  orders: POListItem[],
+  orders: PurchaseOrderListItem[],
   params: POListQueryParams,
 ): POListResponse {
   let result = [...orders];
@@ -13,7 +13,7 @@ export function applyListParams(
   result = searchPurchaseOrders(result, params.search);
 
   if (params.sortBy) {
-    const sortKey = params.sortBy as keyof POListItem;
+    const sortKey = params.sortBy as keyof PurchaseOrderListItem;
     result.sort((a, b) => {
       const aVal = a[sortKey];
       const bVal = b[sortKey];

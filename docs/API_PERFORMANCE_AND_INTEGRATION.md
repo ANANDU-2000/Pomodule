@@ -39,9 +39,9 @@ For component layout and keyboard shortcuts, see [ARCHITECTURE.md](./ARCHITECTUR
 
 ### Current state (development)
 
-Default: frontend calls `GET /api/purchase-orders` via Vite proxy → Express backend (`DATA_SOURCE=mock`). Backend mock service filters/sorts/paginates **20 records** in RAM.
+Default: frontend calls `GET /api/purchase-orders` via Vite proxy → Express backend (`DATA_SOURCE=mock`). Backend mock repository filters/sorts/paginates **20 seed records** in RAM from `mockPurchaseOrders.seed.ts`.
 
-`VITE_USE_MOCK=true` enables offline frontend-only fallback (same mock JSON in browser). Oracle integration: set `DATA_SOURCE=oracle` and fill PLACEHOLDER procedures in `backend/src/services/purchaseOrder.service.ts`. Hooks and components stay unchanged.
+Oracle integration: set `DATA_SOURCE=oracle` in `backend/.env` with host/port/service credentials. List and detail read from `OV_PO_SEARCH_VIEW_YSG` via `oraclePurchaseOrder.service.ts`. Hooks and components stay unchanged.
 
 ---
 
@@ -339,8 +339,8 @@ User types in search (debounced):
 
 | Question | Answer |
 |----------|--------|
-| Where is business logic today? | Backend mock service (`purchaseOrder.mock.service.ts`); optional browser fallback when `VITE_USE_MOCK=true` |
-| Where should it live with Oracle? | Oracle procedures + backend API (`DATA_SOURCE=oracle`) |
+| Where is business logic today? | Backend mock repository (`mockPurchaseOrder.repository.ts`) or Oracle service (`oraclePurchaseOrder.service.ts`) |
+| Where should it live with Oracle? | Oracle view + backend API (`DATA_SOURCE=oracle`); write ops need DB procedures |
 | How many orders does one API call return? | **10–100** (page size), never 1,000,000 |
 | Response size per call? | **~3–35 KB** typical |
 | Target API latency? | **&lt; 200–500 ms** p95 for list |

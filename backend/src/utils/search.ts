@@ -1,6 +1,6 @@
-import type { POListItem } from '../types/purchaseOrder.types';
+import type { PurchaseOrderListItem } from '../types/purchaseOrder.types';
 
-export function searchPurchaseOrders(data: POListItem[], query: string): POListItem[] {
+export function searchPurchaseOrders(data: PurchaseOrderListItem[], query: string): PurchaseOrderListItem[] {
   if (!query.trim()) return data;
   const q = query.toLowerCase().trim();
   return data.filter((row) =>

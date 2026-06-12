@@ -39,8 +39,8 @@ The Purchase Order listing page follows a layered architecture with clear fronte
 ├─────────────────────────────────────────────────────────┤
 │  usePurchaseOrders (hook)                               │
 ├─────────────────────────────────────────────────────────┤
-│  purchaseOrderService → mock JSON (fallback)            │
-│                      → GET /api/purchase-orders (future)│
+│  purchaseOrderService → GET /api/purchase-orders        │
+│                      → backend mock repo or Oracle view │
 └─────────────────────────────────────────────────────────┘
 ```
 

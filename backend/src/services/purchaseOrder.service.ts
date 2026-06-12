@@ -1,47 +1,37 @@
 import type { Connection } from 'oracledb';
 import type {
   POListQueryParams,
-  POListItem,
+  PurchaseOrderListItem,
   POListResponse,
   PODetailResponse,
 } from '../types/purchaseOrder.types';
-import { env } from '../config/env';
-import type { PurchaseOrderRepository } from '../repositories/purchaseOrder.repository';
-import { mockPurchaseOrderRepository } from '../repositories/mockPurchaseOrder.repository';
 import { oraclePurchaseOrderRepository } from '../repositories/oraclePurchaseOrder.repository';
-
-const repository: PurchaseOrderRepository =
-  env.DATA_SOURCE === 'oracle' ? oraclePurchaseOrderRepository : mockPurchaseOrderRepository;
 
 export async function getPOList(
   params: POListQueryParams,
-  conn?: Connection,
+  conn: Connection,
 ): Promise<POListResponse> {
-  return repository.getList(params, conn);
+  return oraclePurchaseOrderRepository.getList(params, conn);
 }
 
 export async function getPODetail(
   id: string,
-  conn?: Connection,
+  conn: Connection,
 ): Promise<PODetailResponse | null> {
-  return repository.getDetail(id, conn);
+  return oraclePurchaseOrderRepository.getDetail(id, conn);
 }
 
 export async function updatePO(
   id: string,
-  payload: Partial<POListItem>,
-  conn?: Connection,
-): Promise<POListItem | null> {
-  return repository.update(id, payload, conn);
+  payload: Partial<PurchaseOrderListItem>,
+  conn: Connection,
+): Promise<PurchaseOrderListItem | null> {
+  return oraclePurchaseOrderRepository.update(id, payload, conn);
 }
 
 export async function approvePO(
   id: string,
-  conn?: Connection,
-): Promise<POListItem | null> {
-  return repository.approve(id, conn);
-}
-
-export function isApprovableStatus(status: string): boolean {
-  return repository.isApprovableStatus(status);
+  conn: Connection,
+): Promise<PurchaseOrderListItem | null> {
+  return oraclePurchaseOrderRepository.approve(id, conn);
 }

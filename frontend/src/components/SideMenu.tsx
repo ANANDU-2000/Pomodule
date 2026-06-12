@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getNavigation, isNavNodeActive, type NavNode } from '../constants/navigation';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
 import { useSidebarExpanded } from '../hooks/useSidebarExpanded';
-import { resetOrderCache } from '../services/purchaseOrderService';
 import type { TranslationMap } from '../types/i18n';
 import { AppIcon, ChevronRight, FileText, ICON_SIZE_NAV, LogOut, PanelLeft, PanelRight } from './icons';
 
@@ -131,7 +130,6 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
         // ignore
       }
     });
-    resetOrderCache();
     navigate('/');
   };
 
@@ -175,4 +173,4 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
 }
 
 export default SideMenu;
-
+

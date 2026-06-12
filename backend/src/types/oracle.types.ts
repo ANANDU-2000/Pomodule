@@ -1,4 +1,4 @@
-export interface OraclePORow {
+export interface OraclePurchaseOrderRow {
   DOC_NO: string;
   DOC_DT: Date | string;
   SUPP_CODE: string;
@@ -17,6 +17,9 @@ export interface OraclePORow {
   H_CR_UNAME: string;
   H_ROW_ID: string;
 }
+
+/** @deprecated Use OraclePurchaseOrderRow */
+export type OraclePORow = OraclePurchaseOrderRow;
 
 export interface OracleListBinds {
   compCode: string;

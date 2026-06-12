@@ -1,19 +1,13 @@
 import type { Connection } from 'oracledb';
-import { env } from '../config/env';
 import { getConnection } from '../config/oracle';
 
 export async function withOracleConnection<T>(
-  handler: (conn: Connection | undefined) => Promise<T>,
+  handler: (conn: Connection) => Promise<T>,
 ): Promise<T> {
-  let conn: Connection | undefined;
+  const conn = await getConnection();
   try {
-    if (env.DATA_SOURCE === 'oracle') {
-      conn = await getConnection();
-    }
     return await handler(conn);
   } finally {
-    if (conn) {
-      await conn.close();
-    }
+    await conn.close();
   }
 }

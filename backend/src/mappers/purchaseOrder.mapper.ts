@@ -1,5 +1,5 @@
-import type { POListItem } from '../types/purchaseOrder.types';
-import type { OraclePORow } from '../types/oracle.types';
+import type { PurchaseOrderListItem } from '../types/purchaseOrder.types';
+import type { OraclePurchaseOrderRow } from '../types/oracle.types';
 
 function formatOracleDate(value: Date | string | null | undefined): string {
   if (value === null || value === undefined) return '';
@@ -16,7 +16,7 @@ function formatOracleDate(value: Date | string | null | undefined): string {
   return str;
 }
 
-export function mapOracleRowToPOListItem(row: OraclePORow): POListItem {
+export function mapOracleRowToPurchaseOrderListItem(row: OraclePurchaseOrderRow): PurchaseOrderListItem {
   return {
     orderNo: String(row.DOC_NO ?? ''),
     documentDate: formatOracleDate(row.DOC_DT),
@@ -26,7 +26,10 @@ export function mapOracleRowToPOListItem(row: OraclePORow): POListItem {
     orderValue: Number(row.GROSS_AMNT ?? 0),
     status: String(row.DOC_STATUS ?? ''),
     deliveryDate: formatOracleDate(row.H_DEL_DT),
-    remarks: '',
+    remarks: String(row.REFERENCE_NO ?? ''),
     userId: String(row.H_CR_UID ?? ''),
   };
 }
+
+/** @deprecated Use mapOracleRowToPurchaseOrderListItem */
+export const mapOracleRowToPOListItem = mapOracleRowToPurchaseOrderListItem;

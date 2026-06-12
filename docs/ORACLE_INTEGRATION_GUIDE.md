@@ -1,44 +1,38 @@
 # Oracle Integration Guide
 
-## Section 1: Data source architecture
-
-Purchase orders are read from Oracle view `OV_PO_SEARCH_VIEW_YSG` via `backend/src/services/oraclePurchaseOrder.service.ts`.
+## Architecture (Oracle only — no mock data)
 
 | Layer | File |
 |-------|------|
+| Env config | `backend/src/config/env.ts` |
 | Connection pool | `backend/src/config/oracle.ts` |
-| Repository switch | `backend/src/services/purchaseOrder.service.ts` (`DATA_SOURCE=mock\|oracle`) |
 | Oracle queries | `backend/src/services/oraclePurchaseOrder.service.ts` |
+| API facade | `backend/src/services/purchaseOrder.service.ts` |
 | Row mapping | `backend/src/mappers/purchaseOrder.mapper.ts` |
-| List filter/sort/page | `backend/src/utils/applyListParams.ts` (in-memory phase 1) |
-| SQL pagination stub | `backend/src/utils/oracleListQueryBuilder.ts` (future) |
+| Types | `backend/src/types/oracle.types.ts`, `purchaseOrder.types.ts` |
+| List filter/sort/page | `backend/src/utils/applyListParams.ts` |
 
-Environment variables (see `backend/.env.example`):
+## Activate real data
+
+1. Connect to VPN
+2. Set `backend/.env`:
 
 ```
-DATA_SOURCE=oracle
-ORACLE_HOST=
+ORACLE_HOST=10.44.0.102
 ORACLE_PORT=1521
-ORACLE_SERVICE=
-ORACLE_USER=
-ORACLE_PASSWORD=
+ORACLE_SERVICE=uatpdb.ysg.com
+ORACLE_USER=<provided>
+ORACLE_PASSWORD=<provided>
 ORACLE_COMP_CODE=YSG
 ORACLE_TXN_CODE=PO
 ```
 
-Optional API override: `GET /api/purchase-orders?txnCode=PO`
+3. `cd backend && npm run dev`
+4. `curl http://localhost:3001/health` → `oracleConnected: true`
+5. `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
+6. Start frontend: `cd frontend && npm run dev`
 
-## Section 2: Activating Oracle after credentials are received
-
-1. Copy `backend/.env.example` to `backend/.env`
-2. Set `DATA_SOURCE=oracle` and fill Oracle host/port/service/user/password
-3. Connect to VPN if required
-4. Start backend: `cd backend && npm run dev`
-5. Verify health: `curl http://localhost:3001/health` (expect `oracleConnected: true`)
-6. Verify list: `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
-7. Set frontend `VITE_USE_MOCK=false` and confirm the list page loads real data
-
-## Section 3: Column mapping (view → API)
+## Column mapping
 
 | Oracle column | API field |
 |---------------|-----------|
@@ -50,21 +44,25 @@ Optional API override: `GET /api/purchase-orders?txnCode=PO`
 | `H_DEL_DT` | `deliveryDate` |
 | `GROSS_AMNT` | `orderValue` |
 | `DOC_STATUS` | `status` |
+| `REFERENCE_NO` | `remarks` |
 | `H_CR_UID` | `userId` |
-| *(not in view)* | `remarks` (defaults to `""`) |
 
-## Section 4: Future stored procedures (update/approve)
+Query: `OV_PO_SEARCH_VIEW_YSG` where `COMP_CODE='YSG'` and `TXN_CODE=:txnCode` (default `PO`).
 
-Update and approve endpoints remain mock-only until DB team shares procedures. When available:
+## Blockers for full functionality
 
-1. Add methods to `oraclePurchaseOrder.service.ts`
-2. Wire `update` / `approve` in `oraclePurchaseOrder.repository.ts`
-3. Map procedure OUT params in `purchaseOrder.mapper.ts`
+| Feature | Status | Blocker |
+|---------|--------|---------|
+| PO List | Ready | Credentials + VPN |
+| PO View | Ready | Credentials + VPN |
+| PO Edit (PUT) | Not ready | Oracle update procedure needed |
+| PO Approve (POST) | Not ready | Oracle approve procedure needed |
+| PO Create (POST) | Not ready | No backend route + insert procedure |
+| Production scale | Future | SQL-side pagination in `oracleListQueryBuilder.ts` |
 
-## Section 5: Performance at scale
+## Blockers checklist
 
-Phase 1 fetches all rows from the view and applies search/filter/sort/pagination in Node. This is acceptable for UAT volumes.
-
-Before production with large row counts, implement SQL-side pagination in `oracleListQueryBuilder.ts` using `OFFSET/FETCH` or DB-team-approved approach. Never fetch unbounded result sets in production.
-
-Connection pool: `poolMin: 2`, `poolMax: 10` in `oracle.ts`. Warm pooled connections avoid ~200ms cold-connect latency per request.
+- [ ] `ORACLE_USER` and `ORACLE_PASSWORD` set in `backend/.env`
+- [ ] VPN connected to reach `10.44.0.102:1521`
+- [ ] Oracle Instant Client installed (if required by `oracledb`)
+- [ ] DB team provides write procedures for update/approve/create

@@ -1,14 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import type { POListItem } from '../types/purchaseOrder.types';
+import type { PurchaseOrderListItem } from '../types/purchaseOrder.types';
 
 const updateBodySchema = z.object({
-  orderNo: z.string().optional(),
   documentDate: z.string().optional(),
   supplierCode: z.string().optional(),
   supplierName: z.string().optional(),
   location: z.string().optional(),
-  orderValue: z.number().optional(),
+  orderValue: z.coerce.number().optional(),
   status: z.string().optional(),
   deliveryDate: z.string().optional(),
   remarks: z.string().optional(),
@@ -18,7 +17,7 @@ const updateBodySchema = z.object({
 declare global {
   namespace Express {
     interface Request {
-      validatedBody?: Partial<POListItem>;
+      validatedBody?: Partial<PurchaseOrderListItem>;
     }
   }
 }

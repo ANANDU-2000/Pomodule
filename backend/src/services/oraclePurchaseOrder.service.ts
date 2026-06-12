@@ -1,8 +1,8 @@
 import oracledb, { type Connection } from 'oracledb';
-import type { POListQueryParams, POListItem, POListResponse } from '../types/purchaseOrder.types';
-import type { OraclePORow } from '../types/oracle.types';
+import type { POListQueryParams, PurchaseOrderListItem, POListResponse } from '../types/purchaseOrder.types';
+import type { OraclePurchaseOrderRow } from '../types/oracle.types';
 import { env } from '../config/env';
-import { mapOracleRowToPOListItem } from '../mappers/purchaseOrder.mapper';
+import { mapOracleRowToPurchaseOrderListItem } from '../mappers/purchaseOrder.mapper';
 import { applyListParams } from '../utils/applyListParams';
 import { logger } from '../utils/logger';
 
@@ -32,7 +32,7 @@ function resolveTxnCode(params?: POListQueryParams): string {
 async function fetchAllRows(
   conn: Connection,
   txnCode: string,
-): Promise<POListItem[]> {
+): Promise<PurchaseOrderListItem[]> {
   const binds = {
     compCode: env.ORACLE_COMP_CODE,
     txnCode,
@@ -40,19 +40,19 @@ async function fetchAllRows(
 
   logger.debug('Executing PO list query', binds);
 
-  const result = await conn.execute<OraclePORow>(
+  const result = await conn.execute<OraclePurchaseOrderRow>(
     PO_LIST_SQL,
     binds,
     { outFormat: oracledb.OUT_FORMAT_OBJECT },
   );
 
-  const rows = (result.rows ?? []) as OraclePORow[];
+  const rows = (result.rows ?? []) as OraclePurchaseOrderRow[];
 
   if (rows.length === 0) {
     logger.warn('Empty result from OV_PO_SEARCH_VIEW_YSG', { txnCode });
   }
 
-  return rows.map(mapOracleRowToPOListItem);
+  return rows.map(mapOracleRowToPurchaseOrderListItem);
 }
 
 export async function getPOList(
@@ -68,7 +68,7 @@ export async function getPODetail(
   orderNo: string,
   conn: Connection,
   txnCode?: string,
-): Promise<POListItem | null> {
+): Promise<PurchaseOrderListItem | null> {
   const binds = {
     compCode: env.ORACLE_COMP_CODE,
     txnCode: txnCode ?? env.ORACLE_TXN_CODE,
@@ -77,14 +77,14 @@ export async function getPODetail(
 
   logger.debug('Executing PO detail query', { orderNo, txnCode: binds.txnCode });
 
-  const result = await conn.execute<OraclePORow>(
+  const result = await conn.execute<OraclePurchaseOrderRow>(
     PO_DETAIL_SQL,
     binds,
     { outFormat: oracledb.OUT_FORMAT_OBJECT },
   );
 
-  const row = result.rows?.[0] as OraclePORow | undefined;
+  const row = result.rows?.[0] as OraclePurchaseOrderRow | undefined;
   if (!row) return null;
 
-  return mapOracleRowToPOListItem(row);
+  return mapOracleRowToPurchaseOrderListItem(row);
 }

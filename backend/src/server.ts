@@ -9,17 +9,13 @@ import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 
 async function main(): Promise<void> {
-  if (env.DATA_SOURCE === 'oracle') {
-    try {
-      await initPool();
-    } catch (err) {
-      logger.error('Failed to initialize Oracle connection pool', {
-        message: err instanceof Error ? err.message : String(err),
-      });
-      process.exit(1);
-    }
-  } else {
-    logger.info('Running with DATA_SOURCE=mock (no Oracle connection)');
+  try {
+    await initPool();
+  } catch (err) {
+    logger.error('Failed to initialize Oracle connection pool', {
+      message: err instanceof Error ? err.message : String(err),
+    });
+    process.exit(1);
   }
 
   const app = express();
@@ -29,16 +25,11 @@ async function main(): Promise<void> {
   app.use(requestLogger);
 
   app.get('/health', async (_req, res) => {
-    const payload: Record<string, unknown> = {
+    res.json({
       status: 'ok',
-      dataSource: env.DATA_SOURCE,
-    };
-
-    if (env.DATA_SOURCE === 'oracle') {
-      payload.oracleConnected = await pingPool();
-    }
-
-    res.json(payload);
+      dataSource: 'oracle',
+      oracleConnected: await pingPool(),
+    });
   });
 
   app.use('/api/purchase-orders', purchaseOrderRouter);
@@ -56,9 +47,7 @@ async function main(): Promise<void> {
   const shutdown = async (signal: string) => {
     logger.info('Shutdown signal received', { signal });
     server.close(async () => {
-      if (env.DATA_SOURCE === 'oracle') {
-        await closePool();
-      }
+      await closePool();
       process.exit(0);
     });
   };

@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 import * as purchaseOrderService from '../services/purchaseOrder.service';
-import { env } from '../config/env';
 import { withOracleConnection } from '../utils/withOracleConnection';
 import { parseOrderId } from '../utils/parseOrderId';
 
@@ -72,18 +71,12 @@ export async function approveDetail(req: Request, res: Response, next: NextFunct
   }
 
   try {
-    if (env.DATA_SOURCE === 'mock') {
-      const existing = await withOracleConnection((conn) =>
-        purchaseOrderService.getPODetail(id, conn),
-      );
-      if (!existing) {
-        res.status(404).json({ error: 'Purchase order not found' });
-        return;
-      }
-      if (!purchaseOrderService.isApprovableStatus(existing.status)) {
-        res.status(409).json({ error: 'Purchase order is not in an approvable status' });
-        return;
-      }
+    const existing = await withOracleConnection((conn) =>
+      purchaseOrderService.getPODetail(id, conn),
+    );
+    if (!existing) {
+      res.status(404).json({ error: 'Purchase order not found' });
+      return;
     }
 
     const result = await withOracleConnection((conn) =>
