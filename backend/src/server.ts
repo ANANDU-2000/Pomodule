@@ -2,17 +2,24 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { env } from './config/env';
-import { initPool, closePool } from './config/db.config';
+import { initPool, closePool, pingPool } from './config/oracle';
 import purchaseOrderRouter from './routes/purchaseOrder.routes';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
+import { logger } from './utils/logger';
 
 async function main(): Promise<void> {
   if (env.DATA_SOURCE === 'oracle') {
-    await initPool();
-    console.log('Oracle connection pool initialized');
+    try {
+      await initPool();
+    } catch (err) {
+      logger.error('Failed to initialize Oracle connection pool', {
+        message: err instanceof Error ? err.message : String(err),
+      });
+      process.exit(1);
+    }
   } else {
-    console.log('Running with DATA_SOURCE=mock (no Oracle connection)');
+    logger.info('Running with DATA_SOURCE=mock (no Oracle connection)');
   }
 
   const app = express();
@@ -21,8 +28,17 @@ async function main(): Promise<void> {
   app.use(express.json());
   app.use(requestLogger);
 
-  app.get('/health', (_req, res) => {
-    res.json({ status: 'ok', dataSource: env.DATA_SOURCE });
+  app.get('/health', async (_req, res) => {
+    const payload: Record<string, unknown> = {
+      status: 'ok',
+      dataSource: env.DATA_SOURCE,
+    };
+
+    if (env.DATA_SOURCE === 'oracle') {
+      payload.oracleConnected = await pingPool();
+    }
+
+    res.json(payload);
   });
 
   app.use('/api/purchase-orders', purchaseOrderRouter);
@@ -34,11 +50,11 @@ async function main(): Promise<void> {
   app.use(errorHandler);
 
   const server = app.listen(env.PORT, () => {
-    console.log(`PO module backend listening on port ${env.PORT}`);
+    logger.info('PO module backend listening', { port: env.PORT });
   });
 
   const shutdown = async (signal: string) => {
-    console.log(`${signal} received — closing server`);
+    logger.info('Shutdown signal received', { signal });
     server.close(async () => {
       if (env.DATA_SOURCE === 'oracle') {
         await closePool();
@@ -52,6 +68,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: unknown) => {
-  console.error('Failed to start server:', err);
+  logger.error('Failed to start server', {
+    message: err instanceof Error ? err.message : String(err),
+  });
   process.exit(1);
 });

@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 import * as purchaseOrderService from '../services/purchaseOrder.service';
-import * as mockService from '../services/purchaseOrder.mock.service';
 import { env } from '../config/env';
 import { withOracleConnection } from '../utils/withOracleConnection';
 import { parseOrderId } from '../utils/parseOrderId';
@@ -81,7 +80,7 @@ export async function approveDetail(req: Request, res: Response, next: NextFunct
         res.status(404).json({ error: 'Purchase order not found' });
         return;
       }
-      if (!mockService.isApprovableStatus(existing.status)) {
+      if (!purchaseOrderService.isApprovableStatus(existing.status)) {
         res.status(409).json({ error: 'Purchase order is not in an approvable status' });
         return;
       }

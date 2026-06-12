@@ -1,59 +1,70 @@
 # Oracle Integration Guide
 
-## Section 1: What the DB team must provide
+## Section 1: Data source architecture
 
-For each Oracle stored procedure the team shares, we need:
+Purchase orders are read from Oracle view `OV_PO_SEARCH_VIEW_YSG` via `backend/src/services/oraclePurchaseOrder.service.ts`.
 
-1. Package name (e.g. PKG_PO)
-2. Procedure name (e.g. GET_PO_LIST)
-3. IN parameter names and types (e.g. P_PAGE NUMBER, P_SEARCH VARCHAR2)
-4. OUT parameter / cursor name and column names returned
-5. Whether procedure is in a package or standalone
-6. Oracle user/schema that owns the procedure
-7. For pagination: which param controls offset vs limit vs page number
+| Layer | File |
+|-------|------|
+| Connection pool | `backend/src/config/oracle.ts` |
+| Repository switch | `backend/src/services/purchaseOrder.service.ts` (`DATA_SOURCE=mock\|oracle`) |
+| Oracle queries | `backend/src/services/oraclePurchaseOrder.service.ts` |
+| Row mapping | `backend/src/mappers/purchaseOrder.mapper.ts` |
+| List filter/sort/page | `backend/src/utils/applyListParams.ts` (in-memory phase 1) |
+| SQL pagination stub | `backend/src/utils/oracleListQueryBuilder.ts` (future) |
 
-## Section 2: How to adopt a new procedure (step-by-step)
-
-**Step 1:** Open `backend/src/utils/oracleParams.ts`  
-`P_FROM_DATE` / `P_TO_DATE` are already resolved from `filter` enum in `backend/src/utils/dateFilter.ts` — frontend never sends dates.  
-Replace PLACEHOLDER param names with actual IN param names from the DB team.
-
-**Step 2:** Open `backend/src/services/purchaseOrder.service.ts`  
-Replace PLACEHOLDER procedure call:
+Environment variables (see `backend/.env.example`):
 
 ```
-conn.execute('BEGIN PKG_PO.GET_PO_LIST(:params...); END;', binds, options)
+DATA_SOURCE=oracle
+ORACLE_HOST=
+ORACLE_PORT=1521
+ORACLE_SERVICE=
+ORACLE_USER=
+ORACLE_PASSWORD=
+ORACLE_COMP_CODE=YSG
+ORACLE_TXN_CODE=PO
 ```
 
-Set `outFormat: oracledb.OUT_FORMAT_OBJECT` for object rows
+Optional API override: `GET /api/purchase-orders?txnCode=PO`
 
-**Step 3:** Map cursor column names → POListItem fields  
-Add mapping in service: `row.COLUMN_NAME` → `listItem.camelCaseName`  
-WHY explicit mapping: Oracle returns UPPERCASE column names by default; frontend expects camelCase; never rename DB columns to match JS
+## Section 2: Activating Oracle after credentials are received
 
-**Step 4:** Run backend dev server: `cd backend && npm run dev`  
-Test with curl: `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
+1. Copy `backend/.env.example` to `backend/.env`
+2. Set `DATA_SOURCE=oracle` and fill Oracle host/port/service/user/password
+3. Connect to VPN if required
+4. Start backend: `cd backend && npm run dev`
+5. Verify health: `curl http://localhost:3001/health` (expect `oracleConnected: true`)
+6. Verify list: `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
+7. Set frontend `VITE_USE_MOCK=false` and confirm the list page loads real data
 
-**Step 5:** Set `DATA_SOURCE=oracle` in `backend/.env` and Oracle credentials  
-Frontend already calls `/api/purchase-orders` by default (`VITE_USE_MOCK=false`). Set `VITE_API_BASE_URL` only if backend is on a different host.
+## Section 3: Column mapping (view → API)
 
-**Step 6:** Test with 1000 rows: add `P_PAGE_SIZE=1000` and verify response time < 2s
+| Oracle column | API field |
+|---------------|-----------|
+| `DOC_NO` | `orderNo` |
+| `DOC_DT` | `documentDate` |
+| `SUPP_CODE` | `supplierCode` |
+| `SUPP_NAME` | `supplierName` |
+| `LOCN_NAME` | `location` |
+| `H_DEL_DT` | `deliveryDate` |
+| `GROSS_AMNT` | `orderValue` |
+| `DOC_STATUS` | `status` |
+| `H_CR_UID` | `userId` |
+| *(not in view)* | `remarks` (defaults to `""`) |
 
-## Section 3: Performance at 1M+ rows
+## Section 4: Future stored procedures (update/approve)
 
-Server-side pagination: NEVER return all rows. Oracle procedure must accept P_PAGE and P_PAGE_SIZE.
+Update and approve endpoints remain mock-only until DB team shares procedures. When available:
 
-If team's procedure does rownum-based pagination:
-Use: `WHERE ROWNUM BETWEEN (page-1)*pageSize+1 AND page*pageSize`  
-This is standard Oracle pagination — DB team likely already has this.
+1. Add methods to `oraclePurchaseOrder.service.ts`
+2. Wire `update` / `approve` in `oraclePurchaseOrder.repository.ts`
+3. Map procedure OUT params in `purchaseOrder.mapper.ts`
 
-REF CURSOR: oracledb streams cursor rows. Do NOT fetch entire cursor into array.  
-Use `resultSet.getRow()` loop or `resultSet.getRows(pageSize)` — never `getRows()` without limit.
+## Section 5: Performance at scale
 
-Connection pool: Keep poolMin:2 so warm connections are always available.  
-Latency test: cold connection = ~200ms, pooled connection = ~2ms.  
-With 1M+ row queries, this 200ms difference is noise — but on high concurrency it stacks.
+Phase 1 fetches all rows from the view and applies search/filter/sort/pagination in Node. This is acceptable for UAT volumes.
 
-Index hint: If Oracle query is slow, ask DB team to confirm index exists on:
-documentDate (most common filter column), supplierCode, status.  
-Frontend cannot fix missing Oracle indexes — only DBA can.
+Before production with large row counts, implement SQL-side pagination in `oracleListQueryBuilder.ts` using `OFFSET/FETCH` or DB-team-approved approach. Never fetch unbounded result sets in production.
+
+Connection pool: `poolMin: 2`, `poolMax: 10` in `oracle.ts`. Warm pooled connections avoid ~200ms cold-connect latency per request.

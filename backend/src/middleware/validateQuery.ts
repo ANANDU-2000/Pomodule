@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import type { POListQueryParams } from '../types/purchaseOrder.types';
 import { FILTER_PERIODS } from '../types/filter.types';
+import { env } from '../config/env';
 
 const SORTABLE_FIELDS = [
   'orderNo',
@@ -26,6 +27,7 @@ const querySchema = z.object({
     { message: 'Invalid sort field' },
   ),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  txnCode: z.string().max(20).regex(/^[A-Za-z0-9_]*$/).optional(),
 });
 
 declare global {
@@ -45,6 +47,11 @@ export function validateQuery(req: Request, res: Response, next: NextFunction): 
     });
     return;
   }
-  req.validatedQuery = result.data;
+
+  const { txnCode, ...rest } = result.data;
+  req.validatedQuery = {
+    ...rest,
+    txnCode: txnCode || env.ORACLE_TXN_CODE,
+  };
   next();
 }

@@ -1,6 +1,6 @@
 import type { Connection } from 'oracledb';
 import { env } from '../config/env';
-import { getConnection } from '../config/db.config';
+import { getConnection } from '../config/oracle';
 
 export async function withOracleConnection<T>(
   handler: (conn: Connection | undefined) => Promise<T>,

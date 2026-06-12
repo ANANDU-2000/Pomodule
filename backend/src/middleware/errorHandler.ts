@@ -1,9 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
 import { env } from '../config/env';
-
-interface OracleError extends Error {
-  errorNum?: number;
-}
+import {
+  getOracleErrorKind,
+  getHttpStatusForOracleError,
+  getPublicOracleMessage,
+  extractOracleErrorMeta,
+} from '../utils/oracleErrors';
+import { logger } from '../utils/logger';
 
 export function errorHandler(
   err: unknown,
@@ -11,13 +14,21 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
-  console.error(err);
-
-  const oracleErr = err as OracleError;
-  if (oracleErr.errorNum === 1403) {
-    res.status(404).json({ error: 'Resource not found' });
+  const oracleMeta = extractOracleErrorMeta(err);
+  if (oracleMeta.errorNum !== undefined) {
+    const kind = getOracleErrorKind(err);
+    logger.error('Oracle error', { ...oracleMeta, kind });
+    const status = getHttpStatusForOracleError(kind);
+    const message = env.NODE_ENV === 'production'
+      ? getPublicOracleMessage(kind)
+      : (err instanceof Error ? err.message : getPublicOracleMessage(kind));
+    res.status(status).json({ error: message });
     return;
   }
+
+  logger.error('Unhandled error', {
+    message: err instanceof Error ? err.message : String(err),
+  });
 
   const message = env.NODE_ENV === 'production'
     ? 'Internal server error'

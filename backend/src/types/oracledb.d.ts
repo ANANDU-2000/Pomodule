@@ -1,4 +1,8 @@
 declare module 'oracledb' {
+  interface ExecuteResult<T = unknown> {
+    rows?: T[];
+  }
+
   interface Pool {
     getConnection(): Promise<Connection>;
     close(drainTime: number): Promise<void>;
@@ -9,7 +13,7 @@ declare module 'oracledb' {
       sql: string,
       binds?: Record<string, unknown>,
       options?: Record<string, unknown>,
-    ): Promise<T>;
+    ): Promise<ExecuteResult<T>>;
     close(): Promise<void>;
   }
 
@@ -25,6 +29,6 @@ declare module 'oracledb' {
     Connection: Connection;
   };
 
-  export type { Pool, Connection };
+  export type { Pool, Connection, ExecuteResult };
   export default oracledb;
 }

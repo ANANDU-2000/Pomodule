@@ -5,6 +5,7 @@ export interface POListQueryParams {
   filter: string;
   sortBy: string;
   sortOrder: 'asc' | 'desc';
+  txnCode?: string;
 }
 
 export interface POListItem {
