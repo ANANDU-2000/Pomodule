@@ -7,10 +7,11 @@ interface PageToolbarProps {
   onBack?: () => void;
   backLabel?: string;
   actions?: ReactNode;
+  statusBadge?: ReactNode;
   t: TranslationMap;
 }
 
-function PageToolbar({ title, onBack, backLabel, actions, t }: PageToolbarProps) {
+function PageToolbar({ title, onBack, backLabel, actions, statusBadge, t }: PageToolbarProps) {
   return (
     <div className="page-toolbar">
       <div className="page-toolbar-left">
@@ -24,6 +25,7 @@ function PageToolbar({ title, onBack, backLabel, actions, t }: PageToolbarProps)
           </>
         )}
         <h1 className="page-toolbar-title">{title}</h1>
+        {statusBadge && <div className="page-toolbar-status">{statusBadge}</div>}
       </div>
       {actions && <div className="page-toolbar-actions">{actions}</div>}
     </div>

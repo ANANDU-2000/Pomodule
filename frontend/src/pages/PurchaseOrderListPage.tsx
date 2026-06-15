@@ -129,7 +129,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
           </button>
         </div>
       )}
-      <div className="po-page-body" ref={tableBodyRef}>
+      <div className="po-page-body erp-page-content" ref={tableBodyRef}>
         <DataTable
           columns={columns}
           data={result?.data ?? []}

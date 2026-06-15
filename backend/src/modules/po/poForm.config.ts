@@ -1,0 +1,190 @@
+// TEMPORARY — remove when ORACLE_FORM_CONFIG_VIEW is live
+import type { FormFieldDef } from '../../types/formConfig.types';
+
+const required = (rules: string[] = ['required']) => ({ rules });
+
+const SUPPLIER_FIELDS: FormFieldDef[] = [
+  {
+    key: 'supplier',
+    apiField: 'supplierCode',
+    type: 'lookup',
+    lookupType: 'supplier',
+    required: true,
+    section: 'supplierInfo',
+    editable: true,
+    labelKey: 'form.supplier',
+    validationSchema: required(),
+  },
+  {
+    key: 'address',
+    apiField: 'address',
+    type: 'textarea',
+    required: true,
+    section: 'supplierInfo',
+    editable: false,
+    readOnly: true,
+    labelKey: 'form.address',
+    validationSchema: required(),
+    dependsOn: 'supplier',
+  },
+  {
+    key: 'shipmentMode',
+    apiField: 'shipmentMode',
+    type: 'text',
+    required: true,
+    section: 'supplierInfo',
+    editable: true,
+    labelKey: 'form.shipmentMode',
+    validationSchema: required(),
+    dependsOn: 'supplier',
+  },
+  {
+    key: 'paymentTerm',
+    apiField: 'paymentTerm',
+    type: 'lookup',
+    lookupType: 'paymentTerm',
+    required: true,
+    section: 'supplierInfo',
+    editable: true,
+    labelKey: 'form.paymentTerm',
+    validationSchema: required(),
+    dependsOn: 'supplier',
+  },
+];
+
+const DOCUMENT_FIELDS: FormFieldDef[] = [
+  {
+    key: 'docLocation',
+    apiField: 'docLocation',
+    type: 'text',
+    required: true,
+    section: 'documentInfo',
+    editable: true,
+    labelKey: 'form.docLocation',
+    validationSchema: required(),
+    dependsOn: 'supplier',
+  },
+  {
+    key: 'location',
+    apiField: 'locationCode',
+    type: 'lookup',
+    lookupType: 'location',
+    required: true,
+    section: 'documentInfo',
+    editable: true,
+    labelKey: 'form.location',
+    validationSchema: required(),
+  },
+  {
+    key: 'documentDate',
+    apiField: 'documentDate',
+    type: 'date',
+    required: true,
+    section: 'documentInfo',
+    editable: true,
+    labelKey: 'form.documentDate',
+    validationSchema: { rules: ['required', 'dateEqualsToday'] },
+  },
+  {
+    key: 'deliveryDate',
+    apiField: 'deliveryDate',
+    type: 'date',
+    required: true,
+    section: 'documentInfo',
+    editable: true,
+    labelKey: 'form.deliveryDate',
+    validationSchema: required(),
+  },
+];
+
+const FINANCIAL_FIELDS: FormFieldDef[] = [
+  {
+    key: 'currency',
+    apiField: 'currency',
+    type: 'text',
+    required: true,
+    section: 'financialInfo',
+    editable: true,
+    labelKey: 'form.currency',
+    validationSchema: required(),
+    defaultFrom: 'system.currency',
+  },
+  {
+    key: 'exchangeRate',
+    apiField: 'exchangeRate',
+    type: 'number',
+    required: true,
+    section: 'financialInfo',
+    editable: true,
+    labelKey: 'form.exchangeRate',
+    validationSchema: { rules: ['required', 'positiveNumber'] },
+  },
+  {
+    key: 'discount',
+    apiField: 'discount',
+    type: 'number',
+    required: false,
+    section: 'financialInfo',
+    editable: true,
+    labelKey: 'form.discount',
+    validationSchema: { rules: [] },
+  },
+  {
+    key: 'inclusiveVat',
+    apiField: 'inclusiveVat',
+    type: 'checkbox',
+    required: false,
+    section: 'financialInfo',
+    editable: true,
+    labelKey: 'form.inclusiveVat',
+    validationSchema: { rules: [] },
+  },
+];
+
+const ADDITIONAL_FIELDS: FormFieldDef[] = [
+  {
+    key: 'remarks',
+    apiField: 'remarks',
+    type: 'textarea',
+    required: false,
+    section: 'additionalInfo',
+    editable: true,
+    labelKey: 'form.remarks',
+    validationSchema: { rules: [] },
+  },
+  {
+    key: 'docType',
+    apiField: 'docType',
+    type: 'text',
+    required: false,
+    section: 'additionalInfo',
+    editable: true,
+    labelKey: 'form.docType',
+    validationSchema: { rules: [] },
+  },
+  {
+    key: 'taxInvoiceDoc',
+    apiField: 'taxInvoiceDoc',
+    type: 'text',
+    required: false,
+    section: 'additionalInfo',
+    editable: true,
+    labelKey: 'form.taxInvoiceDoc',
+    validationSchema: { rules: [] },
+  },
+];
+
+export const TEMPORARY_FORM_FIELD_DEFS: FormFieldDef[] = [
+  ...SUPPLIER_FIELDS,
+  ...DOCUMENT_FIELDS,
+  ...FINANCIAL_FIELDS,
+  ...ADDITIONAL_FIELDS,
+];
+
+export const TEMPORARY_FORM_SECTIONS = [
+  { id: 'supplierInfo', labelKey: 'form.supplierInfo', fields: SUPPLIER_FIELDS },
+  { id: 'documentInfo', labelKey: 'form.documentInfo', fields: DOCUMENT_FIELDS },
+  { id: 'financialInfo', labelKey: 'form.financialInfo', fields: FINANCIAL_FIELDS },
+  { id: 'additionalInfo', labelKey: 'form.additionalInfo', fields: ADDITIONAL_FIELDS },
+  { id: 'itemDetails', labelKey: 'form.itemDetails', fields: [] as FormFieldDef[] },
+];

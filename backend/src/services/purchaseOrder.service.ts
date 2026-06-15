@@ -4,15 +4,40 @@ import type {
   PurchaseOrderListItem,
   POListResponse,
   PODetailResponse,
+  POCreatePayload,
+  POUpdatePayload,
+  POLineItemsResponse,
 } from '../types/purchaseOrder.types';
 import type { OraclePurchaseOrderRow } from '../types/oracle.types';
 import { getPoModuleConfig } from '../modules/po/po.config';
 import { mapOracleRowToPurchaseOrderListItem } from '../mappers/purchaseOrder.mapper';
 import { buildViewListQuery, buildViewDetailQuery } from '../utils/oracleViewQuery';
 import { calcTotalPages } from '../utils/pagination';
+import { resolvePOPermissions } from '../utils/poPermissions.util';
+import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
 const poConfig = getPoModuleConfig();
+
+function buildAuditFields(row: OraclePurchaseOrderRow) {
+  return {
+    createdBy: String(row.H_CR_UNAME ?? row.H_CR_UID ?? ''),
+    createdDate: String(row.DOC_DT ?? ''),
+    updatedBy: '',
+    updatedDate: '',
+    approvedBy: '',
+    approvedDate: '',
+  };
+}
+
+function enrichDetail(row: OraclePurchaseOrderRow): PODetailResponse {
+  const base = mapOracleRowToPurchaseOrderListItem(row);
+  return {
+    ...base,
+    audit: buildAuditFields(row),
+    permissions: resolvePOPermissions(base),
+  };
+}
 
 export async function getPOList(
   params: POListQueryParams,
@@ -67,20 +92,71 @@ export async function getPODetail(
   });
 
   const row = result.rows?.[0] as OraclePurchaseOrderRow | undefined;
-  return row ? mapOracleRowToPurchaseOrderListItem(row) : null;
+  return row ? enrichDetail(row) : null;
+}
+
+export async function getPOLineItems(
+  _orderNo: string,
+  _conn: Connection,
+): Promise<POLineItemsResponse> {
+  if (!env.ORACLE_PO_LINE_VIEW) {
+    return {
+      configured: false,
+      envKey: 'ORACLE_PO_LINE_VIEW',
+      message: 'Oracle PO line view not configured. Set ORACLE_PO_LINE_VIEW in environment.',
+      data: null,
+    };
+  }
+
+  // Future: query ORACLE_PO_LINE_VIEW by orderNo
+  return { configured: true, data: [] };
+}
+
+export async function createPO(
+  _payload: POCreatePayload,
+  _conn: Connection,
+): Promise<never> {
+  if (!env.ORACLE_PO_CREATE_SP) {
+    const err = new Error('PO create stored procedure not configured') as Error & { statusCode: number; blocker: string };
+    err.statusCode = 501;
+    err.blocker = 'ORACLE_PO_CREATE_SP';
+    throw err;
+  }
+  const err = new Error('PO create stored procedure not yet implemented') as Error & { statusCode: number; blocker: string };
+  err.statusCode = 501;
+  err.blocker = 'ORACLE_PO_CREATE_SP';
+  throw err;
 }
 
 export async function updatePO(
   _id: string,
-  _payload: Partial<PurchaseOrderListItem>,
+  _payload: POUpdatePayload,
   _conn: Connection,
-): Promise<PurchaseOrderListItem | null> {
-  return null;
+): Promise<never> {
+  if (!env.ORACLE_PO_UPDATE_SP) {
+    const err = new Error('PO update stored procedure not configured') as Error & { statusCode: number; blocker: string };
+    err.statusCode = 501;
+    err.blocker = 'ORACLE_PO_UPDATE_SP';
+    throw err;
+  }
+  const err = new Error('PO update stored procedure not yet implemented') as Error & { statusCode: number; blocker: string };
+  err.statusCode = 501;
+  err.blocker = 'ORACLE_PO_UPDATE_SP';
+  throw err;
 }
 
 export async function approvePO(
   _id: string,
   _conn: Connection,
-): Promise<PurchaseOrderListItem | null> {
-  return null;
+): Promise<never> {
+  if (!env.ORACLE_PO_APPROVE_SP) {
+    const err = new Error('PO approve stored procedure not configured') as Error & { statusCode: number; blocker: string };
+    err.statusCode = 501;
+    err.blocker = 'ORACLE_PO_APPROVE_SP';
+    throw err;
+  }
+  const err = new Error('PO approve stored procedure not yet implemented') as Error & { statusCode: number; blocker: string };
+  err.statusCode = 501;
+  err.blocker = 'ORACLE_PO_APPROVE_SP';
+  throw err;
 }

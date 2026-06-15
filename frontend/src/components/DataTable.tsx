@@ -1,7 +1,10 @@
 import { memo, type CSSProperties, type KeyboardEvent } from 'react';
 import type { ColumnConfig, PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
-import { formatDate, formatCurrency, getStatusLabel } from '../utils/formatters';
+import { ERPStatusBadge } from './erp';
+import { formatDate, formatCurrency } from '../utils/formatters';
+import { resolvePOPermissions } from '../hooks/usePOPermissions';
+import { DEFAULT_USER_PERMISSIONS } from '../constants/permissions';
 import { TABLE_MIN_WIDTH } from '../data/poColumns';
 import IconButton from './IconButton';
 import {
@@ -29,13 +32,6 @@ interface DataTableProps {
   fillHeight?: boolean;
   skeletonRowCount?: number;
 }
-
-const STATUS_CLASS: Record<PurchaseOrder['status'], string> = {
-  Pending: 'status-pending',
-  Approved: 'status-approved',
-  Rejected: 'status-rejected',
-  Draft: 'status-draft',
-};
 
 const TOOLTIP_COLUMNS = new Set(['supplierName', 'remarks']);
 
@@ -88,6 +84,8 @@ function ActionCell({
   onEdit: (row: PurchaseOrder) => void;
   t: TranslationMap;
 }) {
+  const canEdit = resolvePOPermissions(row, DEFAULT_USER_PERMISSIONS).canEdit;
+
   return (
     <div
       className="action-buttons actions-cell"
@@ -108,7 +106,7 @@ function ActionCell({
         />
       </span>
       <span className="action-slot">
-        {row.status !== 'Approved' ? (
+        {canEdit ? (
           <IconButton
             variant="ghost"
             className="action-btn"
@@ -142,11 +140,7 @@ function renderCell(
   if (col.key === 'orderValue') return formatCurrency(row.orderValue, lang);
   if (col.key === 'documentDate' || col.key === 'deliveryDate') return formatDate(row[col.key], lang);
   if (col.key === 'status') {
-    return (
-      <span className={`status-badge ${STATUS_CLASS[row.status]}`} role="status">
-        {getStatusLabel(row.status, t)}
-      </span>
-    );
+    return <ERPStatusBadge status={row.status} t={t} />;
   }
   const text = row[col.key as keyof PurchaseOrder] as string;
   const showTooltip = TOOLTIP_COLUMNS.has(col.key) || text.length > 24;

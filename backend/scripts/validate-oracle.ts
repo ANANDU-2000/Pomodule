@@ -23,12 +23,19 @@ const UI_FIELDS: (keyof PurchaseOrderListItem)[] = [
   'documentDate',
   'supplierCode',
   'supplierName',
+  'locationCode',
   'location',
-  'orderValue',
-  'status',
   'deliveryDate',
+  'orderQty',
+  'currency',
+  'orderValue',
+  'lineItemCount',
+  'terms',
+  'status',
   'remarks',
   'userId',
+  'userName',
+  'rowId',
 ];
 
 const BLOCKERS: string[] = [];
@@ -48,7 +55,11 @@ function validateMapping(row: OraclePurchaseOrderRow): string {
     }
     if (field === 'orderValue' && typeof value !== 'number') {
       issues.push(`orderValue should be number, got ${typeof value}`);
-    } else if (field !== 'orderValue' && typeof value !== 'string') {
+    } else if (field === 'orderQty' && typeof value !== 'number') {
+      issues.push(`orderQty should be number, got ${typeof value}`);
+    } else if (field === 'lineItemCount' && typeof value !== 'number') {
+      issues.push(`lineItemCount should be number, got ${typeof value}`);
+    } else if (field !== 'orderValue' && field !== 'orderQty' && field !== 'lineItemCount' && typeof value !== 'string') {
       issues.push(`${field} should be string, got ${typeof value}`);
     }
   }

@@ -1,29 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
-import { z } from 'zod';
-import type { PurchaseOrderListItem } from '../types/purchaseOrder.types';
-
-const updateBodySchema = z.object({
-  documentDate: z.string().optional(),
-  supplierCode: z.string().optional(),
-  supplierName: z.string().optional(),
-  location: z.string().optional(),
-  orderValue: z.coerce.number().optional(),
-  status: z.string().optional(),
-  deliveryDate: z.string().optional(),
-  remarks: z.string().optional(),
-  userId: z.string().optional(),
-}).strict();
+import { poUpdateBodySchema } from '../utils/validationRules';
+import type { POUpdatePayload } from '../types/purchaseOrder.types';
 
 declare global {
   namespace Express {
     interface Request {
-      validatedBody?: Partial<PurchaseOrderListItem>;
+      validatedBody?: POUpdatePayload;
     }
   }
 }
 
 export function validateUpdateBody(req: Request, res: Response, next: NextFunction): void {
-  const result = updateBodySchema.safeParse(req.body);
+  const result = poUpdateBodySchema.safeParse(req.body);
   if (!result.success) {
     res.status(400).json({
       error: 'Invalid request body',
@@ -31,6 +19,6 @@ export function validateUpdateBody(req: Request, res: Response, next: NextFuncti
     });
     return;
   }
-  req.validatedBody = result.data;
+  req.validatedBody = result.data as POUpdatePayload;
   next();
 }

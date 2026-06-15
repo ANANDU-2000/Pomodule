@@ -2,26 +2,30 @@
   /* ─── Backgrounds ─── */
   --color-bg-app:           #F9FAFB;
   --color-bg-surface:       #FFFFFF;
-  --color-bg-sidebar:       #1F2937;
-  --color-bg-sidebar-hover: #374151;
-  --color-bg-sidebar-active:rgba(59, 130, 246, 0.18);
+  --color-bg-sidebar:       #172554;
+  --color-bg-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --color-bg-sidebar-active: rgba(37, 99, 235, 0.2);
   --color-bg-header:        #FFFFFF;
   --color-bg-table-header:  #F9FAFB;
   --color-bg-row-hover:     #F3F4F6;
   --color-bg-row-alt:       #F9FAFB;
+  --color-bg-row-active:    #EFF6FF;
+  --color-bg-muted:         #F3F4F6;
   --color-bg-input:         #FFFFFF;
   --color-bg-input-disabled:#F9FAFB;
   --color-bg-overlay:       rgba(17, 24, 39, 0.4);
+  --color-surface-muted:    #F4F4F5;
 
   /* ─── Text ─── */
-  --color-text-primary:     #111827;
+  --color-text-primary:     #1F2937;
   --color-text-secondary:   #6B7280;
   --color-text-muted:       #9CA3AF;
-  --color-text-sidebar:     #F9FAFB;
-  --color-text-sidebar-muted:#9CA3AF;
-  --color-text-sidebar-active:#F9FAFB;
+  --color-text-placeholder: #98A2B3;
+  --color-text-sidebar:     #E2E8F0;
+  --color-text-sidebar-muted:#94A3B8;
+  --color-text-sidebar-active:#FFFFFF;
   --color-text-link:        #2563EB;
-  --color-text-table-link:  #111827;
+  --color-text-table-link:  #1F2937;
   --color-text-table-link-hover: #2563EB;
   --color-text-inverse:     #FFFFFF;
 
@@ -29,12 +33,13 @@
   --color-border:           #E5E7EB;
   --color-border-subtle:    #E5E7EB;
   --color-border-focus:     #2563EB;
-  --color-border-sidebar:   #374151;
-  --color-border-input:     #E5E7EB;
+  --color-border-sidebar:   #1e3a8a;
+  --color-border-input:     #D9D9D9;
   --color-border-input-hover:#9CA3AF;
 
   /* ─── Accent / Brand ─── */
   --color-accent:           #2563EB;
+  --color-primary:          #2563EB;
   --color-accent-hover:     #1D4ED8;
   --color-accent-active:    #1E40AF;
   --color-accent-subtle:    #EFF6FF;
@@ -67,7 +72,7 @@
   --color-success-bg:       #F0FDF4;
   --color-success-border:   #BBF7D0;
 
-  /* ─── Spacing (4px grid — only these 6 values) ─── */
+  /* ─── Spacing (8px grid) ─── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -81,67 +86,75 @@
   --font-size-sm:          12px;
   --font-size-base:        13px;
   --font-size-md:          14px;
-  --font-size-page-title:  18px;
+  --font-size-label:       13px;
+  --font-size-value:       14px;
+  --font-size-table:       14px;
+  --font-size-section-title: 18px;
+  --font-size-page-title:  32px;
 
   --font-weight-normal:    400;
   --font-weight-medium:    500;
   --font-weight-semibold:  600;
+  --font-weight-bold:      700;
 
   --line-height-tight:     1.35;
-  --line-height-base:      1.5;
+  --line-height-base:      1.4;
+
+  /* ─── Layout ─── */
+  --content-max-width:     1400px;
 
   /* ─── Sidebar ─── */
-  --sidebar-width:           220px;
+  --sidebar-width:           240px;
   --sidebar-collapsed-width: 64px;
   --sidebar-header-height:   40px;
-  --sidebar-toggle-size:     32px;
-  --nav-item-height:         32px;
+  --sidebar-toggle-size:     40px;
+  --nav-item-height:         44px;
   --nav-active-bar-width:    4px;
   --nav-indent-l1:           12px;
   --nav-indent-l2:           24px;
   --nav-indent-l3:           36px;
 
   /* ─── Table ─── */
-  --table-row-height:      32px;
-  --table-header-height:   28px;
-  --table-cell-padding-x:  8px;
+  --table-row-height:      44px;
+  --table-header-height:   44px;
+  --table-cell-padding-x:  12px;
 
   /* ─── Components ─── */
-  --input-height:          32px;
-  --input-padding-x:       10px;
-  --btn-height:            32px;
-  --btn-height-primary:    32px;
-  --btn-padding-x:         12px;
-  --icon-btn-size:         32px;
-  --header-height:         40px;
-  --toolbar-height:        40px;
-  --pagination-height:     40px;
+  --input-height:          40px;
+  --input-padding-x:       12px;
+  --btn-height:            40px;
+  --btn-height-primary:    40px;
+  --btn-padding-x:         16px;
+  --icon-btn-size:         40px;
+  --header-height:         56px;
+  --toolbar-height:        56px;
+  --pagination-height:     44px;
   --search-width:          320px;
 
   /* ─── Status badge ─── */
-  --badge-height:          20px;
-  --badge-padding-x:       8px;
-  --badge-width:           76px;
+  --badge-height:          24px;
+  --badge-padding-x:       10px;
 
-  /* ─── Icons (see icons.tsx for constant names) ─── */
+  /* ─── Icons ─── */
   --icon-size-nav:         16px;
-  --icon-size-header:      14px;
-  --icon-size-action:      14px;
-  --icon-size-sort:        12px;
-  --icon-size-form:        14px;
+  --icon-size-header:      16px;
+  --icon-size-action:      16px;
+  --icon-size-sort:        14px;
+  --icon-size-form:        16px;
 
   /* ─── Shape ─── */
   --radius-sm:             4px;
   --radius-md:             6px;
-  --radius-lg:             6px;
+  --radius-lg:             8px;
 
-  /* ─── Elevation (flat by default) ─── */
+  /* ─── Elevation ─── */
   --shadow-none:           none;
+  --shadow-md:             0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-popup:          0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
   --shadow-modal:          0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-focus-ring:     0 0 0 2px var(--color-accent);
 
   /* ─── Motion ─── */
   --transition-fast:       120ms ease;
   --transition-base:       180ms ease;
 }
-

@@ -1,14 +1,55 @@
+import type { POActionPermissions, POAuditFields, POLineItem } from './formConfig';
+
 export interface PurchaseOrder {
   orderNo: string;
   documentDate: string;
   supplierCode: string;
   supplierName: string;
+  locationCode: string;
   location: string;
-  orderValue: number;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Draft';
   deliveryDate: string;
+  orderQty: number;
+  currency: string;
+  orderValue: number;
+  lineItemCount: number;
+  terms: string;
+  status: string;
   remarks: string;
   userId: string;
+  userName: string;
+  rowId: string;
+  permissions?: POActionPermissions;
+  audit?: POAuditFields;
+  address?: string;
+  shipmentMode?: string;
+  paymentTerm?: string;
+  docLocation?: string;
+  exchangeRate?: number;
+  discount?: number;
+  inclusiveVat?: boolean;
+  docType?: string;
+  taxInvoiceDoc?: string;
+}
+
+export interface POFormPayload {
+  supplierCode: string;
+  supplierName: string;
+  address: string;
+  shipmentMode: string;
+  paymentTerm: string;
+  docLocation: string;
+  locationCode: string;
+  location?: string;
+  documentDate: string;
+  deliveryDate: string;
+  currency: string;
+  exchangeRate: number;
+  discount?: number;
+  remarks?: string;
+  inclusiveVat?: boolean;
+  docType?: string;
+  taxInvoiceDoc?: string;
+  items: POLineItem[];
 }
 
 export interface ColumnConfig {

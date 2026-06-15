@@ -46,7 +46,23 @@ function NavTree({
           : isNavNodeActive(node, pathname);
 
         if (isLeaf && node.route) {
-          if (collapsed) return null;
+          if (collapsed) {
+            return (
+              <button
+                key={node.id}
+                type="button"
+                className={`nav-child nav-child-icon-only${isActive ? ' active' : ''}`}
+                title={node.label}
+                aria-label={node.label}
+                onClick={() => onNavigate(node.route!)}
+                onKeyDown={(e) => onKeyDown(e, () => onNavigate(node.route!))}
+              >
+                <span className="nav-icon">
+                  <AppIcon icon={FileText} size={ICON_SIZE_NAV} />
+                </span>
+              </button>
+            );
+          }
 
           return (
             <button

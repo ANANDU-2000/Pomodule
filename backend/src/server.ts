@@ -5,6 +5,8 @@ import { env } from './config/env';
 import { initPool, closePool } from './config/oracle';
 import { probeOracleHealth } from './config/oracleHealth';
 import purchaseOrderRouter from './routes/purchaseOrder.routes';
+import lookupRouter from './routes/lookup.routes';
+import formConfigRouter from './routes/formConfig.routes';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
@@ -68,6 +70,8 @@ async function main(): Promise<void> {
   });
 
   app.use('/api/purchase-orders', purchaseOrderRouter);
+  app.use('/api/lookups', lookupRouter);
+  app.use('/api/po', formConfigRouter);
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'Not found' });

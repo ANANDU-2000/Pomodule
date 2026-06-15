@@ -9,7 +9,7 @@ const DEFAULT_PARAMS: POListParams = {
   search: '',
   filter: 'all',
   sortBy: '',
-  sortDirection: 'asc',
+  sortDirection: 'desc',
 };
 
 export function usePurchaseOrders() {

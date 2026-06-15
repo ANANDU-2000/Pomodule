@@ -1,4 +1,3 @@
-import type { PurchaseOrder } from '../types/PurchaseOrder';
 import type { TranslationMap } from '../types/i18n';
 
 const DATE_LOCALES: Record<string, string> = { en: 'en-GB', th: 'th-TH' };
@@ -22,12 +21,23 @@ export function formatCurrency(value: number, lang: 'en' | 'th' = 'en'): string 
   }).format(value);
 }
 
-export function getStatusLabel(status: PurchaseOrder['status'], t: TranslationMap): string {
-  const map: Record<PurchaseOrder['status'], string> = {
+const STATUS_CLASS_MAP: Record<string, string> = {
+  Pending: 'status-pending',
+  Approved: 'status-approved',
+  Rejected: 'status-rejected',
+  Draft: 'status-draft',
+};
+
+export function getStatusClass(status: string): string {
+  return STATUS_CLASS_MAP[status] ?? 'status-default';
+}
+
+export function getStatusLabel(status: string, t: TranslationMap): string {
+  const map: Record<string, string> = {
     Pending: t.status.pending,
     Approved: t.status.approved,
     Rejected: t.status.rejected,
     Draft: t.status.draft,
   };
-  return map[status];
+  return map[status] ?? status;
 }

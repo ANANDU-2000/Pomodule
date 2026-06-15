@@ -38,4 +38,11 @@ ORACLE_POOL_MAX=50
 
 Connect to VPN before starting the backend.
 
+**Check Oracle connection:**
+```bash
+cd backend
+npm run validate:oracle
+```
+Report is written to `backend/reports/oracle-validation-report.txt`.
+
 Open the app at http://localhost:5173 (not the backend port).

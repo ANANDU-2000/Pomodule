@@ -17,6 +17,7 @@ export async function initPool(): Promise<void> {
     poolTimeout: 60,
     queueTimeout: 30_000,
     stmtCacheSize: 30,
+    connectTimeout: env.ORACLE_CONNECT_TIMEOUT,
   });
 
   logger.info('Oracle connection pool initialized', {
