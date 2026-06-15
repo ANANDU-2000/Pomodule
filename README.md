@@ -38,8 +38,4 @@ ORACLE_POOL_MAX=50
 
 Connect to VPN before starting the backend.
 
-## Documentation
-
-- [Oracle integration](docs/ORACLE_INTEGRATION_GUIDE.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [API & performance](docs/API_PERFORMANCE_AND_INTEGRATION.md)
+Open the app at http://localhost:5173 (not the backend port).
