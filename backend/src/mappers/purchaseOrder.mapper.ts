@@ -30,6 +30,3 @@ export function mapOracleRowToPurchaseOrderListItem(row: OraclePurchaseOrderRow)
     userId: String(row.H_CR_UID ?? ''),
   };
 }
-
-/** @deprecated Use mapOracleRowToPurchaseOrderListItem */
-export const mapOracleRowToPOListItem = mapOracleRowToPurchaseOrderListItem;

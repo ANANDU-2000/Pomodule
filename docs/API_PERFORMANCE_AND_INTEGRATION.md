@@ -19,7 +19,7 @@ For component layout and keyboard shortcuts, see [ARCHITECTURE.md](./ARCHITECTUR
 ┌──────────────────────────────────────────────────────────────────────────┐
 │  BACKEND API (Express — backend/src)                                    │
 │  GET /api/purchase-orders?page=1&pageSize=10&search=...                │
-│  Validates request, calls Oracle (or mock), returns one page + total   │
+│  Validates request, calls Oracle view, returns one page + total        │
 └───────────────────────────────┬──────────────────────────────────────────┘
                                 │  JDBC / ODP.NET / oracledb
                                 ▼
@@ -37,11 +37,9 @@ For component layout and keyboard shortcuts, see [ARCHITECTURE.md](./ARCHITECTUR
 | **Backend API** | `backend/src` | Auth, validation, date filter resolution, Oracle calls, JSON response |
 | **Oracle DB** | *ERP database* | Source of truth, indexed queries, stored procedures |
 
-### Current state (development)
+### Current state
 
-Default: frontend calls `GET /api/purchase-orders` via Vite proxy → Express backend (`DATA_SOURCE=mock`). Backend mock repository filters/sorts/paginates **20 seed records** in RAM from `mockPurchaseOrders.seed.ts`.
-
-Oracle integration: set `DATA_SOURCE=oracle` in `backend/.env` with host/port/service credentials. List and detail read from `OV_PO_SEARCH_VIEW_YSG` via `oraclePurchaseOrder.service.ts`. Hooks and components stay unchanged.
+Frontend calls `GET /api/purchase-orders` via Vite proxy → Express backend. List and detail read from Oracle via `purchaseOrder.service.ts` + reusable `oracleViewQuery.ts`. Hooks and components are unchanged.
 
 ---
 
@@ -70,7 +68,7 @@ Built by `toApiParams()` in `purchaseOrderService.ts` — **no date params from 
 | `sortBy` | `sortBy` | Column key, e.g. `documentDate` |
 | `sortDirection` | `sortOrder` | Mapped from internal `sortDirection` |
 
-Backend resolves `filter` → `P_FROM_DATE` / `P_TO_DATE` in `backend/src/utils/dateFilter.ts` before mock filter or Oracle proc call.
+Backend resolves `filter` → `DOC_DT` date range SQL in `oracleViewQuery.ts` using `resolveFilterDates()` from `dateFilter.ts`.
 
 ### Response (`POListResult`)
 
@@ -99,13 +97,12 @@ Each `PurchaseOrder` row has 10 fields (`orderNo`, `documentDate`, `supplierCode
 | `loading` state | `usePurchaseOrders.ts` | `true` while `fetchPurchaseOrders` runs |
 | Skeleton UI | `DataTable.tsx` | Shows `SkeletonRows` when `loading === true` |
 | Search debounce | `SearchBar.tsx` | 300 ms delay before triggering a new fetch |
-| Mock delay | `purchaseOrderService.ts` | Artificial `100 ms` `setTimeout` (remove with real API) |
 
 **User-visible flow:**
 
 1. User changes page, filter, search, or sort → `params` update.
 2. `useEffect` runs → `setLoading(true)` → table shows skeleton rows.
-3. API (or mock) returns → `setResult(data)` → `setLoading(false)` → table renders rows.
+3. API returns → `setResult(data)` → `setLoading(false)` → table renders rows.
 
 Total perceived wait ≈ **debounce (0–300 ms) + network + DB + render**.
 
@@ -135,7 +132,7 @@ Measure with browser DevTools → **Network** tab → select the `purchase-order
 
 ### 3.3 Response payload size
 
-Estimated JSON size per purchase order row: **~280–350 bytes** (based on mock shape).
+Estimated JSON size per purchase order row: **~280–350 bytes** (10 mapped fields).
 
 | Scenario | Rows in `data` | Approx. payload |
 |----------|----------------|-----------------|
@@ -205,28 +202,14 @@ Plus a separate **count** query (or window function) for `total`.
 | `COUNT(*)` on full table every request | Slow on huge tables | Index on filtered columns; count cache; “100,000+” approximate label |
 | `search` with leading `%` wildcard | Full scan | Oracle Text / functional indexes; minimum search length |
 | `sortBy` on unindexed column | Filesort | Index matching `ORDER BY` |
-| Sort/filter entire set in browser (current mock) | O(n) per interaction, all 1M in memory | **Remove** when API is connected |
+| Fetch entire view into Node memory | O(n) memory per request | **Mitigated** — SQL-side filter/sort/pagination in `oracleViewQuery.ts` |
 | Jump to page 99,999 | OFFSET cost grows | Keyset pagination for very deep pages (future optimization) |
 
-### 4.4 Client-side mock vs 1M rows
+### 4.4 SQL-side list vs 1M rows
 
-Current mock path copies and sorts the **entire** array on every request:
+The backend builds dynamic `WHERE`, `ORDER BY`, and `OFFSET FETCH` in `oracleViewQuery.ts`. Each API call returns only the requested page from Oracle — never the full dataset in Node or the browser.
 
-```typescript
-let result = [...allOrders];
-result = filterByDatePeriod(result, params.filter);
-result = searchPurchaseOrders(result, params.search);
-result.sort(...);
-const data = result.slice(start, start + params.pageSize);
-```
-
-If `allOrders` were 1,000,000 rows loaded from JSON at startup:
-
-- Initial bundle or dynamic import: **hundreds of MB** — app would not load in browser.
-- Each filter/search/sort: **CPU seconds** per interaction.
-- Memory: **1 GB+** for JS objects.
-
-**Action when going to production:** delete in-browser filter/sort/slice; Oracle + API own all of that.
+Run `npm run validate:oracle` after deployment to confirm SQL pagination is active and row counts are reasonable.
 
 ---
 
@@ -339,16 +322,16 @@ User types in search (debounced):
 
 | Question | Answer |
 |----------|--------|
-| Where is business logic today? | Backend mock repository (`mockPurchaseOrder.repository.ts`) or Oracle service (`oraclePurchaseOrder.service.ts`) |
-| Where should it live with Oracle? | Oracle view + backend API (`DATA_SOURCE=oracle`); write ops need DB procedures |
+| Where is business logic today? | Oracle view + `purchaseOrder.service.ts` + `oracleViewQuery.ts` |
+| Where should write ops live? | Oracle stored procedures; wire in `purchaseOrder.service.ts` |
 | How many orders does one API call return? | **10–100** (page size), never 1,000,000 |
 | Response size per call? | **~3–35 KB** typical |
 | Target API latency? | **&lt; 200–500 ms** p95 for list |
 | What shows while waiting? | `SkeletonRows` in `DataTable` (`loading` from `usePurchaseOrders`) |
 | Can UI handle 1M total orders? | **Yes**, if every fetch is paginated server-side |
 | Can UI fetch all 1M at once? | **No** — memory, network, and render will fail |
-| What file to change for Oracle? | **`backend/src/services/purchaseOrder.service.ts`** + **`backend/src/utils/oracleParams.ts`** |
-| How to validate integration? | Request/response contract + API auth + Oracle plans + latency tests (Section 5) |
+| What file to change for list queries? | **`backend/src/utils/oracleViewQuery.ts`** + **`purchaseOrder.service.ts`** |
+| How to validate integration? | `npm run validate:oracle` + Section 5 checklist |
 
 ---
 
@@ -358,11 +341,12 @@ User types in search (debounced):
 |------|------|
 | `frontend/src/services/purchaseOrderService.ts` | API client, `toApiParams`, `POListResult` |
 | `frontend/src/hooks/usePurchaseOrders.ts` | Loading state, param orchestration |
-| `backend/src/utils/dateFilter.ts` | `resolveFilterDates` — filter enum → Oracle date params |
-| `backend/src/services/purchaseOrder.mock.service.ts` | Dev mock list/detail/update |
-| `backend/src/services/purchaseOrder.service.ts` | Oracle procedure stubs |
+| `backend/src/utils/dateFilter.ts` | `resolveFilterDates` — filter enum → SQL date range |
+| `backend/src/utils/oracleViewQuery.ts` | Dynamic SQL WHERE, ORDER BY, OFFSET FETCH |
+| `backend/src/services/purchaseOrder.service.ts` | Oracle list/detail queries |
+| `backend/scripts/validate-oracle.ts` | A–I integration validation report |
 | `docs/ARCHITECTURE.md` | UI architecture and component matrix |
 
 ---
 
-*Last updated for PO module listing scope — backend API live with mock data; Oracle procedures pending DB team.*
+*Last updated for PO module listing scope — Oracle read path live with SQL-side pagination; write procedures pending DB team.*

@@ -40,7 +40,7 @@ The Purchase Order listing page follows a layered architecture with clear fronte
 │  usePurchaseOrders (hook)                               │
 ├─────────────────────────────────────────────────────────┤
 │  purchaseOrderService → GET /api/purchase-orders        │
-│                      → backend mock repo or Oracle view │
+│                      → Oracle view OV_PO_SEARCH_VIEW_YSG │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -80,7 +80,7 @@ GET /api/purchase-orders
 ```
 
 - Frontend sends `filter` enum only — no `fromDate` / `toDate` in the request.
-- Backend `resolveFilterDates(filter)` in `backend/src/utils/dateFilter.ts` computes dates for mock filtering and Oracle `P_FROM_DATE` / `P_TO_DATE`.
+- Backend `resolveFilterDates(filter)` in `backend/src/utils/dateFilter.ts` builds SQL date predicates via `oracleViewQuery.ts`.
 - Frontend uses `sortDirection` internally; `toApiParams()` maps to `sortOrder` for the API.
 
 Response shape (`POListResult`):
@@ -104,13 +104,9 @@ PUT /api/purchase-orders/:id
 
 See [ORACLE_INTEGRATION_GUIDE.md](./ORACLE_INTEGRATION_GUIDE.md) for procedure adoption steps.
 
-## Oracle Integration Plan
+## Oracle Integration
 
-When Oracle stored procedures are ready:
-
-1. Fill in PLACEHOLDER comments in `backend/src/utils/oracleParams.ts` and `backend/src/services/purchaseOrder.service.ts`
-2. Set `DATA_SOURCE=oracle` in `backend/.env`
-3. Frontend keeps calling `/api` — no service-layer changes needed for listing
+List and detail read from Oracle via `purchaseOrder.service.ts` + `oracleViewQuery.ts`. Write operations need DB procedures — see [ORACLE_INTEGRATION_GUIDE.md](./ORACLE_INTEGRATION_GUIDE.md).
 
 No changes required to hooks, pages, or components for listing.
 
@@ -134,8 +130,8 @@ No changes required to hooks, pages, or components for listing.
 | React StrictMode double effects (dev) | `AbortController` in `usePurchaseOrders` |
 | Column/filter recreation on render | `useMemo(() => getPoColumns(t), [t])` in list page |
 | Language switch jank on large tables | `startTransition` in `setLang` |
-| Mock fetch cancellation | `fetchPurchaseOrders(params, signal)` respects `AbortSignal` |
-| Client-side mock at scale | Replace with server-side Oracle pagination via API |
+| Fetch cancellation | `fetchPurchaseOrders(params, signal)` respects `AbortSignal` |
+| Large datasets | SQL-side pagination via `oracleViewQuery.ts` |
 
 See also [API_PERFORMANCE_AND_INTEGRATION.md](./API_PERFORMANCE_AND_INTEGRATION.md).
 
@@ -143,4 +139,4 @@ See also [API_PERFORMANCE_AND_INTEGRATION.md](./API_PERFORMANCE_AND_INTEGRATION.
 
 - **React Router** can wire View/Edit to `GET/PUT` APIs (currently `window.open` stubs)
 - **Virtual scrolling** can be added to DataTable if needed
-- **Role permissions** gate action buttons via `getPoListPageActions(t)` filtered against `MOCK_USER_PERMISSIONS`
+- **Role permissions** gate action buttons via `DEFAULT_USER_PERMISSIONS` until auth service exists

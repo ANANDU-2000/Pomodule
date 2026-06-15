@@ -3,19 +3,9 @@ import { z } from 'zod';
 import type { POListQueryParams } from '../types/purchaseOrder.types';
 import { FILTER_PERIODS } from '../types/filter.types';
 import { env } from '../config/env';
+import { PO_SORTABLE_API_FIELDS } from '../modules/po/po.config';
 
-const SORTABLE_FIELDS = [
-  'orderNo',
-  'documentDate',
-  'supplierCode',
-  'supplierName',
-  'location',
-  'orderValue',
-  'status',
-  'deliveryDate',
-  'remarks',
-  'userId',
-] as const;
+const SORTABLE_FIELDS = PO_SORTABLE_API_FIELDS as readonly string[];
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -23,7 +13,7 @@ const querySchema = z.object({
   search: z.string().max(200).default(''),
   filter: z.enum(FILTER_PERIODS).default('all'),
   sortBy: z.string().max(50).default('').refine(
-    (val) => val === '' || SORTABLE_FIELDS.includes(val as typeof SORTABLE_FIELDS[number]),
+    (val) => val === '' || SORTABLE_FIELDS.includes(val),
     { message: 'Invalid sort field' },
   ),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),

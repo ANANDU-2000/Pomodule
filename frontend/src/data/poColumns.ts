@@ -25,7 +25,7 @@ export function getPoColumns(t: TranslationMap): ColumnConfig[] {
     { key: 'orderValue', label: t.columns.orderValue, sortable: true, width: COLUMN_WIDTHS.orderValue, align: 'right' },
     { key: 'status', label: t.columns.status, sortable: true, width: COLUMN_WIDTHS.status, align: 'center' },
     { key: 'deliveryDate', label: t.columns.deliveryDate, sortable: true, width: COLUMN_WIDTHS.deliveryDate, align: 'right' },
-    { key: 'remarks', label: t.columns.remarks, sortable: false, width: COLUMN_WIDTHS.remarks },
+    { key: 'remarks', label: t.columns.remarks, sortable: true, width: COLUMN_WIDTHS.remarks },
     { key: 'userId', label: t.columns.userId, sortable: true, width: COLUMN_WIDTHS.userId },
     { key: 'actions', label: t.columns.actions, sortable: false, width: COLUMN_WIDTHS.actions, align: 'center' },
   ];

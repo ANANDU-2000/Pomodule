@@ -1,9 +1,5 @@
 import type { FilterPeriod, ResolvedFilterDates } from '../types/filter.types';
 
-interface DatedRow {
-  documentDate: string;
-}
-
 function formatIsoDate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -65,18 +61,4 @@ export function resolveFilterDates(filter: string): ResolvedFilterDates {
     return { fromDate: '', toDate: '' };
   }
   return { fromDate: formatIsoDate(from), toDate: formatIsoDate(to) };
-}
-
-export function filterByDatePeriod<T extends DatedRow>(data: T[], filter: string): T[] {
-  const period = filter as FilterPeriod;
-  if (period === 'all') return data;
-  if (period === 'none') return [];
-
-  const { from, to } = getDateRange(period);
-  if (!from || !to) return data;
-
-  return data.filter((row) => {
-    const d = new Date(row.documentDate);
-    return d >= from && d <= to;
-  });
 }

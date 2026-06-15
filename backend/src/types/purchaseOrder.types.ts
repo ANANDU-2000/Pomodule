@@ -21,9 +21,6 @@ export interface PurchaseOrderListItem {
   userId: string;
 }
 
-/** @deprecated Use PurchaseOrderListItem */
-export type POListItem = PurchaseOrderListItem;
-
 export interface POListResponse {
   data: PurchaseOrderListItem[];
   total: number;
@@ -33,13 +30,3 @@ export interface POListResponse {
 }
 
 export type PODetailResponse = PurchaseOrderListItem;
-
-export interface PurchaseOrderListItemExtended extends PurchaseOrderListItem {
-  locationCode?: string;
-  totalQty?: number;
-  currency?: string;
-  itemCount?: number;
-  termName?: string;
-  userName?: string;
-  rowId?: string;
-}

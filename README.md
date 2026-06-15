@@ -22,20 +22,18 @@ cp .env.example .env
 npm run dev
 ```
 
-Health check: `GET /health` (includes `oracleConnected`)
+Health check: `GET /health` (includes `oracle.connected`, `queryStatus`, `sampleRowCount`)
+
+Validation: `npm run validate:oracle` (writes report to `backend/reports/`)
 
 ## Oracle setup
 
-Set in `backend/.env`:
+Set in `backend/.env` (see `.env.example` — all values from env, nothing hardcoded in source):
 
 ```
-ORACLE_HOST=10.44.0.102
-ORACLE_PORT=1521
-ORACLE_SERVICE=uatpdb.ysg.com
-ORACLE_USER=<your-user>
-ORACLE_PASSWORD=<your-password>
-ORACLE_COMP_CODE=YSG
-ORACLE_TXN_CODE=PO
+ORACLE_VIEW_NAME=OV_PO_SEARCH_VIEW_YSG
+ORACLE_APPLY_COMP_TXN_FILTER=false
+ORACLE_POOL_MAX=50
 ```
 
 Connect to VPN before starting the backend.

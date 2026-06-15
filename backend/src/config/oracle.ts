@@ -7,21 +7,24 @@ let pool: Pool | null = null;
 export async function initPool(): Promise<void> {
   if (pool) return;
 
-  const connectString = buildConnectString();
-
   pool = await oracledb.createPool({
     user: env.ORACLE_USER,
     password: env.ORACLE_PASSWORD,
-    connectString,
-    poolMin: 2,
-    poolMax: 10,
-    poolIncrement: 2,
+    connectString: buildConnectString(),
+    poolMin: env.ORACLE_POOL_MIN,
+    poolMax: env.ORACLE_POOL_MAX,
+    poolIncrement: env.ORACLE_POOL_INCREMENT,
+    poolTimeout: 60,
+    queueTimeout: 30_000,
+    stmtCacheSize: 30,
   });
 
   logger.info('Oracle connection pool initialized', {
     host: env.ORACLE_HOST,
     port: env.ORACLE_PORT,
     service: env.ORACLE_SERVICE,
+    poolMin: env.ORACLE_POOL_MIN,
+    poolMax: env.ORACLE_POOL_MAX,
   });
 }
 
@@ -37,23 +40,5 @@ export async function closePool(): Promise<void> {
     await pool.close(0);
     pool = null;
     logger.info('Oracle connection pool closed');
-  }
-}
-
-export async function pingPool(): Promise<boolean> {
-  let conn: Connection | undefined;
-  try {
-    conn = await getConnection();
-    await conn.execute('SELECT 1 FROM DUAL');
-    return true;
-  } catch (err) {
-    logger.warn('Oracle pool ping failed', {
-      message: err instanceof Error ? err.message : String(err),
-    });
-    return false;
-  } finally {
-    if (conn) {
-      await conn.close();
-    }
   }
 }

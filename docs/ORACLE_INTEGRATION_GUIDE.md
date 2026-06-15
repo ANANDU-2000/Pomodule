@@ -1,68 +1,74 @@
 # Oracle Integration Guide
 
-## Architecture (Oracle only — no mock data)
+## Simple stack (no mock data)
+
+```
+Controller → purchaseOrder.service → oracleViewQuery (reusable) → Oracle view
+```
 
 | Layer | File |
 |-------|------|
-| Env config | `backend/src/config/env.ts` |
+| Env (all config) | `backend/src/config/env.ts` |
 | Connection pool | `backend/src/config/oracle.ts` |
-| Oracle queries | `backend/src/services/oraclePurchaseOrder.service.ts` |
-| API facade | `backend/src/services/purchaseOrder.service.ts` |
-| Row mapping | `backend/src/mappers/purchaseOrder.mapper.ts` |
-| Types | `backend/src/types/oracle.types.ts`, `purchaseOrder.types.ts` |
-| List filter/sort/page | `backend/src/utils/applyListParams.ts` |
+| PO field map | `backend/src/modules/po/po.config.ts` |
+| Reusable SQL builder | `backend/src/utils/oracleViewQuery.ts` |
+| PO service | `backend/src/services/purchaseOrder.service.ts` |
+| Health | `backend/src/config/oracleHealth.ts` |
 
-## Activate real data
+**APIs (minimal):** `GET /health`, `GET /api/purchase-orders`, `GET /api/purchase-orders/:id`, `PUT`, `POST approve`
 
-1. Connect to VPN
-2. Set `backend/.env`:
+## Env setup (nothing hardcoded in code)
 
-```
-ORACLE_HOST=10.44.0.102
+```env
+ORACLE_HOST=
 ORACLE_PORT=1521
-ORACLE_SERVICE=uatpdb.ysg.com
-ORACLE_USER=<provided>
-ORACLE_PASSWORD=<provided>
+ORACLE_SERVICE=
+ORACLE_USER=
+ORACLE_PASSWORD=
+ORACLE_VIEW_NAME=OV_PO_SEARCH_VIEW_YSG
 ORACLE_COMP_CODE=YSG
 ORACLE_TXN_CODE=PO
+ORACLE_APPLY_COMP_TXN_FILTER=false
+ORACLE_POOL_MIN=4
+ORACLE_POOL_MAX=50
+ORACLE_POOL_INCREMENT=4
+ORACLE_ID_COLUMN=DOC_NO
+ORACLE_DATE_COLUMN=DOC_DT
 ```
 
-3. `cd backend && npm run dev`
-4. `curl http://localhost:3001/health` → `oracleConnected: true`
-5. `curl 'http://localhost:3001/api/purchase-orders?page=1&pageSize=10'`
-6. Start frontend: `cd frontend && npm run dev`
+Set `ORACLE_APPLY_COMP_TXN_FILTER=true` once DB confirms comp/txn data.
 
-## Column mapping
+## Scale (100k+ concurrent users)
 
-| Oracle column | API field |
-|---------------|-----------|
-| `DOC_NO` | `orderNo` |
-| `DOC_DT` | `documentDate` |
-| `SUPP_CODE` | `supplierCode` |
-| `SUPP_NAME` | `supplierName` |
-| `LOCN_NAME` | `location` |
-| `H_DEL_DT` | `deliveryDate` |
-| `GROSS_AMNT` | `orderValue` |
-| `DOC_STATUS` | `status` |
-| `REFERENCE_NO` | `remarks` |
-| `H_CR_UID` | `userId` |
+- SQL-side pagination, search, filter, sort — never loads full view into Node
+- Connection pool sized via env (`ORACLE_POOL_MAX=50` per instance)
+- Run **multiple backend instances** behind a load balancer
+- `stmtCacheSize` + pool queue enabled in `oracle.ts`
 
-Query: `OV_PO_SEARCH_VIEW_YSG` where `COMP_CODE='YSG'` and `TXN_CODE=:txnCode` (default `PO`).
+## Column mapping (Oracle → API → UI)
 
-## Blockers for full functionality
+Source: `modules/po/po.config.ts` + `frontend/src/data/poColumns.ts`
 
-| Feature | Status | Blocker |
-|---------|--------|---------|
-| PO List | Ready | Credentials + VPN |
-| PO View | Ready | Credentials + VPN |
-| PO Edit (PUT) | Not ready | Oracle update procedure needed |
-| PO Approve (POST) | Not ready | Oracle approve procedure needed |
-| PO Create (POST) | Not ready | No backend route + insert procedure |
-| Production scale | Future | SQL-side pagination in `oracleListQueryBuilder.ts` |
+| Oracle | API | UI label |
+|--------|-----|----------|
+| DOC_NO | orderNo | Order No |
+| DOC_DT | documentDate | Document Date |
+| SUPP_CODE | supplierCode | Supplier Code |
+| SUPP_NAME | supplierName | Supplier Name |
+| LOCN_NAME | location | Location |
+| H_DEL_DT | deliveryDate | Deliver Date |
+| GROSS_AMNT | orderValue | Order Value |
+| DOC_STATUS | status | Status |
+| REFERENCE_NO | remarks | Remarks |
+| H_CR_UID | userId | User Id |
 
-## Blockers checklist
+## Next module pattern
 
-- [ ] `ORACLE_USER` and `ORACLE_PASSWORD` set in `backend/.env`
-- [ ] VPN connected to reach `10.44.0.102:1521`
-- [ ] Oracle Instant Client installed (if required by `oracledb`)
-- [ ] DB team provides write procedures for update/approve/create
+Copy `modules/po/po.config.ts` → `modules/gr/gr.config.ts`, add field map, wire a new service using `oracleViewQuery.ts`. Same env pool, same list/detail API shape.
+
+## Blockers
+
+| Feature | Status |
+|---------|--------|
+| List / View | Ready |
+| Edit / Approve / Create | Needs Oracle write procedures |

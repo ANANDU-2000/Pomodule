@@ -2,7 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { env } from './config/env';
-import { initPool, closePool, pingPool } from './config/oracle';
+import { initPool, closePool } from './config/oracle';
+import { probeOracleHealth } from './config/oracleHealth';
 import purchaseOrderRouter from './routes/purchaseOrder.routes';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler } from './middleware/errorHandler';
@@ -18,6 +19,26 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  const startupProbe = await probeOracleHealth();
+  if (!startupProbe.connected || startupProbe.queryStatus !== 'ok') {
+    logger.error('Oracle startup probe failed', {
+      connected: startupProbe.connected,
+      queryStatus: startupProbe.queryStatus,
+      error: startupProbe.error,
+    });
+    process.exit(1);
+  }
+
+  logger.info('Oracle startup probe succeeded', {
+    connected: startupProbe.connected,
+    queryStatus: startupProbe.queryStatus,
+    rowCount: startupProbe.rowCount,
+    host: startupProbe.host,
+    service: startupProbe.service,
+    compCode: startupProbe.compCode,
+    txnCode: startupProbe.txnCode,
+  });
+
   const app = express();
 
   app.use(cors({ origin: env.FRONTEND_ORIGIN }));
@@ -25,10 +46,24 @@ async function main(): Promise<void> {
   app.use(requestLogger);
 
   app.get('/health', async (_req, res) => {
-    res.json({
-      status: 'ok',
+    const oracle = await probeOracleHealth();
+    const healthy = oracle.connected && oracle.queryStatus === 'ok';
+
+    res.status(healthy ? 200 : 503).json({
+      status: healthy ? 'ok' : 'degraded',
       dataSource: 'oracle',
-      oracleConnected: await pingPool(),
+      oracle: {
+        connected: oracle.connected,
+        host: oracle.host,
+        service: oracle.service,
+        viewName: oracle.viewName,
+        compCode: oracle.compCode,
+        txnCode: oracle.txnCode,
+        queryStatus: oracle.queryStatus,
+        error: oracle.error,
+        sampleRowCount: oracle.rowCount,
+        compTxnFilterApplied: oracle.compTxnFilterApplied,
+      },
     });
   });
 

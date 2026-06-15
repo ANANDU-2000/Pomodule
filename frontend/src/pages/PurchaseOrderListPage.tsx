@@ -6,7 +6,7 @@ import { usePurchaseOrders } from '../hooks/usePurchaseOrders';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useViewportPageSize } from '../hooks/useViewportPageSize';
 import { getPoListPageActions } from '../constants/pageActions';
-import { MOCK_USER_PERMISSIONS } from '../constants/permissions';
+import { DEFAULT_USER_PERMISSIONS } from '../constants/permissions';
 import { getFilterOptions } from '../constants/filterOptions';
 import { getPoColumns } from '../data/poColumns';
 import { AUTO_PAGE_SIZE } from '../constants/pageSizeOptions';
@@ -43,7 +43,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
   const pageActions = useMemo(() => getPoListPageActions(t), [t]);
   const visiblePageActions = useMemo(
     () => pageActions.filter(
-      (action) => !action.permission || MOCK_USER_PERMISSIONS.includes(action.permission),
+      (action) => !action.permission || DEFAULT_USER_PERMISSIONS.includes(action.permission),
     ),
     [pageActions],
   );

@@ -6,7 +6,7 @@ import {
   getVisiblePoViewActions,
   type POViewActionId,
 } from '../constants/poViewActions';
-import { MOCK_USER_PERMISSIONS } from '../constants/permissions';
+import { DEFAULT_USER_PERMISSIONS } from '../constants/permissions';
 import { approvePO, POActionError } from '../services/purchaseOrderService';
 import { usePODetail } from '../hooks/usePODetail';
 import PageToolbar from '../components/PageToolbar';
@@ -37,7 +37,7 @@ function PurchaseOrderViewPage({ t, lang, setLang }: PurchaseOrderViewPageProps)
 
   const viewActions = useMemo(() => getPoViewPageActions(t), [t]);
   const visibleActions = useMemo(
-    () => (order ? getVisiblePoViewActions(viewActions, order, MOCK_USER_PERMISSIONS) : []),
+    () => (order ? getVisiblePoViewActions(viewActions, order, DEFAULT_USER_PERMISSIONS) : []),
     [viewActions, order],
   );
 
