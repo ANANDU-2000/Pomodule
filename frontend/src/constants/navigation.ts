@@ -5,6 +5,8 @@ export interface NavNode {
   label: string;
   code?: string;
   route?: string;
+  status?: 'live' | 'pending' | 'future';
+  pendingReason?: string;
   children?: NavNode[];
 }
 
@@ -14,12 +16,12 @@ export function getNavigation(t: TranslationMap): NavNode[] {
       id: 'purchase-order',
       label: t.nav.purchaseOrder,
       children: [
-        { id: 'po-list', label: t.nav.purchaseOrderList, code: 'PO001', route: '/po/list' },
-        { id: 'po-gh', label: t.nav.poGh, code: 'PO_GH', route: '/po/gh-delivery' },
-        { id: 'po-all', label: t.nav.poAll, code: 'PO_ALL', route: '/po/all' },
-        { id: 'po-exp', label: t.nav.poExp, code: 'PO_EXP', route: '/po/exp' },
-        { id: 'po-ast', label: t.nav.poAst, code: 'PO_AST', route: '/po/ast' },
-        { id: 'po-gr', label: t.nav.poGr, code: 'PO_GR', route: '/po/gr' },
+        { id: 'po-list', label: t.nav.purchaseOrderList, code: 'PO001', route: '/po/list', status: 'live' },
+        { id: 'po-gh', label: t.nav.poGh, code: 'PO_GH', route: '/po/gh-delivery', status: 'pending', pendingReason: 'Waiting for DB team: ORACLE_SUPPLIER_VIEW' },
+        { id: 'po-all', label: t.nav.poAll, code: 'PO_ALL', route: '/po/all', status: 'pending', pendingReason: 'Waiting for DB team: ORACLE_PO_LINE_VIEW' },
+        { id: 'po-exp', label: t.nav.poExp, code: 'PO_EXP', route: '/po/exp', status: 'future', pendingReason: 'Future module' },
+        { id: 'po-ast', label: t.nav.poAst, code: 'PO_AST', route: '/po/ast', status: 'future', pendingReason: 'Future module' },
+        { id: 'po-gr', label: t.nav.poGr, code: 'PO_GR', route: '/po/gr', status: 'pending', pendingReason: 'Waiting for DB team: ORACLE_GRN_VIEW' },
       ],
     },
   ];

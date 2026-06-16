@@ -103,6 +103,8 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
   const totalPages = result?.totalPages ?? 0;
   const currentPage = result?.page ?? params.page;
   const effectivePageSize = params.pageSize;
+  const start = total === 0 ? 0 : (currentPage - 1) * effectivePageSize + 1;
+  const end = Math.min(currentPage * effectivePageSize, total);
 
   return (
     <div className="po-page">
@@ -131,6 +133,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
         </div>
       )}
       <div className="po-page-body erp-page-content" ref={tableBodyRef}>
+        {loading && <div className="po-list-loading-inline">Loading...</div>}
         <DataTable
           columns={columns}
           data={result?.data ?? []}
@@ -146,6 +149,7 @@ function PurchaseOrderListPage({ onToggleSidebar, t, lang, setLang, pageTitle }:
           skeletonRowCount={effectivePageSize}
         />
       </div>
+      <div className="po-list-summary">{`Showing ${start}-${end} of ${total} orders`}</div>
       <Pagination
         page={currentPage}
         totalPages={totalPages}

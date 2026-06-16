@@ -91,9 +91,11 @@ export function buildViewListQuery(
   const offset = (params.page - 1) * params.pageSize;
   const listBinds = { ...binds, offset, pageSize: params.pageSize };
   const orderBy = buildOrderBy(config, params.sortBy, params.sortOrder);
+  const queryHint = (process.env.ORACLE_QUERY_HINT ?? '').trim();
+  const hintClause = queryHint ? `/*+ ${queryHint} */ ` : '';
 
   const listSql = `
-    SELECT ${selectSql}
+    SELECT ${hintClause}${selectSql}
     FROM   ${config.viewName}
     WHERE  ${where}
     ORDER BY ${orderBy}

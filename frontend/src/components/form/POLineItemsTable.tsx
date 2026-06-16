@@ -62,7 +62,7 @@ export default function POLineItemsTable({
 
   const supplierSelected = Boolean(supplierCode?.trim());
 
-  const { handleGridKeyDown, focusNext, addLineRef } = useLineItemGridNavigation(items.length, {
+  const { handleGridKeyDown, focusNext, focusCell, addLineRef } = useLineItemGridNavigation(items.length, {
     pageSize: LINE_PAGE_SIZE,
     pageIndex: safePageIndex,
     setPageIndex,
@@ -109,7 +109,9 @@ export default function POLineItemsTable({
   const addRow = () => {
     const next = [...items, emptyLine()];
     onChange(next);
+    const newIndex = next.length - 1;
     setPageIndex(Math.ceil(next.length / LINE_PAGE_SIZE) - 1);
+    requestAnimationFrame(() => focusCell(newIndex, 'itemCode'));
   };
 
   const removeRow = (index: number) => {
@@ -158,19 +160,35 @@ export default function POLineItemsTable({
         <table className="erp-line-table po-item-table data-table">
           <colgroup>
             <col className="po-item-col-code" />
+            <col className="po-item-col-name" />
+            <col className="po-item-col-grade" />
+            <col className="po-item-col-grade" />
+            <col className="po-item-col-stock" />
             <col className="po-item-col-uom" />
             <col className="po-item-col-qty" />
             <col className="po-item-col-rate" />
+            <col className="po-item-col-disc" />
+            <col className="po-item-col-disc" />
             <col className="po-item-col-total" />
+            <col className="po-item-col-tol" />
+            <col className="po-item-col-tol" />
             {!readOnly && <col className="po-item-col-actions" />}
           </colgroup>
           <thead>
             <tr>
               <th>{t.form.itemCodeBarcode}</th>
-              <th>{t.form.uom}</th>
-              <th>{t.form.quantity}</th>
-              <th>{t.form.rate}</th>
-              <th className="align-right">{t.form.lineTotal}</th>
+              <th>Item Name</th>
+              <th>Grade 1</th>
+              <th>Grade 2</th>
+              <th className="align-right">Free Stock</th>
+              <th className="align-center">{t.form.uom}</th>
+              <th className="align-right">{t.form.quantity}</th>
+              <th className="align-right">{t.form.rate}</th>
+              <th className="align-right">Disc %</th>
+              <th className="align-right">Disc Amt</th>
+              <th className="align-right">Net Value</th>
+              <th className="align-right">Tol +</th>
+              <th className="align-right">Tol -</th>
               {!readOnly && <th className="po-item-col-actions-th" aria-label={t.columns.actions} />}
             </tr>
           </thead>
@@ -220,8 +238,20 @@ export default function POLineItemsTable({
                     )}
                   </td>
                   <td>
+                    <span className="po-item-readonly-value po-item-name-strong">{row.itemName || '-'}</span>
+                  </td>
+                  <td>
+                    <span className="po-item-readonly-value">{row.grade1 ?? '-'}</span>
+                  </td>
+                  <td>
+                    <span className="po-item-readonly-value">{row.grade2 ?? '-'}</span>
+                  </td>
+                  <td className="align-right">
+                    <span className="po-item-readonly-value">{Number(row.freeStock ?? 0).toFixed(2)}</span>
+                  </td>
+                  <td>
                     {readOnly ? (
-                      <span className="po-item-readonly-value">{row.uom}</span>
+                      <span className="po-item-readonly-value align-center">{row.uom}</span>
                     ) : (
                       <div className="po-item-uom-wrap">
                         <TextField
@@ -237,7 +267,7 @@ export default function POLineItemsTable({
                       </div>
                     )}
                   </td>
-                  <td>
+                  <td className="align-right">
                     {readOnly ? (
                       <span className="po-item-readonly-value">{row.quantity}</span>
                     ) : (
@@ -254,7 +284,7 @@ export default function POLineItemsTable({
                       />
                     )}
                   </td>
-                  <td>
+                  <td className="align-right">
                     {readOnly ? (
                       <span className="po-item-readonly-value">{row.rate.toFixed(2)}</span>
                     ) : (
@@ -270,8 +300,56 @@ export default function POLineItemsTable({
                       />
                     )}
                   </td>
+                  <td className="align-right">
+                    {readOnly ? (
+                      <span className="po-item-readonly-value">{row.discPercent.toFixed(2)}</span>
+                    ) : (
+                      <NumberInput
+                        className="erp-line-input po-item-field"
+                        value={row.discPercent}
+                        min={0}
+                        data-grid-row={index}
+                        data-grid-col="rate"
+                        aria-label={`Disc % ${index + 1}`}
+                        onChange={(e) => updateRow(index, { discPercent: Number(e.target.value) })}
+                      />
+                    )}
+                  </td>
+                  <td className="align-right">
+                    <span className="po-item-readonly-value">{row.discAmt.toFixed(2)}</span>
+                  </td>
                   <td className="po-line-total-cell align-right">
                     <span className="po-item-total-value">{row.netValue.toFixed(2)}</span>
+                  </td>
+                  <td className="align-right">
+                    {readOnly ? (
+                      <span className="po-item-readonly-value">{row.tolPlus.toFixed(2)}</span>
+                    ) : (
+                      <NumberInput
+                        className="erp-line-input po-item-field"
+                        value={row.tolPlus}
+                        min={0}
+                        data-grid-row={index}
+                        data-grid-col="rate"
+                        aria-label={`Tol + ${index + 1}`}
+                        onChange={(e) => updateRow(index, { tolPlus: Number(e.target.value) })}
+                      />
+                    )}
+                  </td>
+                  <td className="align-right">
+                    {readOnly ? (
+                      <span className="po-item-readonly-value">{row.tolMinus.toFixed(2)}</span>
+                    ) : (
+                      <NumberInput
+                        className="erp-line-input po-item-field"
+                        value={row.tolMinus}
+                        min={0}
+                        data-grid-row={index}
+                        data-grid-col="rate"
+                        aria-label={`Tol - ${index + 1}`}
+                        onChange={(e) => updateRow(index, { tolMinus: Number(e.target.value) })}
+                      />
+                    )}
                   </td>
                   {!readOnly && (
                     <td className="po-item-actions-cell">

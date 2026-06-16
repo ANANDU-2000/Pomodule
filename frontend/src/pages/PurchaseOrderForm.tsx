@@ -135,6 +135,7 @@ export default function PurchaseOrderForm({
   const [actionError, setActionError] = useState<string | null>(null);
   const [lineItemsNotice, setLineItemsNotice] = useState<string | null>(null);
   const [leaveConfirm, setLeaveConfirm] = useState(false);
+  const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
 
   const headerSections = useMemo(
     () => config?.sections.filter((s) => s.id !== 'itemDetails' && s.fields.length > 0) ?? [],
@@ -202,6 +203,12 @@ export default function PurchaseOrderForm({
 
   const handleFieldChange = useCallback((apiField: string, value: string | number | boolean) => {
     setValues((prev) => ({ ...prev, [apiField]: value }));
+    setAutoFilledFields((prev) => {
+      if (!prev.has(apiField)) return prev;
+      const next = new Set(prev);
+      next.delete(apiField);
+      return next;
+    });
   }, []);
 
   const handleLookupSelect = useCallback((field: FormFieldDef, item: LookupItem) => {
@@ -221,6 +228,17 @@ export default function PurchaseOrderForm({
         }
         if (!next.docType) next.docType = 'PO';
         if (!next.deliveryDate && next.documentDate) next.deliveryDate = next.documentDate;
+        const auto = new Set<string>([
+          'address',
+          'shipmentMode',
+          'paymentTerm',
+          'docLocation',
+          'locationCode',
+        ]);
+        setAutoFilledFields(auto);
+        if (mode === 'create') {
+          window.setTimeout(() => setActiveTab('itemDetails'), 300);
+        }
       } else if (field.apiField === 'locationCode') {
         next.locationCode = item.code;
         next.location = item.name;
@@ -306,6 +324,34 @@ export default function PurchaseOrderForm({
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const inInput = Boolean(target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
+      if (inInput && e.key !== 'Escape') return;
+      if (e.key === 'F2') {
+        e.preventDefault();
+        setActiveTab('basicInfo');
+        const el = document.getElementById('supplier');
+        el?.focus();
+      }
+      if (e.key === 'F3') {
+        e.preventDefault();
+        setActiveTab('itemDetails');
+      }
+      if ((e.ctrlKey && e.key === 'Enter') || e.key === 'F9') {
+        e.preventDefault();
+        void handleSave();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleBack();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [handleBack, handleSave]);
 
   const pageTitle =
     mode === 'create' ? t.pages.newTitle : mode === 'edit' ? t.pages.editTitle : t.pages.viewTitle;
@@ -405,6 +451,8 @@ export default function PurchaseOrderForm({
       statusBadge={statusBadge}
       dirtyBanner={dirtyBanner}
       showAuditTab={mode !== 'create' && Boolean(order?.audit)}
+      viewMode={mode === 'view'}
+      auditHoverCard={mode === 'view' && order?.audit ? <AuditTimeline audit={order.audit} t={t} lang={lang} /> : undefined}
       headerActions={headerActions}
       printHeader={printHeader}
       toolbarActions={
@@ -426,6 +474,7 @@ export default function PurchaseOrderForm({
           t={t}
           getLabel={(key) => resolveLabel(t, key)}
           lang={lang}
+          autoFilledFields={autoFilledFields}
         />
       )}
 
@@ -462,7 +511,7 @@ export default function PurchaseOrderForm({
         </div>
       )}
 
-      {activeTab === 'audit' && order?.audit && (
+      {activeTab === 'audit' && mode !== 'view' && order?.audit && (
         <AuditTimeline audit={order.audit} t={t} lang={lang} />
       )}
     </POFormPageLayout>

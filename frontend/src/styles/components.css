@@ -1530,6 +1530,16 @@
   margin-left: 2px;
 }
 
+.erp-autofill-chip {
+  margin-left: 8px;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  color: #166534;
+  background: #e8f5e9;
+  border: 1px solid #bbf7d0;
+}
+
 .erp-field-error {
   display: block;
   margin-top: var(--space-1);
@@ -1603,6 +1613,20 @@
   background: var(--po-form-canvas-bg);
   flex: 1;
   min-height: 0;
+}
+
+.po-view-mode-body {
+  padding-top: 24px;
+}
+
+.po-audit-hover-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  width: min(520px, calc(100vw - 40px));
+  margin-top: 8px;
+  box-shadow: var(--shadow-md);
 }
 
 .po-form-page .po-form-tabpanel-basic {
@@ -2259,10 +2283,15 @@
 }
 
 .po-item-col-code { width: 42%; }
+.po-item-col-name { width: 16%; }
+.po-item-col-grade { width: 8%; }
+.po-item-col-stock { width: 8%; }
 .po-item-col-uom { width: 16%; }
 .po-item-col-qty { width: 12%; }
 .po-item-col-rate { width: 14%; }
+.po-item-col-disc { width: 10%; }
 .po-item-col-total { width: 12%; }
+.po-item-col-tol { width: 8%; }
 .po-item-col-actions { width: 44px; }
 
 .po-item-col-actions-th {
@@ -2381,6 +2410,15 @@
   text-align: center;
   padding-left: 4px;
   padding-right: 0;
+}
+
+.po-item-delete-btn {
+  min-width: 32px;
+  flex-shrink: 0;
+}
+
+.po-item-name-strong {
+  font-weight: 600;
 }
 
 .po-item-delete-btn {
@@ -2723,6 +2761,22 @@
   width: 100%;
 }
 
+.nav-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.nav-status-dot.pending {
+  background: #f59e0b;
+}
+
+.nav-status-dot.future {
+  background: #94a3b8;
+}
+
 .side-menu.collapsed .nav-child-icon-only {
   margin: var(--space-1) auto;
   width: calc(100% - var(--space-2));
@@ -2739,6 +2793,18 @@
   margin: 0 0 var(--space-2);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+}
+
+.po-list-loading-inline {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 4px 0 8px;
+}
+
+.po-list-summary {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 8px 0;
 }
 
 .po-form-notice {

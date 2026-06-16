@@ -39,6 +39,7 @@ function NavTree({
       {nodes.map((node) => {
         const hasChildren = Boolean(node.children?.length);
         const isLeaf = Boolean(node.route);
+        const isInteractive = (node.status ?? 'live') === 'live';
         const isExpanded = expandedIds.has(node.id);
         const isActive = isLeaf && node.route
           ? pathname.startsWith(node.route)
@@ -51,14 +52,16 @@ function NavTree({
                 key={node.id}
                 type="button"
                 className={`nav-child nav-child-icon-only${isActive ? ' active' : ''}`}
-                title={node.label}
+                title={node.pendingReason ?? node.label}
                 aria-label={node.label}
-                onClick={() => onNavigate(node.route!)}
-                onKeyDown={(e) => onKeyDown(e, () => onNavigate(node.route!))}
+                disabled={!isInteractive}
+                onClick={() => isInteractive && onNavigate(node.route!)}
+                onKeyDown={(e) => onKeyDown(e, () => isInteractive && onNavigate(node.route!))}
               >
                 <span className="nav-icon">
                   <AppIcon icon={FileText} size={ICON_SIZE_NAV} />
                 </span>
+                {node.status && node.status !== 'live' && <span className={`nav-status-dot ${node.status}`} />}
               </button>
             );
           }
@@ -69,11 +72,14 @@ function NavTree({
               type="button"
               className={`nav-child${isActive ? ' active' : ''}`}
               role="menuitem"
-              onClick={() => onNavigate(node.route!)}
-              onKeyDown={(e) => onKeyDown(e, () => onNavigate(node.route!))}
+              title={node.pendingReason}
+              disabled={!isInteractive}
+              onClick={() => isInteractive && onNavigate(node.route!)}
+              onKeyDown={(e) => onKeyDown(e, () => isInteractive && onNavigate(node.route!))}
             >
               {node.code && <span className="nav-child-code">{node.code}</span>}
               <span className="nav-child-label">{node.label}</span>
+              {node.status && node.status !== 'live' && <span className={`nav-status-dot ${node.status}`} />}
             </button>
           );
         }

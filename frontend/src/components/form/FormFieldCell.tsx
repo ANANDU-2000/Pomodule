@@ -27,6 +27,7 @@ interface FormFieldCellProps {
   lang?: 'en' | 'th';
   labelTone?: 'primary' | 'secondary' | 'default';
   className?: string;
+  autoFilled?: boolean;
 }
 
 export default function FormFieldCell({
@@ -42,6 +43,7 @@ export default function FormFieldCell({
   lang = 'en',
   labelTone = 'default',
   className = '',
+  autoFilled = false,
 }: FormFieldCellProps) {
   const disabled = isFieldDisabled(field, values, readOnly);
   const fieldError = errors?.[field.apiField]?.[0];
@@ -67,6 +69,7 @@ export default function FormFieldCell({
         <label className={labelClass} htmlFor={field.key}>
           {label}
           {field.required && <span className="erp-required">*</span>}
+          {autoFilled && <span className="erp-autofill-chip">Auto</span>}
         </label>
         <SearchSelect
           id={field.key}
@@ -121,6 +124,7 @@ export default function FormFieldCell({
         <label className={labelClass} htmlFor={field.key}>
           {label}
           {field.required && <span className="erp-required">*</span>}
+          {autoFilled && <span className="erp-autofill-chip">Auto</span>}
         </label>
         <ERPTextarea
           id={field.key}
@@ -173,6 +177,7 @@ export default function FormFieldCell({
         <label className={labelClass} htmlFor={field.key}>
           {label}
           {field.required && <span className="erp-required">*</span>}
+          {autoFilled && <span className="erp-autofill-chip">Auto</span>}
         </label>
         <DatePicker
           id={field.key}
@@ -222,6 +227,7 @@ export default function FormFieldCell({
       <label className={labelClass} htmlFor={field.key}>
         {label}
         {field.required && <span className="erp-required">*</span>}
+        {autoFilled && <span className="erp-autofill-chip">Auto</span>}
       </label>
       <TextField
         id={field.key}

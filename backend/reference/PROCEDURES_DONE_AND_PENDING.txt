@@ -1,0 +1,76 @@
+YSG PO MODULE - PROCEDURE / VIEW STATUS TRACKER
+================================================
+Last updated: 2026-06-16
+
+[DONE] DONE (Live in production)
+------------------------------
+VIEW : OV_PO_SEARCH_VIEW_YSG
+  -> PO list + detail, 60k+ rows, pagination working
+  -> env: ORACLE_VIEW_NAME=OV_PO_SEARCH_VIEW_YSG
+
+API ROUTE: GET /api/purchase-orders
+  -> filter, sort, paginate, search - all Oracle-side SQL
+  -> file: backend/src/services/purchaseOrder.service.ts
+
+API ROUTE: GET /api/purchase-orders/:id
+  -> detail from same view, filtered by DOC_NO
+  -> file: backend/src/services/purchaseOrder.service.ts
+
+UTILITY: SQL pagination (OFFSET / FETCH NEXT)
+  -> file: backend/src/utils/oracleViewQuery.ts
+
+UTILITY: Procedure executor (executeNamedProcedure)
+  -> file: backend/src/utils/oracleProcedure.ts
+
+UTILITY: Connection pool with health check
+  -> file: backend/src/config/oracle.ts
+
+[DONE] DONE (Code ready, wired to 501/503 until DB delivers)
+----------------------------------------------------------
+POST   /api/purchase-orders              -> createPO()     -> needs ORACLE_PO_CREATE_SP
+PUT    /api/purchase-orders/:id          -> updatePO()     -> needs ORACLE_PO_UPDATE_SP
+POST   /api/purchase-orders/:id/approve  -> approvePO()    -> needs ORACLE_PO_APPROVE_SP
+GET    /api/purchase-orders/:id/items    -> getPOLineItems -> needs ORACLE_PO_LINE_VIEW
+GET    /api/lookups?type=supplier        -> lookup service  -> needs ORACLE_SUPPLIER_VIEW
+GET    /api/lookups?type=item            -> lookup service  -> needs ORACLE_ITEM_VIEW
+GET    /api/lookups?type=location        -> lookup service  -> needs ORACLE_LOCATION_VIEW
+GET    /api/lookups?type=paymentTerm     -> lookup service  -> needs ORACLE_PAYMENT_TERM_VIEW
+GET    /api/items/:code/validate         -> itemValidate    -> needs ORACLE_ITEM_VALIDATE_SP
+
+[PENDING] PENDING (DB team to deliver - then just set env key)
+---------------------------------------------------------
+ORACLE_SUPPLIER_VIEW     -> supplier lookup auto-fill (address, ship mode, pay term, doc locn)
+ORACLE_ITEM_VIEW         -> item search in line items grid
+ORACLE_ITEM_VALIDATE_SP  -> o_dval_item_11j - validates item, returns UOM + stock
+ORACLE_LOCATION_VIEW     -> location dropdown in form header
+ORACLE_PAYMENT_TERM_VIEW -> payment term filtered by supplier
+ORACLE_PO_LINE_VIEW      -> read existing PO line items
+ORACLE_PO_CREATE_SP      -> create new PO (OT_PO_HEAD + OT_PO_ITEM)
+ORACLE_PO_UPDATE_SP      -> update PO header and lines
+ORACLE_PO_APPROVE_SP     -> approve PO (DOC_STATUS = 'APPROVED')
+
+[FUTURE] FUTURE (Next sprint)
+------------------------
+ORACLE_PO_DUPLICATE_SP   -> duplicate PO
+
+ACTION FOR EACH PENDING ITEM
+---------------------------------
+1. DB team creates the view / SP in UAT schema
+2. DB team shares the object name via Slack/WhatsApp
+3. Developer sets value in backend/.env
+4. Restart backend -> feature goes live automatically
+5. Test via /health + manual API test
+6. Update this file - move item from PENDING to DONE
+
+REFERENCE FILES
+-------------------
+SQL statements : backend/reference/ORACLE_DB_REFERENCE.sql
+Bind contracts : backend/src/modules/oracle/procedures/PO_CREATE.procedure.ts
+                 backend/src/modules/oracle/procedures/PO_UPDATE.procedure.ts
+                 backend/src/modules/oracle/procedures/PO_APPROVE.procedure.ts
+View contracts : backend/src/modules/oracle/views/SUPPLIER_LOOKUP.view.ts
+                 backend/src/modules/oracle/views/ITEM_LOOKUP.view.ts
+                 backend/src/modules/oracle/views/LOCATION_LOOKUP.view.ts
+                 backend/src/modules/oracle/views/PAYMENT_TERM_LOOKUP.view.ts
+                 backend/src/modules/oracle/views/PO_LINE_ITEMS.view.ts
+Integration map: backend/src/modules/oracle/integration.registry.ts

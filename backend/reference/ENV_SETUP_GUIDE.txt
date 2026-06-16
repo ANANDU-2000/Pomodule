@@ -1,0 +1,50 @@
+YSG PO MODULE - ENVIRONMENT SETUP GUIDE
+=========================================
+For new developer or team member opening this repo.
+
+QUICK START
+-----------
+1. cd backend
+2. cp .env.example .env
+3. Fill in ORACLE credentials:
+      ORACLE_HOST=10.44.0.11      (server IP, no port)
+      ORACLE_PORT=1521
+      ORACLE_SERVICE=uatpdb.ysg.com
+      ORACLE_USER=your_user
+      ORACLE_PASSWORD=your_password
+4. Leave all ORACLE_*_VIEW and ORACLE_*_SP blank (DB team pending)
+5. npm install
+6. npm run dev
+7. Open http://localhost:3001/health - should show oracle.connected=true
+
+MANDATORY ENV KEYS (app won't start without these)
+----------------------------------------------------
+ORACLE_HOST       - DB server IP (no port suffix)
+ORACLE_SERVICE    - Oracle service name / PDB
+ORACLE_USER       - DB username
+ORACLE_PASSWORD   - DB password
+
+OPTIONAL KEYS (features degrade gracefully if blank)
+------------------------------------------------------
+ORACLE_SUPPLIER_VIEW     - set when DB team delivers supplier view
+ORACLE_ITEM_VIEW         - set when DB team delivers item view
+ORACLE_ITEM_VALIDATE_SP  - set when DB team delivers o_dval_item_11j
+ORACLE_LOCATION_VIEW     - set when DB team delivers location view
+ORACLE_PAYMENT_TERM_VIEW - set when DB team delivers payment term view
+ORACLE_PO_LINE_VIEW      - set when DB team delivers line items view
+ORACLE_PO_CREATE_SP      - set when DB team delivers create SP
+ORACLE_PO_UPDATE_SP      - set when DB team delivers update SP
+ORACLE_PO_APPROVE_SP     - set when DB team delivers approve SP
+
+BEHAVIOUR WHEN ENV KEY IS BLANK
+---------------------------------
+Lookup views (supplier/item/location/paymentTerm):
+  -> API returns { configured: false, message: "Oracle ... not configured" }
+  -> Frontend falls back to mock data (VITE_MOCK_PENDING=true default)
+
+Write SPs (create/update/approve):
+  -> API returns HTTP 501 { error: "...", blocker: "ORACLE_PO_CREATE_SP" }
+  -> UI shows "Feature pending DB setup" toast
+
+NEVER COMMIT .env TO GIT - it has database credentials.
+.gitignore already excludes backend/.env

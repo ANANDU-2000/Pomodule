@@ -31,6 +31,7 @@ interface POBasicFormGridProps {
   t: TranslationMap;
   getLabel: (labelKey: string) => string;
   lang?: 'en' | 'th';
+  autoFilledFields?: Set<string>;
 }
 
 interface RenderCtx {
@@ -44,6 +45,7 @@ interface RenderCtx {
   t: TranslationMap;
   getLabel: (labelKey: string) => string;
   lang: 'en' | 'th';
+  autoFilledFields?: Set<string>;
 }
 
 function rowClassName(row: POFormGridRow): string {
@@ -77,6 +79,7 @@ function renderRow(row: POFormGridRow, rowIndex: number, ctx: RenderCtx): ReactN
               getLabel={ctx.getLabel}
               lang={ctx.lang}
               labelTone={getLabelTone(layoutKey)}
+              autoFilled={Boolean(ctx.autoFilledFields?.has(field.apiField))}
             />
           </div>
         );
@@ -96,6 +99,7 @@ export default function POBasicFormGrid({
   t,
   getLabel,
   lang = 'en',
+  autoFilledFields,
 }: POBasicFormGridProps) {
   const fieldByKey = useMemo(() => {
     const allFields = sections.flatMap((section) => section.fields);
@@ -113,6 +117,7 @@ export default function POBasicFormGrid({
     t,
     getLabel,
     lang,
+    autoFilledFields,
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useCallback, type KeyboardEvent, type ReactNode } from 'react';
+import { useCallback, useState, type KeyboardEvent, type ReactNode } from 'react';
 import PageToolbar from '../PageToolbar';
 import type { TranslationMap } from '../../types/i18n';
 
@@ -17,6 +17,8 @@ interface POFormPageLayoutProps {
   printHeader?: ReactNode;
   t: TranslationMap;
   showAuditTab?: boolean;
+  viewMode?: boolean;
+  auditHoverCard?: ReactNode;
 }
 
 export default function POFormPageLayout({
@@ -32,7 +34,10 @@ export default function POFormPageLayout({
   printHeader,
   t,
   showAuditTab,
+  viewMode,
+  auditHoverCard,
 }: POFormPageLayoutProps) {
+  const [showAuditHover, setShowAuditHover] = useState(false);
   const tabs: { id: POFormTab; label: string }[] = [
     { id: 'basicInfo', label: t.form.basicInfo },
     { id: 'itemDetails', label: t.form.itemDetails },
@@ -87,15 +92,26 @@ export default function POFormPageLayout({
                 className={`po-form-tab${activeTab === tab.id ? ' active' : ''}`}
                 onClick={() => onTabChange(tab.id)}
                 onKeyDown={(e) => handleTabKeyDown(e, index)}
+                onMouseEnter={() => {
+                  if (viewMode && tab.id === 'itemDetails' && auditHoverCard) setShowAuditHover(true);
+                }}
+                onMouseLeave={() => {
+                  if (viewMode && tab.id === 'itemDetails' && auditHoverCard) setShowAuditHover(false);
+                }}
               >
                 {tab.label}
               </button>
             ))}
           </div>
+          {viewMode && showAuditHover && auditHoverCard && (
+            <div className="po-audit-hover-panel" onMouseEnter={() => setShowAuditHover(true)} onMouseLeave={() => setShowAuditHover(false)}>
+              {auditHoverCard}
+            </div>
+          )}
         </div>
       </div>
       {printHeader}
-      <div className="po-detail-body po-form-body erp-page-content">
+      <div className={`po-detail-body po-form-body erp-page-content${viewMode ? ' po-view-mode-body' : ''}`}>
         {dirtyBanner}
         <div
           className={`po-form-tabpanel${

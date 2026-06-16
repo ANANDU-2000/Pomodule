@@ -1,0 +1,127 @@
+YSG PO MODULE - PENDING ORACLE OBJECTS
+Generated: 2026-06-16
+=========================================
+
+STATUS LEGEND:
+  [LIVE]     - In production, queries running
+  [PENDING]  - Waiting for DB team to create/share name
+  [FUTURE]   - Next sprint, not started
+
+=========================================
+VIEWS
+=========================================
+
+[LIVE]    OV_PO_SEARCH_VIEW_YSG
+          Env key : ORACLE_VIEW_NAME
+          Used by : GET /api/purchase-orders (list + detail)
+          Columns : DOC_NO, DOC_DT, SUPP_CODE, SUPP_NAME, H_LOCN_CODE,
+                    LOCN_NAME, H_DEL_DT, TOT_QTY, CURR_CODE, GROSS_AMNT,
+                    ITEM_COUNT, TERM_NAME, DOC_STATUS, REFERENCE_NO,
+                    H_CR_UID, H_CR_UNAME, H_ROW_ID
+          Filter  : COMP_CODE='YSG' AND TXN_CODE='PO'
+
+[PENDING] <SUPPLIER_VIEW>
+          Env key : ORACLE_SUPPLIER_VIEW
+          Used by : GET /api/lookups?type=supplier
+          Columns : SUPP_CODE, SUPP_NAME, SUPP_ADDR, SHIP_MODE, PAY_TERM, DOC_LOCN
+          Action  : DB team share view name -> set in backend/.env
+
+[PENDING] <ITEM_VIEW>
+          Env key : ORACLE_ITEM_VIEW
+          Source  : OM_ITEM (filter NVL(ITEM_FRZ_FLAG_NUM,2)=2)
+          Used by : GET /api/lookups?type=item
+          Columns : ITEM_CODE, ITEM_NAME, UOM
+          Action  : DB team share view name -> set in backend/.env
+
+[PENDING] <LOCATION_VIEW>
+          Env key : ORACLE_LOCATION_VIEW
+          Used by : GET /api/lookups?type=location
+          Columns : LOCN_CODE, LOCN_NAME
+          Action  : DB team share view name -> set in backend/.env
+
+[PENDING] <PAYMENT_TERM_VIEW>
+          Env key : ORACLE_PAYMENT_TERM_VIEW
+          Used by : GET /api/lookups?type=paymentTerm
+          Columns : TERM_CODE, TERM_NAME, SUPP_CODE
+          Action  : DB team share view name -> set in backend/.env
+
+[PENDING] <PO_LINE_VIEW>
+          Env key : ORACLE_PO_LINE_VIEW
+          Used by : GET /api/purchase-orders/:id/items
+          Columns : ITEM_CODE, ITEM_NAME, UOM, QTY, RATE,
+                    DISC_PCT, DISC_AMT, NET_VALUE, TOL_PLUS, TOL_MINUS
+          Filter  : DOC_NO = :orderNo
+          Action  : DB team share view name -> set in backend/.env
+
+=========================================
+STORED PROCEDURES
+=========================================
+
+[PENDING] <PO_CREATE_SP>
+          Env key : ORACLE_PO_CREATE_SP
+          Used by : POST /api/purchase-orders
+          Tables  : OT_PO_HEAD (header), OT_PO_ITEM (line items)
+          IN params:
+            p_comp_code, p_txn_code, p_user_id,
+            p_supp_code, p_supp_name, p_doc_dt, p_del_dt,
+            p_curr_code, p_locn_code, p_remarks, p_items_json
+          OUT params:
+            p_doc_no -> generated DOC_NO (VARCHAR2 64)
+          Action  : DB team create SP + share name -> set in backend/.env
+
+[PENDING] <PO_UPDATE_SP>
+          Env key : ORACLE_PO_UPDATE_SP
+          Used by : PUT /api/purchase-orders/:id
+          Tables  : OT_PO_HEAD, OT_PO_ITEM
+          IN params:
+            p_doc_no, p_comp_code, p_txn_code, p_user_id,
+            p_supp_code, p_doc_dt, p_del_dt, p_items_json
+          Action  : DB team create SP + share name -> set in backend/.env
+
+[PENDING] <PO_APPROVE_SP>
+          Env key : ORACLE_PO_APPROVE_SP
+          Used by : POST /api/purchase-orders/:id/approve
+          Table   : OT_PO_HEAD
+          IN params: p_doc_no, p_comp_code, p_txn_code, p_user_id
+          SQL     : UPDATE OT_PO_HEAD SET DOC_STATUS='APPROVED' WHERE H_ROW_ID=:rowId
+          Action  : DB team create SP + share name -> set in backend/.env
+
+[PENDING] o_dval_item_11j
+          Env key : ORACLE_ITEM_VALIDATE_SP
+          Used by : GET /api/items/:itemCode/validate
+          IN : p_item_code, p_lang_code, p_txn_code, p_comp_code, p_user_id, p_locn_code
+          OUT: p_uom, p_item_name, p_avbl_stk, p_err_war_flag, p_tax_para_code,
+               p_stk_yn_num, p_batch_yn_num, p_sno_yn_num, p_dim_reqd_yn_num,
+               p_max_loose, p_gc_1, p_gc_2, p_tax_para_value, p_free_stk,
+               p_gc1_req_yn, p_gc2_req_yn
+          Action  : DB team confirm SP available in UAT schema -> set in backend/.env
+
+[FUTURE]  <PO_DUPLICATE_SP>
+          Env key : ORACLE_PO_DUPLICATE_SP
+          Used by : POST /api/purchase-orders/:id/duplicate
+          Action  : Next sprint
+
+=========================================
+TABLES (Write targets, not queried directly by app)
+=========================================
+
+[PENDING] OT_PO_HEAD   - PO header, written via create/update/approve SP
+[PENDING] OT_PO_ITEM   - PO line items, written via create/update SP (as JSON array)
+
+=========================================
+HOW TO ACTIVATE EACH FEATURE
+=========================================
+
+When DB team shares an object name:
+1. Open backend/.env
+2. Set the env key value (e.g. ORACLE_SUPPLIER_VIEW=OV_SUPPLIER_YSG)
+3. Restart backend: npm run dev
+4. The API switches from 503 mock -> live Oracle automatically
+5. Test via GET /health - shows oracle.connected=true
+6. No code changes needed for view-based features
+
+For SP-based features (create/update/approve):
+1. Set env key (e.g. ORACLE_PO_CREATE_SP=SP_PO_CREATE_YSG)
+2. Align p_ parameter names with actual SP signature (edit poProcedure.binds.ts if needed)
+3. Test via POST /api/purchase-orders with valid body
+4. Check backend logs for Oracle errors if 500 returned

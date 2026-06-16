@@ -14,6 +14,7 @@ export async function initPool(): Promise<void> {
     poolMin: env.ORACLE_POOL_MIN,
     poolMax: env.ORACLE_POOL_MAX,
     poolIncrement: env.ORACLE_POOL_INCREMENT,
+    poolPingInterval: 60,
     poolTimeout: 60,
     queueTimeout: 30_000,
     stmtCacheSize: 30,

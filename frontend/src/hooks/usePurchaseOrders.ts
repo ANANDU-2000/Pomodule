@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { POListParams, FilterPeriod, PurchaseOrder } from '../types/PurchaseOrder';
 import { fetchPurchaseOrders } from '../services/purchaseOrderService';
@@ -7,19 +7,47 @@ import { queryKeys } from '../constants/queryKeys';
 
 const DEFAULT_PARAMS: POListParams = {
   page: 1,
-  pageSize: DEFAULT_PAGE_SIZE,
+  pageSize: 20,
   search: '',
-  filter: 'all',
+  filter: 'this_month',
   sortBy: '',
   sortDirection: 'desc',
 };
 
+const STATE_KEY = 'ysg_po_list_state';
+
+function readInitialParams(): POListParams {
+  try {
+    const raw = sessionStorage.getItem(STATE_KEY);
+    if (!raw) return DEFAULT_PARAMS;
+    const parsed = JSON.parse(raw) as POListParams;
+    return { ...DEFAULT_PARAMS, ...parsed, pageSize: parsed.pageSize || DEFAULT_PAGE_SIZE };
+  } catch {
+    return DEFAULT_PARAMS;
+  }
+}
+
 export function usePurchaseOrders() {
-  const [params, setParams] = useState<POListParams>(DEFAULT_PARAMS);
+  const [params, setParams] = useState<POListParams>(readInitialParams);
+  const [debouncedSearch, setDebouncedSearch] = useState(params.search);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(params.search), 400);
+    return () => window.clearTimeout(timer);
+  }, [params.search]);
+
+  const queryParams = useMemo(
+    () => ({ ...params, search: debouncedSearch }),
+    [params, debouncedSearch],
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem(STATE_KEY, JSON.stringify(params));
+  }, [params]);
 
   const query = useQuery({
-    queryKey: queryKeys.purchaseOrders.list(params),
-    queryFn: ({ signal }) => fetchPurchaseOrders(params, signal),
+    queryKey: queryKeys.purchaseOrders.list(queryParams),
+    queryFn: ({ signal }) => fetchPurchaseOrders(queryParams, signal),
     staleTime: 30_000,
     gcTime: 5 * 60_000,
     placeholderData: (prev) => prev,

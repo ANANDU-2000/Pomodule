@@ -50,11 +50,11 @@ export default function StickyActionBar({
     <div className="sticky-action-bar no-print">
       {!readOnly && (
         <>
-          <button type="button" className="btn btn-default" onClick={onCancel} disabled={saving}>
+          <button type="button" className="btn btn-default" onClick={onCancel} disabled={saving} title="Esc">
             {cancelLabel}
           </button>
           {canPrint && (
-            <button type="button" className="btn btn-default sticky-action-btn" onClick={onPrint}>
+            <button type="button" className="btn btn-default sticky-action-btn" onClick={onPrint} title="Print">
               <AppIcon icon={Printer} size={16} />
               {printLabel}
             </button>
@@ -64,6 +64,7 @@ export default function StickyActionBar({
             className="btn btn-primary sticky-action-btn"
             onClick={onSave}
             disabled={saving}
+            title="F9 / Ctrl+Enter"
           >
             {saving ? (
               <AppIcon icon={Loader2} size={16} className="animate-spin" />
@@ -82,21 +83,20 @@ export default function StickyActionBar({
             </button>
           )}
           {canPrint && (
-            <button type="button" className="btn btn-default sticky-action-btn" onClick={onPrint}>
+            <button type="button" className="btn btn-default sticky-action-btn" onClick={onPrint} title="Print">
               <AppIcon icon={Printer} size={16} />
               {printLabel}
             </button>
           )}
-          {canApprove && (
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={onApprove}
-              disabled={saving}
-            >
-              {saving ? approvingLabel : approveLabel}
-            </button>
-          )}
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={onApprove}
+            disabled={saving || !canApprove}
+            title={canApprove ? 'Approve' : 'Cannot approve'}
+          >
+            {saving ? approvingLabel : approveLabel}
+          </button>
         </>
       )}
       {extraActions}

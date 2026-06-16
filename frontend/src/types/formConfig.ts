@@ -88,6 +88,9 @@ export interface POAuditFields {
 export interface POLineItem {
   itemCode: string;
   itemName: string;
+  grade1?: string;
+  grade2?: string;
+  freeStock?: number;
   uom: string;
   quantity: number;
   rate: number;
