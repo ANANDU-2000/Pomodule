@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '../src/config/loadEnv';
 import fs from 'fs';
 import path from 'path';
 import oracledb from 'oracledb';

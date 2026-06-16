@@ -5,7 +5,7 @@ interface ERPTextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaEleme
   className?: string;
 }
 
-function ERPTextareaInner({ error, className = '', rows = 3, ...props }: ERPTextareaProps) {
+function ERPTextareaInner({ error, className = '', rows = 2, ...props }: ERPTextareaProps) {
   return (
     <textarea
       {...props}

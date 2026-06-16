@@ -1,9 +1,10 @@
 import type { TranslationMap } from '../types/i18n';
+import type { Permission } from './permissions';
 
 export interface PageActionConfig {
   id: string;
   label: string;
-  permission?: string;
+  permission?: Permission;
   variant?: 'primary' | 'default';
 }
 

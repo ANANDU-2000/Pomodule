@@ -73,6 +73,11 @@ export interface TranslationMap {
     orderTotal: string;
     totalNet: string;
     addLine: string;
+    addItem: string;
+    itemCodeBarcode: string;
+    itemCodeBarcodePlaceholder: string;
+    lineTotal: string;
+    selectUom: string;
     removeLine: string;
     removeLineAria: string;
     deliveryDateAfterDocument: string;
@@ -80,6 +85,11 @@ export interface TranslationMap {
     documentDateToday: string;
     validationTitle: string;
     lookupPlaceholder: string;
+    searchSupplier: string;
+    searchItem: string;
+    selectSupplierFirst: string;
+    searchLocation: string;
+    searchPaymentTerm: string;
     clearLookup: string;
     minSearchChars: string;
     searching: string;
@@ -94,6 +104,8 @@ export interface TranslationMap {
     approvedDate: string;
     unsavedChanges: string;
     leaveAnyway: string;
+    saveSuccess: string;
+    linePageOf: string;
   };
 
   columns: {
@@ -182,5 +194,19 @@ export interface TranslationMap {
     skipToContent: string;
     pageActions: string;
     language: string;
+  };
+
+  login: {
+    title: string;
+    subtitle: string;
+    userId: string;
+    password: string;
+    signIn: string;
+    signingIn: string;
+    invalidCredentials: string;
+    capsLockOn: string;
+    showPassword: string;
+    hidePassword: string;
+    mockHintTitle: string;
   };
 }

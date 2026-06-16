@@ -4,4 +4,11 @@ dist/
 .env.local
 *.local
 .DS_Store
+*.log
+health-report.txt
+diagnose-out.txt
 backend/reports/
+backend/dist/
+backend/.env
+frontend/dist/
+frontend/.env

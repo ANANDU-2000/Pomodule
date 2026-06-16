@@ -14,6 +14,7 @@ function ERPInfoCardInner({ title, children, className = '', icon }: ERPInfoCard
         {icon && <span className="erp-section-card-icon">{icon}</span>}
         <h2 className="erp-section-card-title">{title}</h2>
       </div>
+      <div className="erp-section-card-divider" aria-hidden="true" />
       <div className="erp-section-body">{children}</div>
     </article>
   );

@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { POListParams, FilterPeriod, PurchaseOrder } from '../types/PurchaseOrder';
-import { fetchPurchaseOrders, type POListResult } from '../services/purchaseOrderService';
+import { fetchPurchaseOrders } from '../services/purchaseOrderService';
 import { DEFAULT_PAGE_SIZE } from '../constants/pageSizeOptions';
+import { queryKeys } from '../constants/queryKeys';
 
 const DEFAULT_PARAMS: POListParams = {
   page: 1,
@@ -14,37 +16,14 @@ const DEFAULT_PARAMS: POListParams = {
 
 export function usePurchaseOrders() {
   const [params, setParams] = useState<POListParams>(DEFAULT_PARAMS);
-  const [result, setResult] = useState<POListResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [fetchKey, setFetchKey] = useState(0);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchPurchaseOrders(params, controller.signal);
-        if (!controller.signal.aborted) {
-          setResult(data);
-        }
-      } catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') return;
-        if (!controller.signal.aborted) {
-          setError(err instanceof Error ? err.message : 'Failed to load');
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    void load();
-    return () => controller.abort();
-  }, [params, fetchKey]);
+  const query = useQuery({
+    queryKey: queryKeys.purchaseOrders.list(params),
+    queryFn: ({ signal }) => fetchPurchaseOrders(params, signal),
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    placeholderData: (prev) => prev,
+  });
 
   const setSearch = useCallback((search: string) => {
     setParams((p) => {
@@ -79,13 +58,13 @@ export function usePurchaseOrders() {
   }, []);
 
   const retry = useCallback(() => {
-    setFetchKey((k) => k + 1);
-  }, []);
+    void query.refetch();
+  }, [query]);
 
   return {
-    result,
-    loading,
-    error,
+    result: query.data ?? null,
+    loading: query.isFetching,
+    error: query.error instanceof Error ? query.error.message : query.error ? 'Failed to load' : null,
     retry,
     params,
     setSearch,

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { TranslationMap } from '../types/i18n';
 import type { FormFieldDef, LookupItem, POFormValues, POLineItem } from '../types/formConfig';
 import type { PurchaseOrder } from '../types/PurchaseOrder';
+import { useInvalidatePurchaseOrders } from '../hooks/usePODetail';
 import { usePOFormConfig } from '../hooks/usePOFormConfig';
 import { usePOPermissions } from '../hooks/usePOPermissions';
 import { usePOFieldValidation } from '../hooks/usePOFieldValidation';
@@ -13,14 +14,16 @@ import {
   PONotImplementedError,
   updatePO,
 } from '../services/purchaseOrderService';
+import { DEFAULT_ITEM_ROWS } from '../components/form/POLineItemsTable';
 import POFormPageLayout, { type POFormTab } from '../components/form/POFormPageLayout';
-import POHeaderSections from '../components/form/POHeaderSection';
+import POBasicFormGrid from '../components/form/POBasicFormGrid';
 import POLineItemsTable from '../components/form/POLineItemsTable';
-import OrderTotals from '../components/form/OrderTotals';
+import POItemDetailsLayout from '../components/form/POItemDetailsLayout';
 import StickyActionBar from '../components/form/StickyActionBar';
 import AuditTimeline from '../components/form/AuditTimeline';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import { ERPStatusBadge } from '../components/erp';
+import { useERPToast } from '../hooks/useERPToast';
 import { formatDate } from '../utils/formatters';
 
 export type POFormMode = 'create' | 'edit' | 'view';
@@ -63,15 +66,15 @@ function buildInitialValues(defaults?: { currency: string }): POFormValues {
     locationCode: '',
     location: '',
     documentDate: new Date().toISOString().slice(0, 10),
-    deliveryDate: '',
+    deliveryDate: new Date().toISOString().slice(0, 10),
     currency: defaults?.currency ?? 'THB',
     exchangeRate: 1,
     discount: 0,
     remarks: '',
     inclusiveVat: false,
-    docType: '',
+    docType: 'PO',
     taxInvoiceDoc: '',
-    items: [emptyLine()],
+    items: Array.from({ length: DEFAULT_ITEM_ROWS }, emptyLine),
   };
 }
 
@@ -119,6 +122,8 @@ export default function PurchaseOrderForm({
   onOrderUpdated,
 }: PurchaseOrderFormProps) {
   const navigate = useNavigate();
+  const invalidatePurchaseOrders = useInvalidatePurchaseOrders();
+  const { showToast, toastNode } = useERPToast();
   const { config, defaults, isLoading: configLoading } = usePOFormConfig();
   const permissions = usePOPermissions(order ?? null);
   const readOnly = mode === 'view';
@@ -209,6 +214,13 @@ export default function PurchaseOrderForm({
         if (item.shipmentMode) next.shipmentMode = item.shipmentMode;
         if (item.paymentTerm) next.paymentTerm = item.paymentTerm;
         if (item.docLocation) next.docLocation = item.docLocation;
+        const locCode = item.locationCode ?? item.docLocation;
+        if (locCode) {
+          next.locationCode = locCode;
+          next.location = item.locationName ?? locCode;
+        }
+        if (!next.docType) next.docType = 'PO';
+        if (!next.deliveryDate && next.documentDate) next.deliveryDate = next.documentDate;
       } else if (field.apiField === 'locationCode') {
         next.locationCode = item.code;
         next.location = item.name;
@@ -252,10 +264,18 @@ export default function PurchaseOrderForm({
       };
       if (mode === 'create') {
         const created = await createPO(payload);
-        navigate(`/purchase-orders/${created.orderNo}/view`);
+        invalidatePurchaseOrders();
+        showToast(t.form.saveSuccess);
+        window.setTimeout(() => {
+          navigate(`/purchase-orders/${created.orderNo}/view`);
+        }, 400);
       } else if (mode === 'edit' && orderNo) {
         await updatePO(orderNo, payload);
-        navigate(`/purchase-orders/${orderNo}/view`);
+        invalidatePurchaseOrders();
+        showToast(t.form.saveSuccess);
+        window.setTimeout(() => {
+          navigate(`/purchase-orders/${orderNo}/view`);
+        }, 400);
       }
     } catch (err) {
       if (err instanceof PONotImplementedError) {
@@ -274,6 +294,7 @@ export default function PurchaseOrderForm({
     setActionError(null);
     try {
       const updated = await approvePO(orderNo);
+      invalidatePurchaseOrders();
       onOrderUpdated?.(updated);
     } catch (err) {
       if (err instanceof PONotImplementedError) {
@@ -373,7 +394,9 @@ export default function PurchaseOrderForm({
   }
 
   return (
-    <POFormPageLayout
+    <>
+      {toastNode}
+      <POFormPageLayout
       title={titleNode}
       activeTab={activeTab}
       onTabChange={setActiveTab}
@@ -392,7 +415,7 @@ export default function PurchaseOrderForm({
       {actionError && <div className="po-detail-error" role="alert">{actionError}</div>}
 
       {activeTab === 'basicInfo' && (
-        <POHeaderSections
+        <POBasicFormGrid
           sections={headerSections}
           values={values as unknown as Record<string, string | number | boolean>}
           errors={errors}
@@ -407,30 +430,42 @@ export default function PurchaseOrderForm({
       )}
 
       {activeTab === 'itemDetails' && (
-        <>
+        <div className="po-item-tab-content">
           {lineItemsNotice && (
             <div className="po-form-notice" role="status">{lineItemsNotice}</div>
           )}
-          <POLineItemsTable
-            items={values.items}
-            readOnly={readOnly}
-            supplierCode={values.supplierCode}
-            onChange={(items) => setValues((prev) => ({ ...prev, items }))}
-            itemErrors={itemErrors}
-            t={t}
-          />
-          <OrderTotals
+          <POItemDetailsLayout
+            table={
+              <POLineItemsTable
+                items={values.items}
+                readOnly={readOnly}
+                supplierCode={values.supplierCode}
+                locationCode={values.locationCode}
+                onChange={(items) => {
+                  setValues((prev) => ({ ...prev, items }));
+                  setErrors((prev) => {
+                    if (!prev.items) return prev;
+                    const next = { ...prev };
+                    delete next.items;
+                    return next;
+                  });
+                }}
+                itemErrors={itemErrors}
+                t={t}
+              />
+            }
             items={values.items}
             discount={values.discount}
             inclusiveVat={values.inclusiveVat}
             t={t}
           />
-        </>
+        </div>
       )}
 
       {activeTab === 'audit' && order?.audit && (
         <AuditTimeline audit={order.audit} t={t} lang={lang} />
       )}
     </POFormPageLayout>
+    </>
   );
 }

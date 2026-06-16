@@ -6,21 +6,22 @@ interface OrderTotalsProps {
   discount: number;
   inclusiveVat: boolean;
   t: TranslationMap;
+  sticky?: boolean;
 }
 
-export default function OrderTotals({ items, discount, inclusiveVat, t }: OrderTotalsProps) {
+export default function OrderTotals({ items, discount, inclusiveVat, t, sticky }: OrderTotalsProps) {
   const { subtotal, headerDiscount, vat, total } = calcOrderTotals(items, discount, inclusiveVat);
 
   return (
-    <div className="order-totals">
+    <div className={`order-totals${sticky ? ' order-totals-panel' : ''}`}>
       <div className="order-totals-row">
         <span>{t.form.subtotal}</span>
         <span className="order-totals-value">{subtotal.toFixed(2)}</span>
       </div>
       <div className="order-totals-row">
-        <span>{t.form.headerDiscount}</span>
+        <span>{t.form.headerDiscount} ({discount}%)</span>
         <span className="order-totals-value order-totals-discount">
-          {headerDiscount > 0 ? `-${headerDiscount.toFixed(2)}` : '0.00'}
+          {headerDiscount > 0 ? `-${headerDiscount.toFixed(2)}` : '-0.00'}
         </span>
       </div>
       <div className="order-totals-row">

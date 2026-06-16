@@ -1,0 +1,14 @@
+feature,endpoint,method,env_key,db_object,status,backend_file,frontend_file,db_team_owner,notes
+poList,/api/purchase-orders,GET,ORACLE_VIEW_NAME,OV_PO_SEARCH_VIEW_YSG,live,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderListPage.tsx,DB team,62k+ rows via VPN
+poDetail,/api/purchase-orders/:id,GET,ORACLE_VIEW_NAME,OV_PO_SEARCH_VIEW_YSG,live,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderViewPage.tsx,DB team,Same view as list
+poLineItems,/api/purchase-orders/:id/items,GET,ORACLE_PO_LINE_VIEW,PO line view,pending,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderForm.tsx,DB team,Filter by DOC_NO
+poCreate,/api/purchase-orders,POST,ORACLE_PO_CREATE_SP,OT_PO_HEAD + OT_PO_ITEM,pending,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderForm.tsx,DB team,SP name from team lead
+poUpdate,/api/purchase-orders/:id,PUT,ORACLE_PO_UPDATE_SP,OT_PO_HEAD + OT_PO_ITEM,pending,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderForm.tsx,DB team,SP name from team lead
+poApprove,/api/purchase-orders/:id/approve,POST,ORACLE_PO_APPROVE_SP,Approve SP,pending,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderForm.tsx,DB team,SP name from team lead
+poDuplicate,/api/purchase-orders/:id/duplicate,POST,ORACLE_PO_DUPLICATE_SP,Duplicate SP,future,src/services/purchaseOrder.service.ts,src/pages/PurchaseOrderViewPage.tsx,DB team,Next sprint
+supplierLookup,/api/lookups?type=supplier,GET,ORACLE_SUPPLIER_VIEW,Supplier view,pending,src/repositories/lookup.repository.ts,src/components/erp/ERPLookup.tsx,DB team,SUPP_CODE SUPP_NAME etc
+itemLookup,/api/lookups?type=item,GET,ORACLE_ITEM_VIEW,OM_ITEM / item view,pending,src/repositories/lookup.repository.ts,src/components/form/POLineItemsTable.tsx,DB team,OM_ITEM NVL(ITEM_FRZ_FLAG_NUM 2)=2; validates via o_dval_item_11j
+itemValidate,/api/items/:itemCode/validate,GET,ORACLE_ITEM_VALIDATE_SP,o_dval_item_11j,pending,src/services/itemValidate.service.ts,src/services/itemValidateService.ts,DB team,OUT: item_name uom avbl_stk tax flags; mock until SP shared
+locationLookup,/api/lookups?type=location,GET,ORACLE_LOCATION_VIEW,Location view,pending,src/repositories/lookup.repository.ts,src/components/erp/ERPLookup.tsx,DB team,LOCN_CODE LOCN_NAME
+paymentTermLookup,/api/lookups?type=paymentTerm,GET,ORACLE_PAYMENT_TERM_VIEW,Payment term view,pending,src/repositories/lookup.repository.ts,src/components/erp/ERPLookup.tsx,DB team,TERM_CODE TERM_NAME SUPP_CODE
+formConfig,/api/po/form-config,GET,ORACLE_FORM_CONFIG_VIEW,Form config view,pending,src/services/formConfig.service.ts,src/hooks/usePOFormConfig.ts,DB team,Temporary fallback in code today

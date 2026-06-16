@@ -1,5 +1,5 @@
 {
-  "pageTitle": "ใบสั่งซื้อ",
+  "pageTitle": "YSG ใบสั่งซื้อ",
   "purchaseOrders": "รายการใบสั่งซื้อ",
   "nav": {
     "purchaseOrder": "ใบสั่งซื้อ",
@@ -70,6 +70,11 @@
     "orderTotal": "รวมทั้งสิ้น",
     "totalNet": "รวมสุทธิ",
     "addLine": "เพิ่มรายการ",
+    "addItem": "เพิ่มรายการ",
+    "itemCodeBarcode": "รหัสสินค้า / บาร์โค้ด",
+    "itemCodeBarcodePlaceholder": "ใส่รหัสสินค้าหรือสแกนบาร์โค้ด",
+    "lineTotal": "รวม",
+    "selectUom": "เลือกหน่วย",
     "removeLine": "ลบ",
     "removeLineAria": "ลบรายการสินค้า",
     "deliveryDateAfterDocument": "วันที่ส่งมอบต้องไม่ก่อนวันที่เอกสาร",
@@ -77,6 +82,11 @@
     "documentDateToday": "วันที่เอกสารต้องเป็นวันนี้",
     "validationTitle": "กรุณาแก้ไขข้อผิดพลาดต่อไปนี้:",
     "lookupPlaceholder": "พิมพ์เพื่อค้นหา…",
+    "searchSupplier": "ค้นหาผู้จำหน่าย…",
+    "searchItem": "ค้นหาสินค้า…",
+    "selectSupplierFirst": "เลือกผู้จำหน่ายก่อนค้นหารายการ",
+    "searchLocation": "ค้นหาสถานที่…",
+    "searchPaymentTerm": "ค้นหาเงื่อนไขการชำระ…",
     "clearLookup": "ล้างการเลือก",
     "minSearchChars": "พิมพ์อย่างน้อย {n} ตัวอักษร",
     "searching": "กำลังค้นหา…",
@@ -90,7 +100,9 @@
     "approvedBy": "อนุมัติโดย",
     "approvedDate": "วันที่อนุมัติ",
     "unsavedChanges": "มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก",
-    "leaveAnyway": "ออกโดยไม่บันทึก"
+    "leaveAnyway": "ออกโดยไม่บันทึก",
+    "saveSuccess": "บันทึกใบสั่งซื้อสำเร็จ",
+    "linePageOf": "หน้า {page} จาก {total}"
   },
   "moduleTitles": {
     "poGh": "PO_GH - ใบส่งมอบ/เงินสด",
@@ -169,5 +181,18 @@
     "skipToContent": "ข้ามไปเนื้อหาหลัก",
     "pageActions": "การดำเนินการของหน้า",
     "language": "ภาษา"
+  },
+  "login": {
+    "title": "YSG PO",
+    "subtitle": "YSG — เข้าสู่ระบบเพื่อดำเนินการต่อ",
+    "userId": "รหัสผู้ใช้",
+    "password": "รหัสผ่าน",
+    "signIn": "เข้าสู่ระบบ",
+    "signingIn": "กำลังเข้าสู่ระบบ…",
+    "invalidCredentials": "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+    "capsLockOn": "เปิด Caps Lock อยู่",
+    "showPassword": "แสดง",
+    "hidePassword": "ซ่อน",
+    "mockHintTitle": "โหมด Mock — บัญชีสำหรับพัฒนา"
   }
 }

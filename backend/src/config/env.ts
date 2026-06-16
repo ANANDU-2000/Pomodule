@@ -30,12 +30,15 @@ const envSchema = z.object({
   ORACLE_FORM_CONFIG_VIEW: z.string().default(''),
   ORACLE_SUPPLIER_VIEW: z.string().default(''),
   ORACLE_ITEM_VIEW: z.string().default(''),
+  ORACLE_ITEM_VALIDATE_SP: z.string().default(''),
   ORACLE_LOCATION_VIEW: z.string().default(''),
   ORACLE_PAYMENT_TERM_VIEW: z.string().default(''),
   ORACLE_PO_LINE_VIEW: z.string().default(''),
   ORACLE_PO_CREATE_SP: z.string().default(''),
   ORACLE_PO_UPDATE_SP: z.string().default(''),
   ORACLE_PO_APPROVE_SP: z.string().default(''),
+  ORACLE_PO_DUPLICATE_SP: z.string().default(''),
+  ORACLE_PO_LINE_DOC_COL: z.string().min(1).default('DOC_NO'),
   ORACLE_SUPPLIER_CODE_COL: z.string().min(1).default('SUPP_CODE'),
   ORACLE_SUPPLIER_NAME_COL: z.string().min(1).default('SUPP_NAME'),
   ORACLE_SUPPLIER_ADDR_COL: z.string().min(1).default('SUPP_ADDR'),
@@ -57,7 +60,21 @@ type Env = z.infer<typeof envSchema>;
 function parseEnv(): Env {
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    console.error('Invalid environment configuration:', result.error.flatten().fieldErrors);
+    const fieldErrors = result.error.flatten().fieldErrors;
+    console.error('Invalid environment configuration:', fieldErrors);
+    const oracleKeys = ['ORACLE_HOST', 'ORACLE_SERVICE', 'ORACLE_USER', 'ORACLE_PASSWORD'] as const;
+    const missingOracle = oracleKeys.filter((key) => fieldErrors[key]);
+    if (missingOracle.length > 0) {
+      console.error(
+        '\nOracle connection is not configured. Edit backend/.env (copy from .env.example if needed):\n' +
+          '  ORACLE_HOST=10.44.0.102          # IP only — port is ORACLE_PORT\n' +
+          '  ORACLE_PORT=1521\n' +
+          '  ORACLE_SERVICE=uatpdb.ysg.com    # service / PDB name\n' +
+          '  ORACLE_USER=your_user\n' +
+          '  ORACLE_PASSWORD=your_password\n' +
+          '\nDo not run "cp .env.example .env" after filling .env — it resets credentials to blank.\n',
+      );
+    }
     process.exit(1);
   }
 

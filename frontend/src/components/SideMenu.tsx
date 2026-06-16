@@ -2,11 +2,10 @@ import { useMemo, type KeyboardEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getNavigation, isNavNodeActive, type NavNode } from '../constants/navigation';
 import { KEYBOARD_SHORTCUTS } from '../constants/keyboardShortcuts';
+import { useAuth } from '../context/AuthContext';
 import { useSidebarExpanded } from '../hooks/useSidebarExpanded';
 import type { TranslationMap } from '../types/i18n';
 import { AppIcon, ChevronRight, FileText, ICON_SIZE_NAV, LogOut, PanelLeft, PanelRight } from './icons';
-
-const CACHE_KEYS = ['erp.sidebar.collapsed', 'erp.sidebar.expanded'];
 
 interface SideMenuProps {
   collapsed: boolean;
@@ -85,7 +84,7 @@ function NavTree({
           <div key={node.id}>
             <button
               type="button"
-              className={className}
+              className={`${className}${isActive ? ' active' : ''}`}
               role="menuitem"
               aria-expanded={hasChildren ? isExpanded : undefined}
               title={collapsed ? node.label : undefined}
@@ -130,6 +129,7 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
   const navigation = useMemo(() => getNavigation(t), [t]);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { session, logout } = useAuth();
 
   const handleKeyDown = (e: KeyboardEvent, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -139,15 +139,11 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
   };
 
   const handleLogout = () => {
-    CACHE_KEYS.forEach((key) => {
-      try {
-        localStorage.removeItem(key);
-      } catch {
-        // ignore
-      }
-    });
-    navigate('/');
+    logout();
+    navigate('/login', { replace: true });
   };
+
+  const userInitial = session?.name?.charAt(0)?.toUpperCase() ?? '?';
 
   return (
     <aside className={`side-menu${collapsed ? ' collapsed' : ''}`}>
@@ -177,6 +173,19 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
       </nav>
 
       <div className="side-menu-footer">
+        {session && (
+          <div className={`side-menu-user${collapsed ? ' collapsed' : ''}`}>
+            <span className="side-menu-user-avatar" aria-hidden="true">
+              {userInitial}
+            </span>
+            {!collapsed && (
+              <div className="side-menu-user-meta">
+                <span className="side-menu-user-name">{session.name}</span>
+                <span className="side-menu-user-role">{session.role}</span>
+              </div>
+            )}
+          </div>
+        )}
         <button type="button" className="nav-logout" title={t.nav.logout} onClick={handleLogout}>
           <span className="nav-icon">
             <AppIcon icon={LogOut} size={ICON_SIZE_NAV} />
@@ -189,4 +198,3 @@ function SideMenu({ collapsed, onToggle, t }: SideMenuProps) {
 }
 
 export default SideMenu;
-

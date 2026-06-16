@@ -57,6 +57,8 @@ export interface LookupItem {
   shipmentMode?: string;
   paymentTerm?: string;
   docLocation?: string;
+  locationCode?: string;
+  locationName?: string;
 }
 
 export interface LookupResponse {

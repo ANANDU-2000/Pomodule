@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "setup": "ts-node-dev --transpile-only --no-notify --exit-child scripts/setup-env.ts",
+    "check:env": "ts-node-dev --transpile-only --no-notify --exit-child scripts/check-env.ts",
+    "diagnose": "ts-node-dev --transpile-only --no-notify --exit-child scripts/diagnose-connection.ts",
+    "dev": "npm run check:env && ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "validate:oracle": "ts-node-dev --transpile-only --no-notify --exit-child scripts/validate-oracle.ts"

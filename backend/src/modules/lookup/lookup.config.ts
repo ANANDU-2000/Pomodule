@@ -11,10 +11,6 @@ export interface LookupTypeConfig {
   envKey: string;
 }
 
-function viewFromEnv(value: string, envKey: string): string {
-  return value;
-}
-
 export function getLookupTypeConfig(type: LookupType): LookupTypeConfig | null {
   const registry: Record<LookupType, LookupTypeConfig | null> = {
     supplier: env.ORACLE_SUPPLIER_VIEW
@@ -65,7 +61,7 @@ export function getLookupTypeConfig(type: LookupType): LookupTypeConfig | null {
 
   const config = registry[type];
   if (!config) return null;
-  return { ...config, viewName: viewFromEnv(config.viewName, config.envKey) };
+  return config;
 }
 
 export function isValidLookupType(type: string): type is LookupType {

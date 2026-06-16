@@ -14,6 +14,7 @@ declare module 'oracledb' {
       binds?: Record<string, unknown>,
       options?: Record<string, unknown>,
     ): Promise<ExecuteResult<T>>;
+    commit(): Promise<void>;
     close(): Promise<void>;
   }
 
@@ -25,6 +26,7 @@ declare module 'oracledb' {
     BIND_OUT: number;
     CURSOR: number;
     NUMBER: number;
+    STRING: number;
     Pool: Pool;
     Connection: Connection;
   };

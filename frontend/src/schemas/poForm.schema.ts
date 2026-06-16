@@ -4,9 +4,9 @@ import type { FormFieldDef } from '../types/formConfig';
 const VAT_RATE = 0.07;
 
 const lineItemSchema = z.object({
-  itemCode: z.string().min(1),
+  itemCode: z.string().min(1, 'Item code is required'),
   itemName: z.string().optional().default(''),
-  uom: z.string().min(1),
+  uom: z.string().min(1, 'UOM is required'),
   quantity: z.coerce.number().min(0.001),
   rate: z.coerce.number().min(0),
   discPercent: z.coerce.number().min(0).default(0),
@@ -97,7 +97,15 @@ export function validatePOForm(
   messages: POValidationMessages = defaultMessages,
 ): { valid: boolean; errors: Record<string, string[]> } {
   const schema = buildPOFormSchema(fields, messages);
-  const result = schema.safeParse(values);
+  const items = Array.isArray(values.items) ? values.items : [];
+  const activeItems = items.filter(
+    (row) => typeof row === 'object' && row !== null && String((row as { itemCode?: string }).itemCode ?? '').trim(),
+  );
+  const normalized = {
+    ...values,
+    items: activeItems,
+  };
+  const result = schema.safeParse(normalized);
   if (!result.success) {
     return {
       valid: false,

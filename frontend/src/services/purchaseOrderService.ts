@@ -5,6 +5,17 @@ import type {
   POLineItemsResponse,
 } from '../types/formConfig';
 import { API_BASE } from '../config/api.config';
+import { MOCK_MODE, USE_MOCK_FORM } from '../config/mock.config';
+import { delay } from '../mock/delay';
+import {
+  mockApprovePO,
+  mockCreatePO,
+  mockFetchPODetail,
+  mockFetchPOLineItems,
+  mockFetchPurchaseOrders,
+  mockUpdatePO,
+  hasMockPurchaseOrder,
+} from '../mock/mockStore';
 
 export interface POListResult {
   data: PurchaseOrder[];
@@ -70,6 +81,12 @@ export async function fetchPurchaseOrders(
   params: import('../types/PurchaseOrder').POListParams,
   signal?: AbortSignal,
 ): Promise<POListResult> {
+  if (MOCK_MODE) {
+    await delay(300);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    return mockFetchPurchaseOrders(params);
+  }
+
   const res = await fetch(
     `${API_BASE}/api/purchase-orders?${new URLSearchParams(toApiParams(params))}`,
     { signal },
@@ -82,6 +99,21 @@ export async function fetchPODetail(
   id: string,
   signal?: AbortSignal,
 ): Promise<PODetailResponse> {
+  if (MOCK_MODE) {
+    await delay(300);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    const detail = mockFetchPODetail(id);
+    if (!detail) throw new PONotFoundError(id);
+    return detail;
+  }
+
+  if (USE_MOCK_FORM && hasMockPurchaseOrder(id)) {
+    await delay(150);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    const detail = mockFetchPODetail(id);
+    if (detail) return detail;
+  }
+
   const res = await fetch(`${API_BASE}/api/purchase-orders/${encodeURIComponent(id)}`, { signal });
   if (res.status === 404) throw new PONotFoundError(id);
   if (!res.ok) throw new Error(`Failed to fetch purchase order: ${res.status}`);
@@ -92,12 +124,22 @@ export async function fetchPOLineItems(
   id: string,
   signal?: AbortSignal,
 ): Promise<POLineItemsResponse> {
+  if (USE_MOCK_FORM && (MOCK_MODE || hasMockPurchaseOrder(id))) {
+    await delay(300);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    return mockFetchPOLineItems(id);
+  }
+
   const res = await fetch(
     `${API_BASE}/api/purchase-orders/${encodeURIComponent(id)}/items`,
     { signal },
   );
   if (!res.ok) throw new Error(`Failed to fetch line items: ${res.status}`);
-  return res.json() as Promise<POLineItemsResponse>;
+  const body = (await res.json()) as POLineItemsResponse;
+  if (!body.configured) {
+    return mockFetchPOLineItems(id);
+  }
+  return body;
 }
 
 export async function updatePO(
@@ -105,6 +147,14 @@ export async function updatePO(
   payload: POFormPayload,
   signal?: AbortSignal,
 ): Promise<PurchaseOrder> {
+  if (USE_MOCK_FORM && (MOCK_MODE || hasMockPurchaseOrder(id))) {
+    await delay(800);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    const updated = mockUpdatePO(id, payload);
+    if (!updated) throw new PONotFoundError(id);
+    return updated;
+  }
+
   const res = await fetch(`${API_BASE}/api/purchase-orders/${encodeURIComponent(id)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -124,6 +174,14 @@ export async function approvePO(
   id: string,
   signal?: AbortSignal,
 ): Promise<PurchaseOrder> {
+  if (USE_MOCK_FORM && (MOCK_MODE || hasMockPurchaseOrder(id))) {
+    await delay(500);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    const approved = mockApprovePO(id);
+    if (!approved) throw new PONotFoundError(id);
+    return approved;
+  }
+
   const res = await fetch(`${API_BASE}/api/purchase-orders/${encodeURIComponent(id)}/approve`, {
     method: 'POST',
     signal,
@@ -145,6 +203,12 @@ export async function createPO(
   payload: POFormPayload,
   signal?: AbortSignal,
 ): Promise<PurchaseOrder> {
+  if (USE_MOCK_FORM) {
+    await delay(800);
+    if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+    return mockCreatePO(payload);
+  }
+
   const res = await fetch(`${API_BASE}/api/purchase-orders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -1,12 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import SideMenu from './components/SideMenu';
 import PurchaseOrderListPage from './pages/PurchaseOrderListPage';
 import PurchaseOrderViewPage from './pages/PurchaseOrderViewPage';
 import PurchaseOrderEditPage from './pages/PurchaseOrderEditPage';
 import PurchaseOrderNewPage from './pages/PurchaseOrderNewPage';
+import LoginPage from './pages/LoginPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { useSidebarState } from './hooks/useSidebarState';
 import { useLanguage } from './hooks/useLanguage';
+
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
 
 function AppLayout() {
   const { collapsed, toggle } = useSidebarState();
@@ -46,7 +56,19 @@ function AppLayout() {
 function App() {
   return (
     <BrowserRouter>
-      <AppLayout />
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/*"
+            element={(
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            )}
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

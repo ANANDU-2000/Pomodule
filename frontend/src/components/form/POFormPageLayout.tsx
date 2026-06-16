@@ -65,37 +65,46 @@ export default function POFormPageLayout({
   return (
     <div className="po-detail-page po-form-page">
       <div className="po-form-sticky-chrome no-print">
-        <PageToolbar
-          title={title}
-          onBack={onBack}
-          backLabel={t.form.back}
-          t={t}
-          actions={toolbarRight}
-          statusBadge={statusBadge}
-        />
-        <div className="po-form-tabs" role="tablist" aria-label={t.form.basicInfo}>
-          {tabs.map((tab, index) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              id={`tab-${tab.id}`}
-              aria-selected={activeTab === tab.id}
-              aria-controls={`panel-${tab.id}`}
-              tabIndex={activeTab === tab.id ? 0 : -1}
-              className={`po-form-tab${activeTab === tab.id ? ' active' : ''}`}
-              onClick={() => onTabChange(tab.id)}
-              onKeyDown={(e) => handleTabKeyDown(e, index)}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="erp-content-shell">
+          <PageToolbar
+            title={title}
+            onBack={onBack}
+            backLabel={t.form.back}
+            t={t}
+            actions={toolbarRight}
+            statusBadge={statusBadge}
+          />
+          <div className="po-form-tabs" role="tablist" aria-label={t.form.basicInfo}>
+            {tabs.map((tab, index) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-selected={activeTab === tab.id}
+                aria-controls={`panel-${tab.id}`}
+                tabIndex={activeTab === tab.id ? 0 : -1}
+                className={`po-form-tab${activeTab === tab.id ? ' active' : ''}`}
+                onClick={() => onTabChange(tab.id)}
+                onKeyDown={(e) => handleTabKeyDown(e, index)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
       {printHeader}
       <div className="po-detail-body po-form-body erp-page-content">
         {dirtyBanner}
         <div
+          className={`po-form-tabpanel${
+            activeTab === 'basicInfo'
+              ? ' po-form-tabpanel-basic'
+              : activeTab === 'itemDetails'
+                ? ' po-form-tabpanel-items'
+                : ''
+          }`}
           role="tabpanel"
           id={`panel-${activeTab}`}
           aria-labelledby={`tab-${activeTab}`}

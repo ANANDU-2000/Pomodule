@@ -1,5 +1,5 @@
 {
-  "pageTitle": "Purchase Order",
+  "pageTitle": "YSG Purchase Order",
   "purchaseOrders": "Purchase Orders",
   "nav": {
     "purchaseOrder": "Purchase Order",
@@ -70,6 +70,11 @@
     "orderTotal": "Total",
     "totalNet": "Total Net",
     "addLine": "Add Line",
+    "addItem": "Add Item",
+    "itemCodeBarcode": "Item Code / Barcode",
+    "itemCodeBarcodePlaceholder": "Enter item code or scan barcode",
+    "lineTotal": "Total",
+    "selectUom": "Select UOM",
     "removeLine": "Remove",
     "removeLineAria": "Remove line item",
     "deliveryDateAfterDocument": "Delivery date must be on or after document date",
@@ -77,6 +82,11 @@
     "documentDateToday": "Document date must be today's date",
     "validationTitle": "Please fix the following errors:",
     "lookupPlaceholder": "Type to search…",
+    "searchSupplier": "Search supplier…",
+    "searchItem": "Search item…",
+    "selectSupplierFirst": "Select a supplier before searching items",
+    "searchLocation": "Search location…",
+    "searchPaymentTerm": "Search payment term…",
     "clearLookup": "Clear selection",
     "minSearchChars": "Type at least {n} characters",
     "searching": "Searching…",
@@ -90,7 +100,9 @@
     "approvedBy": "Approved By",
     "approvedDate": "Approved Date",
     "unsavedChanges": "You have unsaved changes.",
-    "leaveAnyway": "Leave anyway"
+    "leaveAnyway": "Leave anyway",
+    "saveSuccess": "Purchase order saved successfully",
+    "linePageOf": "Page {page} of {total}"
   },
   "moduleTitles": {
     "poGh": "PO_GH - Cash/Delivery Note",
@@ -169,5 +181,18 @@
     "skipToContent": "Skip to main content",
     "pageActions": "Page actions",
     "language": "Language"
+  },
+  "login": {
+    "title": "YSG PO",
+    "subtitle": "YSG — Sign in to continue",
+    "userId": "User ID",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in…",
+    "invalidCredentials": "Invalid username or password",
+    "capsLockOn": "Caps Lock is on",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "mockHintTitle": "Mock mode — dev accounts"
   }
 }

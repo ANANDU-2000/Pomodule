@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PurchaseOrder } from '../types/PurchaseOrder';
 import { fetchPODetail, PONotFoundError } from '../services/purchaseOrderService';
+import { queryKeys } from '../constants/queryKeys';
 
 interface UsePODetailMessages {
   notFound: string;
@@ -8,40 +9,51 @@ interface UsePODetailMessages {
 }
 
 export function usePODetail(orderNo: string | undefined, messages: UsePODetailMessages) {
-  const [order, setOrder] = useState<PurchaseOrder | null>(null);
-  const [loading, setLoading] = useState(Boolean(orderNo));
-  const [error, setError] = useState<string | null>(null);
-  const [trackedOrderNo, setTrackedOrderNo] = useState(orderNo);
+  const queryClient = useQueryClient();
 
-  if (orderNo !== trackedOrderNo) {
-    setTrackedOrderNo(orderNo);
-    setOrder(null);
-    setLoading(Boolean(orderNo));
-    setError(null);
+  const query = useQuery({
+    queryKey: queryKeys.purchaseOrders.detail(orderNo ?? ''),
+    queryFn: ({ signal }) => {
+      if (!orderNo) throw new Error('Missing order number');
+      return fetchPODetail(orderNo, signal);
+    },
+    enabled: Boolean(orderNo),
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    retry: (failureCount, error) => {
+      if (error instanceof PONotFoundError) return false;
+      return failureCount < 1;
+    },
+  });
+
+  const setOrder = (order: PurchaseOrder | null) => {
+    if (!orderNo) return;
+    if (order) {
+      queryClient.setQueryData(queryKeys.purchaseOrders.detail(orderNo), order);
+    } else {
+      queryClient.removeQueries({ queryKey: queryKeys.purchaseOrders.detail(orderNo) });
+    }
+  };
+
+  let error: string | null = null;
+  if (query.error instanceof PONotFoundError) {
+    error = messages.notFound;
+  } else if (query.error instanceof Error && query.error.name !== 'AbortError') {
+    error = messages.loadError;
   }
 
-  useEffect(() => {
-    if (!orderNo) return;
-    const controller = new AbortController();
+  return {
+    order: query.data ?? null,
+    setOrder,
+    loading: query.isFetching,
+    error,
+    setError: () => undefined,
+  };
+}
 
-    fetchPODetail(orderNo, controller.signal)
-      .then((data) => {
-        if (!controller.signal.aborted) setOrder(data);
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return;
-        if (err instanceof PONotFoundError) {
-          setError(messages.notFound);
-        } else if (err instanceof Error && err.name !== 'AbortError') {
-          setError(messages.loadError);
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-
-    return () => controller.abort();
-  }, [orderNo, messages.notFound, messages.loadError]);
-
-  return { order, setOrder, loading, error, setError };
+export function useInvalidatePurchaseOrders() {
+  const queryClient = useQueryClient();
+  return () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.purchaseOrders.all });
+  };
 }
